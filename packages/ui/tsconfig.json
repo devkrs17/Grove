@@ -1,0 +1,7 @@
+{
+  "extends": "@grove/config/tsconfig/nextjs",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

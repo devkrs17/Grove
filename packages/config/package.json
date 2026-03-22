@@ -1,0 +1,9 @@
+{
+  "name": "@grove/config",
+  "private": true,
+  "exports": {
+    "./tsconfig/*": "./tsconfig/*.json",
+    "./tailwind/globals.css": "./tailwind/globals.css",
+    "./eslint/base": "./eslint/base.js"
+  }
+}

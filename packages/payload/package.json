@@ -1,0 +1,15 @@
+{
+  "name": "@grove/payload",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./collections/*": "./src/collections/*.ts"
+  },
+  "dependencies": {
+    "payload": "^3"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@grove/config": "workspace:*"
+  }
+}
