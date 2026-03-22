@@ -1,5 +1,12 @@
 export { Tenants } from "./collections/tenants";
 export { Users } from "./collections/users";
 export { Products } from "./collections/products";
+export { Sites } from "./collections/sites";
+export { SiteMemberships } from "./collections/site-memberships";
+export { BrandConfigs } from "./collections/brand-configs";
+export { Pages } from "./collections/pages";
+export { Media } from "./collections/media";
+export { Customers } from "./collections/customers";
+export { ServiceRequests } from "./collections/service-requests";
 export { isAuthenticated, isSuperAdmin } from "./access";
 export { seed } from "./seed";

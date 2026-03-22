@@ -5,7 +5,19 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { multiTenantPlugin } from "@payloadcms/plugin-multi-tenant";
 import sharp from "sharp";
-import { Tenants, Users, Products, seed } from "@grove/payload";
+import {
+  Tenants,
+  Users,
+  Products,
+  Sites,
+  SiteMemberships,
+  BrandConfigs,
+  Pages,
+  Media,
+  Customers,
+  ServiceRequests,
+  seed,
+} from "@grove/payload";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -18,7 +30,18 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || "",
     },
   }),
-  collections: [Users, Tenants, Products],
+  collections: [
+    Users,
+    Tenants,
+    Products,
+    Sites,
+    SiteMemberships,
+    BrandConfigs,
+    Pages,
+    Media,
+    Customers,
+    ServiceRequests,
+  ],
   admin: {
     user: Users.slug,
     importMap: {
@@ -29,6 +52,13 @@ export default buildConfig({
     multiTenantPlugin({
       collections: {
         products: {},
+        sites: {},
+        "site-memberships": {},
+        "brand-configs": { isGlobal: true },
+        pages: {},
+        media: {},
+        customers: {},
+        "service-requests": {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>
