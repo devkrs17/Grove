@@ -1,6 +1,9 @@
 {
   "name": "@grove/payload",
   "private": true,
+  "scripts": {
+    "test": "vitest run"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./collections/*": "./src/collections/*.ts"

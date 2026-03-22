@@ -19,6 +19,9 @@ dist/
 # payload
 payload-types.ts
 
+# coverage
+coverage/
+
 # misc
 .DS_Store
 *.tsbuildinfo

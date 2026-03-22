@@ -4,6 +4,7 @@
   "exports": {
     "./tsconfig/*": "./tsconfig/*.json",
     "./tailwind/globals.css": "./tailwind/globals.css",
-    "./eslint/base": "./eslint/base.js"
+    "./eslint/base": "./eslint/base.js",
+    "./test/setup": "./test/setup.ts"
   }
 }

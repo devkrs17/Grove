@@ -172,6 +172,7 @@ Org (tenant)
 - **Manual service requests first** — build AI layer after real patterns emerge
 - **Turborepo** for monorepo tooling
 - **Atomic service requests** — one intent, one request
+- **100% test coverage** — all code must have 100% function and line coverage. Vitest with v8 provider, thresholds enforced in CI
 
 ---
 
