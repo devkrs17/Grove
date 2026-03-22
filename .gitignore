@@ -17,7 +17,7 @@ out/
 dist/
 
 # payload
-payload-types.ts
+# payload-types.ts is versioned in packages/types/src/
 
 # coverage
 coverage/

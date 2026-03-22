@@ -5,6 +5,7 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
+    "payload": "^3.80.0",
     "typescript": "^5"
   }
 }

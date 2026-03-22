@@ -11,6 +11,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.0
         version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(jsdom@29.0.1)(vite@8.0.1(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.98.0)(tsx@4.21.0)))
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
       turbo:
         specifier: ^2
         version: 2.8.20
@@ -60,6 +63,9 @@ importers:
       '@grove/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@next/env':
+        specifier: ^16.2.1
+        version: 16.2.1
       '@types/node':
         specifier: 25.5.0
         version: 25.5.0
@@ -78,6 +84,9 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@grove/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@grove/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -115,6 +124,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@grove/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@grove/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -167,6 +179,9 @@ importers:
 
   packages/types:
     devDependencies:
+      payload:
+        specifier: ^3.80.0
+        version: 3.80.0(graphql@16.13.1)(typescript@5.9.3)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -1267,6 +1282,9 @@ packages:
 
   '@next/env@15.5.14':
     resolution: {integrity: sha512-aXeirLYuASxEgi4X4WhfXsShCFxWDfNn/8ZeC5YXAS2BB4A8FJi1kwwGL6nvMVboE7fZCzmJPNdMvVHc8JpaiA==}
+
+  '@next/env@16.2.1':
+    resolution: {integrity: sha512-n8P/HCkIWW+gVal2Z8XqXJ6aB3J0tuM29OcHpCsobWlChH/SITBs1DFBk/HajgrwDkqqBXPbuUuzgDvUekREPg==}
 
   '@next/swc-darwin-arm64@15.4.8':
     resolution: {integrity: sha512-Pf6zXp7yyQEn7sqMxur6+kYcywx5up1J849psyET7/8pG2gQTVMjU3NzgIt8SeEP5to3If/SaWmaA6H6ysBr1A==}
@@ -4350,6 +4368,8 @@ snapshots:
 
   '@next/env@15.5.14': {}
 
+  '@next/env@16.2.1': {}
+
   '@next/swc-darwin-arm64@15.4.8':
     optional: true
 
@@ -6488,7 +6508,7 @@ snapshots:
   tsx@4.21.0:
     dependencies:
       esbuild: 0.27.4
-      get-tsconfig: 4.8.1
+      get-tsconfig: 4.13.6
     optionalDependencies:
       fsevents: 2.3.3
 

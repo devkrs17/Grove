@@ -9,6 +9,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@grove/types": "workspace:*",
     "@grove/ui": "workspace:*",
     "next": "15.4.11",
     "react": "^19",

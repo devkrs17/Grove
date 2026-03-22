@@ -7,7 +7,7 @@
     "start": "next start --port 3002",
     "lint": "next lint",
     "check-types": "tsc --noEmit",
-    "generate:types": "payload generate:types"
+    "generate:types": "node --require ./scripts/payload-compat.cjs --import tsx scripts/generate-types.mjs"
   },
   "dependencies": {
     "@grove/payload": "workspace:*",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@grove/config": "workspace:*",
+    "@next/env": "^16.2.1",
     "@types/node": "25.5.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
