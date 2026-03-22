@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Tenants } from "./tenants";
+import { isAuthenticated, isSuperAdmin } from "../access";
 
 describe("Tenants collection", () => {
   it("has slug 'tenants'", () => {
@@ -29,5 +30,21 @@ describe("Tenants collection", () => {
 
   it("has exactly 3 fields", () => {
     expect(Tenants.fields).toHaveLength(3);
+  });
+
+  it("allows read for authenticated users", () => {
+    expect(Tenants.access?.read).toBe(isAuthenticated);
+  });
+
+  it("restricts create to super admin", () => {
+    expect(Tenants.access?.create).toBe(isSuperAdmin);
+  });
+
+  it("restricts update to super admin", () => {
+    expect(Tenants.access?.update).toBe(isSuperAdmin);
+  });
+
+  it("restricts delete to super admin", () => {
+    expect(Tenants.access?.delete).toBe(isSuperAdmin);
   });
 });

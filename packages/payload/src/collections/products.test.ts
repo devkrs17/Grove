@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Products } from "./products";
+import { isAuthenticated, isSuperAdmin } from "../access";
 
 describe("Products collection", () => {
   it("has slug 'products'", () => {
@@ -43,5 +44,21 @@ describe("Products collection", () => {
 
   it("has exactly 3 fields", () => {
     expect(Products.fields).toHaveLength(3);
+  });
+
+  it("allows read for authenticated users", () => {
+    expect(Products.access?.read).toBe(isAuthenticated);
+  });
+
+  it("allows create for authenticated users", () => {
+    expect(Products.access?.create).toBe(isAuthenticated);
+  });
+
+  it("allows update for authenticated users", () => {
+    expect(Products.access?.update).toBe(isAuthenticated);
+  });
+
+  it("restricts delete to super admin", () => {
+    expect(Products.access?.delete).toBe(isSuperAdmin);
   });
 });
