@@ -8,10 +8,14 @@
     "check-types": "turbo check-types",
     "test": "turbo test",
     "test:coverage": "turbo test -- --coverage",
-    "generate:types": "pnpm --filter @grove/cms generate:types"
+    "generate:types": "pnpm --filter @grove/cms generate:types",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.14",
+    "husky": "^9.1.7",
     "tsx": "^4.21.0",
     "turbo": "^2",
     "vitest": "^4.1.0"
