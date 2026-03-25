@@ -10,7 +10,14 @@
       "Bash(pnpm install:*)",
       "Bash(node -e \"console.log\\(require.resolve\\(''next/dist/bin/next'', {paths:[''C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/apps/web'']}\\)\\)\")",
       "Bash(ls -la \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/apps/cms/.env\"*)",
-      "Bash(ls -la \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/.env\"*)"
+      "Bash(ls -la \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/.env\"*)",
+      "mcp__a4dbb759-3f0b-46f8-b21e-1a8f7f42c334__resolve-library-id",
+      "mcp__a4dbb759-3f0b-46f8-b21e-1a8f7f42c334__query-docs",
+      "Bash(pnpm generate:types)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm check-types:*)",
+      "Bash(terraform --version)"
     ]
   }
 }
