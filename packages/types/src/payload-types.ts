@@ -173,6 +173,10 @@ export interface Tenant {
   name: string;
   slug: string;
   domain?: string | null;
+  /**
+   * Auth0 Organization ID mapped to this tenant
+   */
+  auth0OrgId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -480,6 +484,7 @@ export interface TenantsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   domain?: T;
+  auth0OrgId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -31,6 +31,16 @@ pnpm dev
 DATABASE_URL=postgresql://grove:grove_dev_password@localhost:5432/grove_dev
 PAYLOAD_SECRET=your-secret-here
 SUPER_ADMIN_EMAIL=admin@example.com
+
+# Auth0 (from terraform output — see infra/auth0/README.md)
+AUTH0_DOMAIN=grove-dev.us.auth0.com
+AUTH0_ISSUER_URL=https://grove-dev.us.auth0.com/
+AUTH0_DASHBOARD_CLIENT_ID=<from terraform output>
+AUTH0_DASHBOARD_CLIENT_SECRET=<from terraform output>
+AUTH0_WEB_CLIENT_ID=<from terraform output>
+AUTH0_WEB_CLIENT_SECRET=<from terraform output>
+AUTH0_M2M_CLIENT_ID=<from terraform output>
+AUTH0_M2M_CLIENT_SECRET=<from terraform output>
 ```
 
 ## Commands
@@ -44,6 +54,10 @@ pnpm test             # Run all tests
 pnpm test:coverage    # Run tests with coverage report
 pnpm generate:types   # Regenerate Payload TypeScript types
 ```
+
+## Infrastructure
+
+Auth0 tenant configuration is managed via Terraform in `infra/auth0/`. See [infra/auth0/README.md](infra/auth0/README.md) for setup and bootstrap instructions.
 
 ## Architecture
 
