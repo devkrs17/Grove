@@ -28,5 +28,12 @@ export const Tenants: CollectionConfig = {
       name: "domain",
       type: "text",
     },
+    {
+      name: "auth0OrgId",
+      type: "text",
+      admin: {
+        description: "Auth0 Organization ID mapped to this tenant",
+      },
+    },
   ],
 };

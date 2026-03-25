@@ -28,8 +28,15 @@ describe("Tenants collection", () => {
     expect(domain).toMatchObject({ type: "text" });
   });
 
-  it("has exactly 3 fields", () => {
-    expect(Tenants.fields).toHaveLength(3);
+  it("has optional auth0OrgId field", () => {
+    const auth0OrgId = Tenants.fields.find(
+      (f) => "name" in f && f.name === "auth0OrgId",
+    );
+    expect(auth0OrgId).toMatchObject({ type: "text" });
+  });
+
+  it("has exactly 4 fields", () => {
+    expect(Tenants.fields).toHaveLength(4);
   });
 
   it("allows read for authenticated users", () => {

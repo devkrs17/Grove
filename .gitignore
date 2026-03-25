@@ -22,6 +22,13 @@ dist/
 # coverage
 coverage/
 
+# terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+*.tfplan
+
 # misc
 .DS_Store
 *.tsbuildinfo

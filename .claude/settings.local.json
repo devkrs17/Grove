@@ -1,7 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "mcp__claude_ai_Notion__notion-fetch"
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/apps/web/node_modules/.bin/next\"*)",
+      "Bash(ls \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/node_modules/.bin/next\"*)",
+      "Read(//c/Users/kreyes33/Source/Personal/Grove/node_modules/.bin/**)",
+      "Read(//c/Users/kreyes33/Source/Personal/Grove/apps/web/node_modules/.bin/**)",
+      "Bash(pnpm install:*)",
+      "Bash(node -e \"console.log\\(require.resolve\\(''next/dist/bin/next'', {paths:[''C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/apps/web'']}\\)\\)\")",
+      "Bash(ls -la \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/apps/cms/.env\"*)",
+      "Bash(ls -la \"C:/Users/kreyes33/Source/Personal/Grove/.claude/worktrees/happy-germain/.env\"*)",
+      "mcp__a4dbb759-3f0b-46f8-b21e-1a8f7f42c334__resolve-library-id",
+      "mcp__a4dbb759-3f0b-46f8-b21e-1a8f7f42c334__query-docs",
+      "Bash(pnpm generate:types)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm check-types:*)",
+      "Bash(terraform --version)",
+      "Bash(where gh:*)"
     ]
   }
 }
