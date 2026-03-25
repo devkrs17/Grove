@@ -1,3 +1,13 @@
+resource "auth0_client_credentials" "dashboard" {
+  client_id             = auth0_client.dashboard.id
+  authentication_method = "client_secret_post"
+}
+
+resource "auth0_client_credentials" "web" {
+  client_id             = auth0_client.web.id
+  authentication_method = "client_secret_post"
+}
+
 resource "auth0_client_credentials" "m2m" {
   client_id             = auth0_client.m2m.id
   authentication_method = "client_secret_post"

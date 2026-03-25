@@ -5,7 +5,7 @@ output "dashboard_client_id" {
 
 output "dashboard_client_secret" {
   description = "Auth0 client secret for the Dashboard app"
-  value       = auth0_client.dashboard.client_secret
+  value       = auth0_client_credentials.dashboard.client_secret
   sensitive   = true
 }
 
@@ -16,7 +16,7 @@ output "web_client_id" {
 
 output "web_client_secret" {
   description = "Auth0 client secret for the Web/storefront app"
-  value       = auth0_client.web.client_secret
+  value       = auth0_client_credentials.web.client_secret
   sensitive   = true
 }
 
@@ -27,7 +27,7 @@ output "m2m_client_id" {
 
 output "m2m_client_secret" {
   description = "Auth0 client secret for the M2M backend app"
-  value       = auth0_client.m2m.client_secret
+  value       = auth0_client_credentials.m2m.client_secret
   sensitive   = true
 }
 
