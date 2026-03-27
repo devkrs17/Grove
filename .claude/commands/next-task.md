@@ -1,27 +1,23 @@
-Fetch the Notion project board at https://www.notion.so/7be2c45841954399b92ced74a494e3c8 and find the next task to work on.
+Fetch the next MVP task to work on from the Notion project board.
 
-## Lessons & Performance Notes
+## How to find the next task
 
-- **`view://` URLs CANNOT be fetched** — the Notion API returns a validation error. Instead, fetch the database and then use `notion-search` on the data source, or fetch individual ticket pages by ID.
-- The data source is `collection://c2294908-28ff-4da9-9fee-5b45061427b5`.
-- `notion-search` is semantic, NOT property-filtered. It cannot reliably filter by Status or Phase. Use it to find tickets by name/content, then fetch each page to check properties.
-- If no "To Do" tasks exist, check "Backlog" for the highest-priority candidates (P0 first) and suggest promoting them.
-- Do NOT spawn a sub-agent for this — fetch individual pages directly.
+1. Read `.claude/docs/mvp.md` to understand what's in scope.
+2. Read `.claude/docs/notion-links.md` to get the board data source ID and known ticket IDs.
+3. Fetch each known MVP ticket by page ID to check its current status.
+4. Search the data source (`collection://c2294908-28ff-4da9-9fee-5b45061427b5`) for "Foundation" and "Storefront" tickets.
+5. Pick the highest-priority ticket with Status = "To Do". If none, find highest-priority "Backlog" ticket whose dependencies are met (check Depends On field).
+6. Show: Ticket ID, Name, Phase, Priority, Size, Type, Depends On, and Acceptance Criteria.
+7. Fetch the full page so I have all details.
 
-## Known Foundation Tickets (for quick lookup)
+## Priority order for MVP work
 
-These are P0-Critical Foundation tickets. Fetch them directly to check status:
-- PLT-20: Auth0 tenant setup — `326fcd29-ea34-81a1-ac94-d0281e36fd50`
-- PLT-14: Payload CMS setup — `326fcd29-ea34-816c-a5c6-dbba57f33ba2` (Done)
-- PLT-103: CI pipeline — `32bfcd29-ea34-8195-8b51-de392d2d564f` (Done in git, Backlog in Notion)
-- PLT-114: Seed script — `32bfcd29-ea34-81f5-af9d-d29dfdf8cc28` (Done)
-- PLT-154: Access control audit — `32bfcd29-ea34-816e-8312-e4201e79d645` (Done)
+1. Anything currently "Blocked" or "In Progress" (unblock or finish it)
+2. "To Do" tickets, highest priority first
+3. "Backlog" Foundation/Storefront tickets with met dependencies
 
-## Steps
+## Important
 
-1. Fetch the database at `https://www.notion.so/7be2c45841954399b92ced74a494e3c8` to get current schema.
-2. Fetch known P0 Foundation tickets by page ID (see list above) to check their current status.
-3. Also search the data source for "Foundation" to find any new tickets.
-4. Find the highest-priority ticket with Status = "To Do". If none, find highest-priority "Backlog" ticket whose dependencies are met.
-5. Show the top candidate with: Ticket ID, Name, Phase, Priority, Size, Type, Epic, Depends On, and Acceptance Criteria.
-6. Fetch the full page for that ticket so I have all the details.
+- Do NOT suggest tickets from Service Layer, AI Layer, or SEO phases — they're not MVP.
+- `view://` URLs cannot be fetched. Use page IDs directly.
+- notion-search is semantic, not property-filtered. Always fetch pages to verify Status.
