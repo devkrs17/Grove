@@ -7,8 +7,8 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "lcov"],
       reportsDirectory: "./coverage",
-      include: ["src/app/api/**/*.ts"],
-      exclude: ["src/app/api/**/*.test.ts"],
+      include: ["src/app/api/**/*.ts", "src/middleware.ts", "src/lib/**/*.ts"],
+      exclude: ["src/**/*.test.ts"],
       thresholds: {
         functions: 100,
         lines: 100,

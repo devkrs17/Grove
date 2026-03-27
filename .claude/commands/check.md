@@ -1,6 +1,6 @@
 Run the full quality check suite: lint, type-check, and tests.
 
-Run these from the repo root:
+Run these in parallel from the repo root:
 ```
 pnpm lint
 pnpm check-types

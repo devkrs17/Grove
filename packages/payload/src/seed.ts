@@ -44,6 +44,29 @@ export const seed = async (payload: Payload): Promise<void> => {
   });
   payload.logger.info("Assigned user to both tenants");
 
+  // 3b. Create sites for each tenant (used by hostname middleware)
+  const siteA = await payload.create({
+    collection: "sites",
+    data: {
+      name: "Acme Art Gallery",
+      slug: "acme-art",
+      domain: "acme-art.localhost",
+      tenant: tenantA.id,
+    },
+  });
+  payload.logger.info(`Created site: ${siteA.name} (${siteA.domain})`);
+
+  const siteB = await payload.create({
+    collection: "sites",
+    data: {
+      name: "Bella Botanicals",
+      slug: "bella-botanicals",
+      domain: "bella-botanicals.localhost",
+      tenant: tenantB.id,
+    },
+  });
+  payload.logger.info(`Created site: ${siteB.name} (${siteB.domain})`);
+
   // 4. Create products scoped to each tenant
   await payload.create({
     collection: "products",
