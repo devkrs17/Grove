@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grove Platform — Settlement Flow</title>
+<style>
+  :root{
+    --bg:#f6f8f7; --panel:#ffffff; --panel2:#f3f6f4; --ink:#15201a; --muted:#5d6f64; --soft:#7d8c83;
+    --line:#e1e8e3; --line2:#cfdad3; --grove:#2f8f55; --grove-d:#236b40; --grove-bg:#e9f5ee;
+    --sky:#2f6fb0; --sky-bg:#e8f1fa; --amber:#b8821f; --amber-bg:#faf1dc; --violet:#7c5bbf;
+    --rose:#c0506a; --rose-bg:#fde9ee; --radius:14px;
+    --debit:#2f6fb0; --credit:#2f8f55;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:40px 20px 90px}
+  .wrap{max-width:1000px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+  .back{font-size:13px;text-decoration:none;color:var(--grove-d);font-weight:600}
+  .back:hover{text-decoration:underline}
+  h1{font-size:30px;margin:6px 0 8px;letter-spacing:-.01em}
+  h1 .leaf{color:var(--grove)}
+  .sub{color:var(--muted);margin:0 0 26px;max-width:80ch;font-size:15px}
+  h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--grove-d);margin:44px 0 6px}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:82ch;font-size:14.5px}
+  code{font-family:var(--mono);font-size:.9em;background:var(--panel2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:6px;color:var(--grove-d)}
+
+  /* sequence steps */
+  .seq{position:relative;margin:0;padding:0;list-style:none}
+  .seq::before{content:"";position:absolute;left:23px;top:6px;bottom:6px;width:2px;background:var(--line2)}
+  .step{position:relative;padding:0 0 18px 64px;}
+  .step .num{position:absolute;left:8px;top:0;width:32px;height:32px;border-radius:50%;background:var(--grove);
+    color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px;z-index:1;
+    box-shadow:0 0 0 4px var(--bg)}
+  .step.pay .num{background:var(--sky)}
+  .step.route .num{background:var(--amber)}
+  .step.ledger .num{background:var(--violet)}
+  .step.payout .num{background:var(--rose)}
+  .step .body{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .step .ttl{font-weight:650;font-size:15px;margin:0 0 4px}
+  .step .actor{font-family:var(--mono);font-size:11px;color:var(--soft);display:inline-block;
+    background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;margin-left:8px}
+  .step .desc{font-size:13px;color:var(--muted);margin:6px 0 0}
+  .step .writes{font-size:11.5px;color:var(--grove-d);margin-top:9px;font-family:var(--mono)}
+  .step .writes b{color:var(--ink)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+  .note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--grove);background:var(--grove-bg);
+    padding:11px 14px;border-radius:0 8px 8px 0;margin:16px 0 0}
+
+  /* double-entry table */
+  table{width:100%;border-collapse:collapse;font-size:13px;font-family:var(--mono)}
+  caption{text-align:left;font-family:var(--sans);font-weight:650;font-size:13.5px;margin-bottom:8px;color:var(--ink)}
+  caption span{font-weight:400;color:var(--muted);font-size:12.5px}
+  th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left}
+  th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);font-family:var(--sans);font-weight:650}
+  td.dr{color:var(--debit);text-align:right}
+  td.cr{color:var(--credit);text-align:right}
+  th.amt{text-align:right}
+  tfoot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:none}
+  tfoot td.dr{color:var(--debit)} tfoot td.cr{color:var(--credit)}
+  .balanced{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:12px;
+    background:var(--grove-bg);color:var(--grove-d);border:1px solid #cfe7da;padding:3px 10px;border-radius:20px;font-weight:600}
+  .legend2{display:flex;gap:18px;font-size:12px;color:var(--muted);margin:0 0 14px;flex-wrap:wrap}
+  .legend2 b{font-family:var(--mono)}
+  .legend2 .d-dr{color:var(--debit)} .legend2 .d-cr{color:var(--credit)}
+
+  /* money split bar */
+  .splitbar{display:flex;height:42px;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin:6px 0 4px}
+  .splitbar div{display:grid;place-items:center;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:0 6px}
+  .s-supplier{background:#5b8c6e}.s-partner{background:#7c5bbf}.s-platform{background:#b8821f}
+  .splitkey{display:flex;gap:16px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .splitkey span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  footer{margin-top:52px;color:var(--soft);font-size:12.5px;border-top:1px solid var(--line);padding-top:18px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top"><a class="back" href="index.html">&larr; All docs</a></div>
+  <h1><span class="leaf">&#127795;</span> Grove Platform &mdash; Settlement Flow</h1>
+  <p class="sub">The full life of one order's <strong>money</strong>: from checkout, to the partner getting
+  paid. Every financial movement is recorded as <strong>double-entry</strong> ledger postings &mdash; immutable,
+  and always balanced (total debits == total credits). Routing, settlement math, and payout aggregation are
+  <strong>deterministic code</strong>, not AI. Amounts are integer minor units (cents).</p>
+
+  <!-- worked example numbers -->
+  <div class="panel" style="margin-bottom:8px">
+    <div class="two">
+      <div>
+        <h2 style="margin:0 0 8px">Worked example</h2>
+        <p style="font-size:13.5px;color:var(--muted);margin:0 0 10px">One delivered order, total <b>$100.00</b>
+        (<code>10000</code> cents). Tenant config defines the split:</p>
+        <ul style="margin:0;padding-left:18px;font-size:13.5px;color:var(--ink)">
+          <li>Supplier (goods): <b>$70.00</b></li>
+          <li>Fulfillment partner (delivery): <b>$20.00</b></li>
+          <li>Platform fee: <b>$10.00</b></li>
+        </ul>
+      </div>
+      <div>
+        <h2 style="margin:0 0 8px">Where the $100 goes</h2>
+        <div class="splitbar">
+          <div class="s-supplier" style="flex:70">Supplier $70</div>
+          <div class="s-partner" style="flex:20">Partner $20</div>
+          <div class="s-platform" style="flex:10">Fee $10</div>
+        </div>
+        <div class="splitkey">
+          <span><i class="sw s-supplier"></i> Supplier payable</span>
+          <span><i class="sw s-partner"></i> Partner payable</span>
+          <span><i class="sw s-platform"></i> Platform fee (kept)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <h2>End-to-end sequence</h2>
+  <p class="lead">Each step names the <strong>actor</strong> and the <strong>records it writes</strong>.
+  Steps 5&ndash;7 produce the ledger postings shown in the next section.</p>
+
+  <ol class="seq">
+    <li class="step"><div class="num">1</div>
+      <div class="body">
+        <span class="ttl">Order placed</span><span class="actor">apps/web &rarr; API Layer</span>
+        <p class="desc">Customer checks out. The create-order route is <b>server-authoritative</b>: it
+        recomputes line totals &amp; the order total from DB product prices (never trusts the client),
+        accepts an idempotency key (returns <code>409</code> on replay), and runs a stub inventory
+        availability check. If the tenant enables it, checkout is gated on a passing eligibility
+        <code>compliance-check</code>.</p>
+        <p class="writes">writes &rarr; <b>orders</b> (status: pending, paymentStatus: unpaid) &middot; <b>audit-logs</b> (order placed)</p>
+      </div></li>
+
+    <li class="step pay"><div class="num">2</div>
+      <div class="body">
+        <span class="ttl">Payment authorized</span><span class="actor">PaymentProvider adapter</span>
+        <p class="desc">The selected provider (mock in dev) authorizes the order amount via
+        <code>authorize()</code>. The customer's funds are now committed. On delivery the engine will
+        <code>capture()</code>. Method may be ach / rtp / card / pay-by-bank.</p>
+        <p class="writes">writes &rarr; <b>payments</b> (status: authorized) &middot; updates <b>orders</b>.paymentStatus &rarr; authorized, status &rarr; confirmed</p>
+      </div></li>
+
+    <li class="step route"><div class="num">3</div>
+      <div class="body">
+        <span class="ttl">Routing selects a partner</span><span class="actor">Routing Engine (deterministic)</span>
+        <p class="desc"><code>selectFulfillment(order, candidates)</code> filters partner-locations that are
+        <b>active</b>, <b>have available inventory for every item</b>, and are within
+        <code>serviceRadiusKm</code> of the shipping address; then ranks by distance/speed. It
+        <b>never routes out-of-stock</b>. Inventory is reserved for the order.</p>
+        <p class="writes">writes &rarr; <b>fulfillments</b> (status: assigned) &middot; updates <b>inventory-levels</b> (reserve) &middot; <b>orders</b>.status &rarr; routed</p>
+      </div></li>
+
+    <li class="step route"><div class="num">4</div>
+      <div class="body">
+        <span class="ttl">Fulfillment &amp; delivery</span><span class="actor">Partner Portal / partner ops</span>
+        <p class="desc">Partner accepts &rarr; picks up &rarr; in transit &rarr; delivered. Each transition is
+        recorded. On <b>delivered</b>, the payment is captured and the order moves toward completion;
+        the reserved inventory is consumed.</p>
+        <p class="writes">writes &rarr; <b>fulfillments</b>.status (accepted&hellip;delivered) &middot; <b>payments</b> capture &middot; <b>orders</b>.status &rarr; delivered &rarr; completed &middot; <b>audit-logs</b></p>
+      </div></li>
+
+    <li class="step ledger"><div class="num">5</div>
+      <div class="body">
+        <span class="ttl">Ledger postings (double-entry)</span><span class="actor">Ledger Engine</span>
+        <p class="desc">When payment captures, the customer's funds enter the ledger. Every posting set
+        shares a <code>transactionId</code> and must <b>balance</b> (&Sigma;debits == &Sigma;credits). Entries are
+        <b>immutable</b>: hooks deny edits/deletes to non-super-admins. See <b>Transaction A</b> below.</p>
+        <p class="writes">writes &rarr; <b>ledger-entries</b> (refType: order) into <b>ledger-accounts</b></p>
+      </div></li>
+
+    <li class="step ledger"><div class="num">6</div>
+      <div class="body">
+        <span class="ttl">Settlement allocation</span><span class="actor">Settlement Engine (deterministic)</span>
+        <p class="desc">On completion, the engine computes the split from tenant config (platform fee %,
+        supplier amount, fulfillment partner amount) and posts <b>balanced</b> ledger entries that move
+        funds from the holding account into each payee's payable account. See <b>Transaction B</b>.</p>
+        <p class="writes">writes &rarr; <b>settlements</b> (allocations[], status: posted) &middot; <b>ledger-entries</b> (refType: settlement)</p>
+      </div></li>
+
+    <li class="step payout"><div class="num">7</div>
+      <div class="body">
+        <span class="ttl">Payout batch &amp; disbursement</span><span class="actor">Payout Engine &rarr; PayoutProvider</span>
+        <p class="desc">On the tenant's cadence, the engine <b>aggregates payable balances</b> across orders
+        per payee, creates a <code>payout-batch</code> + one <code>payout</code> per payee, posts ledger
+        entries marking funds settled, then the provider (mock simulates same/next-day) disburses via
+        ACH/RTP. See <b>Transaction C</b>.</p>
+        <p class="writes">writes &rarr; <b>payout-batches</b> &middot; <b>payouts</b> (status: paid) &middot; <b>ledger-entries</b> (refType: payout) &middot; <b>audit-logs</b></p>
+      </div></li>
+  </ol>
+
+  <!-- ========================================================= -->
+  <h2 id="ledger">The double-entry postings</h2>
+  <p class="lead">A reminder of the rule: in double-entry bookkeeping, <b>every transaction has equal
+  debits and credits</b>. Money is never created or destroyed &mdash; it only moves between accounts. Below are
+  the three transactions for our $100 order, in cents. Each one balances.</p>
+
+  <div class="legend2">
+    <span><b class="d-dr">DEBIT</b> &mdash; money into / claim on this account</span>
+    <span><b class="d-cr">CREDIT</b> &mdash; money out of / obligation from this account</span>
+    <span>All amounts in minor units (cents).</span>
+  </div>
+
+  <div class="panel">
+    <table>
+      <caption>Transaction A &mdash; capture customer funds <span>(<code>refType: order</code>, on payment capture)</span></caption>
+      <thead><tr><th>Account</th><th>Type</th><th class="amt">Debit</th><th class="amt">Credit</th></tr></thead>
+      <tbody>
+        <tr><td>Customer Funds (clearing)</td><td>customer_funds</td><td class="dr">10000</td><td class="cr"></td></tr>
+        <tr><td>Order Holding</td><td>platform (holding)</td><td class="dr"></td><td class="cr">10000</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Totals</td><td class="dr">10000</td><td class="cr">10000</td></tr></tfoot>
+    </table>
+    <div style="margin-top:8px"><span class="balanced">&#10003; balanced &mdash; 10000 = 10000</span></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <table>
+      <caption>Transaction B &mdash; settlement split <span>(<code>refType: settlement</code>, on order completion)</span></caption>
+      <thead><tr><th>Account</th><th>Type</th><th class="amt">Debit</th><th class="amt">Credit</th></tr></thead>
+      <tbody>
+        <tr><td>Order Holding</td><td>platform (holding)</td><td class="dr">10000</td><td class="cr"></td></tr>
+        <tr><td>Supplier Payable</td><td>supplier_payable</td><td class="dr"></td><td class="cr">7000</td></tr>
+        <tr><td>Partner Payable</td><td>partner_payable</td><td class="dr"></td><td class="cr">2000</td></tr>
+        <tr><td>Platform Fee Revenue</td><td>platform_fee</td><td class="dr"></td><td class="cr">1000</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Totals</td><td class="dr">10000</td><td class="cr">10000</td></tr></tfoot>
+    </table>
+    <div style="margin-top:8px"><span class="balanced">&#10003; balanced &mdash; 10000 = 7000 + 2000 + 1000</span></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <table>
+      <caption>Transaction C &mdash; payout disbursement <span>(<code>refType: payout</code>, when the batch pays a partner)</span></caption>
+      <thead><tr><th>Account</th><th>Type</th><th class="amt">Debit</th><th class="amt">Credit</th></tr></thead>
+      <tbody>
+        <tr><td>Partner Payable</td><td>partner_payable</td><td class="dr">2000</td><td class="cr"></td></tr>
+        <tr><td>Cash / Bank (provider)</td><td>platform (cash)</td><td class="dr"></td><td class="cr">2000</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Totals</td><td class="dr">2000</td><td class="cr">2000</td></tr></tfoot>
+    </table>
+    <div style="margin-top:8px"><span class="balanced">&#10003; balanced &mdash; 2000 = 2000</span></div>
+    <p class="note">After payout, the Partner Payable balance for this order is zero &mdash; the obligation is
+    settled. The supplier's $70 and the platform's $10 fee follow the same pattern (supplier paid in its
+    own payout; the fee is platform revenue that stays). A <b>refund</b> would post a reversing,
+    balanced transaction (<code>refType: refund</code>) rather than editing any existing entry &mdash; the
+    ledger is append-only.</p>
+  </div>
+
+  <footer>
+    Derived from <code>docs/platform/DESIGN-BRIEF.md</code> &sect;3, &sect;4, &sect;7b/7c. The split
+    percentages come from <b>per-tenant config</b>, not core code &mdash; this same flow serves any tenant.
+  </footer>
+
+</div>
+</body>
+</html>

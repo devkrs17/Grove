@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MOCKUP — Partner Portal — Grove Platform</title>
+<style>
+  :root{
+    --bg:#eceeed; --paper:#ffffff; --ink:#2b302e; --muted:#6c7570; --soft:#9aa39e;
+    --line:#d3d8d5; --line2:#c2c8c4; --wire:#e6e9e8; --wire2:#dde1df; --accent:#8a948e;
+    --side:#2f3a45;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:0 0 80px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  .pagehdr{background:#2b302e;color:#fff;padding:12px 0;position:sticky;top:0;z-index:10;border-bottom:3px solid #f0c24a}
+  .pagehdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .pagehdr a{color:#cfd6d2;text-decoration:none;font-size:13px;font-weight:600}
+  .pagehdr a:hover{color:#fff}
+  .badge{background:#f0c24a;color:#3a2f00;font-weight:700;font-size:11px;letter-spacing:.08em;
+    padding:4px 10px;border-radius:6px;text-transform:uppercase}
+  .pagehdr .title{font-weight:650;font-size:15px}
+
+  .intro{margin:26px 0 8px}
+  .intro h1{font-size:26px;margin:0 0 6px}
+  .intro p{color:var(--muted);font-size:14px;margin:0;max-width:82ch}
+
+  .screen{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:24px 0;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .screen > .cap{background:#f4f6f5;border-bottom:1px solid var(--line);padding:9px 16px;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:650;display:flex;
+    justify-content:space-between;align-items:center}
+  .cap .ref{font-family:var(--mono);font-size:10.5px;color:var(--soft);letter-spacing:0;text-transform:none}
+
+  .shell{display:grid;grid-template-columns:180px 1fr}
+  .side{background:var(--side);color:#c2cdd6;padding:16px 0}
+  .side .brand{padding:0 16px 4px;font-weight:700;color:#fff;font-size:14px;display:flex;align-items:center;gap:8px}
+  .side .brand .leaf{width:20px;height:20px;border-radius:6px;background:#4d7da6;display:inline-grid;place-items:center;font-size:11px}
+  .side .who{padding:0 16px 14px;font-size:11px;color:#8fa3b3}
+  .side nav a{display:block;padding:8px 16px;font-size:13px;color:#aebcc7;text-decoration:none}
+  .side nav a.on{background:rgba(255,255,255,.08);color:#fff;border-left:3px solid #4d7da6;padding-left:13px}
+  .main{padding:18px 20px}
+  .main h2{margin:0 0 14px;font-size:18px}
+
+  .ph{background:var(--wire);border:1px dashed var(--line2);border-radius:6px}
+  .toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+  .search{flex:1;min-width:160px;height:34px;border:1px solid var(--line2);border-radius:8px;background:#fafbfa;
+    display:flex;align-items:center;padding:0 12px;color:var(--soft);font-size:12px}
+  .chip{font-size:11.5px;color:var(--muted);border:1px solid var(--line2);border-radius:20px;padding:5px 12px;background:#fafbfa}
+  .chip.on{background:#2f3a45;color:#fff;border-color:#2f3a45}
+  .btn{display:inline-block;background:#2f3a45;color:#fff;font-size:12px;font-weight:600;border-radius:8px;padding:8px 14px}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+  .anno{font-size:11.5px;color:var(--soft);font-style:italic;margin-top:10px}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fafbfa}
+  .stat .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+  .stat .v{font-size:22px;font-weight:700;margin-top:4px}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);font-weight:650;background:#f7f8f8}
+  td.num,th.num{text-align:right;font-family:var(--mono)}
+  tr:hover td{background:#fafbfa}
+  .pill{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;display:inline-block}
+  .p-grey{background:#eceeed;color:#6c7570}
+  .p-blue{background:#e3edf7;color:#2f6fb0}
+  .p-amber{background:#faf1dc;color:#b8821f}
+  .p-green{background:#e3efe7;color:#2f8f55}
+  .p-red{background:#fbe6ea;color:#c0506a}
+  .stockbar{height:8px;background:var(--wire2);border-radius:4px;overflow:hidden;width:90px}
+  .stockbar i{display:block;height:100%;background:#4d7da6}
+  .input{height:30px;border:1px solid var(--line2);border-radius:6px;background:#fafbfa;width:64px;display:inline-block;vertical-align:middle}
+  @media(max-width:820px){.shell{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="pagehdr">
+  <div class="wrap">
+    <a href="../index.html">&larr; Grove docs</a>
+    <span class="title">Partner portal wireframes &mdash; <code style="font-family:var(--mono);font-size:12px;color:#cfd6d2">new section / app</code></span>
+    <span class="badge">Mockup &mdash; not functional</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>Partner Portal</h1>
+    <p>Non-functional wireframes, placeholder data only. For partner users (<code style="font-family:var(--mono);font-size:12px">partner_admin</code>
+    / <code style="font-family:var(--mono);font-size:12px">partner_operator</code>), scoped to their own partner.
+    Screens: assigned fulfillments, the partner's own inventory, and payout history. They never see other
+    partners' or the platform's data.</p>
+  </div>
+
+  <!-- ASSIGNED FULFILLMENTS -->
+  <div class="screen"
+       data-grove-app="apps/partner-portal"
+       data-grove-route="/portal/fulfillments"
+       data-grove-collections="fulfillments,orders,audit-logs"
+       data-grove-components="Badge,Button"
+       data-grove-recipe="none"
+       data-grove-layer="shell">
+    <div class="cap">1 &middot; Assigned fulfillments <span class="ref">/portal/fulfillments</span></div>
+    <div class="shell">
+      <div class="side">
+        <div class="brand"><span class="leaf">&#127795;</span> Grove</div>
+        <div class="who">North Hub Logistics<br/>partner_operator</div>
+        <nav>
+          <a class="on" href="#">Fulfillments</a><a href="#">My inventory</a><a href="#">Payouts</a><a href="#">Locations</a><a href="#">Settings</a>
+        </nav>
+      </div>
+      <div class="main">
+        <h2>Assigned fulfillments</h2>
+        <div class="stats">
+          <div class="stat"><div class="k">New / assigned</div><div class="v">4</div></div>
+          <div class="stat"><div class="k">In transit</div><div class="v">7</div></div>
+          <div class="stat"><div class="k">Delivered today</div><div class="v">18</div></div>
+          <div class="stat"><div class="k">Acceptance rate</div><div class="v">98%</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="search">Search by order or tracking&hellip;</div>
+          <span class="chip on">Active</span><span class="chip">Assigned</span><span class="chip">In transit</span><span class="chip">Delivered</span>
+        </div>
+        <table>
+          <thead><tr><th>Order</th><th>Location</th><th>Status</th><th>Tracking</th><th>Assigned</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>GRV-100245</td><td>North Hub</td><td><span class="pill p-grey">assigned</span></td><td>&mdash;</td><td>2m ago</td><td><span class="btn ghost">Accept</span></td></tr>
+            <tr><td>GRV-100240</td><td>North Hub</td><td><span class="pill p-blue">accepted</span></td><td>TRK-88210</td><td>20m ago</td><td><span class="btn ghost">Pick up</span></td></tr>
+            <tr><td>GRV-100238</td><td>North Hub</td><td><span class="pill p-amber">in transit</span></td><td>TRK-88207</td><td>40m ago</td><td><span class="btn">Mark delivered</span></td></tr>
+            <tr><td>GRV-100231</td><td>North Hub</td><td><span class="pill p-green">delivered</span></td><td>TRK-88199</td><td>2h ago</td><td>&mdash;</td></tr>
+            <tr><td>GRV-100229</td><td>North Hub</td><td><span class="pill p-red">failed</span></td><td>TRK-88195</td><td>3h ago</td><td><span class="btn ghost">Retry</span></td></tr>
+          </tbody>
+        </table>
+        <p class="anno">Partner updates fulfillment status (accept &rarr; pick up &rarr; in transit &rarr; delivered). Each transition writes an audit log and drives the order's fulfillmentStatus.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWN INVENTORY -->
+  <div class="screen"
+       data-grove-app="apps/partner-portal"
+       data-grove-route="/portal/inventory"
+       data-grove-collections="inventory-levels,partner-locations,products"
+       data-grove-components="Input,Badge,Button"
+       data-grove-recipe="B"
+       data-grove-layer="mixed">
+    <div class="cap">2 &middot; My inventory <span class="ref">/portal/inventory</span></div>
+    <div style="padding:18px 20px">
+      <h2 style="margin:0 0 14px;font-size:18px">My inventory</h2>
+      <div class="toolbar">
+        <div class="search">Search product&hellip;</div>
+        <span class="chip on">North Hub</span><span class="chip">All my locations</span>
+        <span class="btn ghost" style="margin-left:auto">Import CSV</span><span class="btn">Save changes</span>
+      </div>
+      <table>
+        <thead><tr><th>Product</th><th>Location</th><th class="num">Available</th><th class="num">Reserved</th><th>Level</th><th>Edit available</th></tr></thead>
+        <tbody>
+          <tr><td>Sample product A</td><td>North Hub</td><td class="num">120</td><td class="num">8</td><td><div class="stockbar"><i style="width:85%"></i></div></td><td><span class="input"></span></td></tr>
+          <tr><td>Sample product B</td><td>North Hub</td><td class="num">14</td><td class="num">3</td><td><div class="stockbar"><i style="width:25%;background:#b8821f"></i></div></td><td><span class="input"></span></td></tr>
+          <tr><td>Sample product C</td><td>North Hub</td><td class="num">62</td><td class="num">11</td><td><div class="stockbar"><i style="width:60%"></i></div></td><td><span class="input"></span></td></tr>
+          <tr><td>Sample product D</td><td>North Hub</td><td class="num">0</td><td class="num">0</td><td><div class="stockbar"><i style="width:3%;background:#c0506a"></i></div></td><td><span class="input"></span></td></tr>
+        </tbody>
+      </table>
+      <p class="anno">Partner maintains stock only at their own locations (manual edit or CSV import). The Inventory Sync engine upserts levels; reservations are managed by the platform on order placement / cancel.</p>
+    </div>
+  </div>
+
+  <!-- PAYOUT HISTORY -->
+  <div class="screen"
+       data-grove-app="apps/partner-portal"
+       data-grove-route="/portal/payouts"
+       data-grove-collections="payouts,payout-batches"
+       data-grove-components="Card,Badge,Button"
+       data-grove-recipe="none"
+       data-grove-layer="shell">
+    <div class="cap">3 &middot; Payout history <span class="ref">/portal/payouts</span></div>
+    <div style="padding:18px 20px">
+      <h2 style="margin:0 0 14px;font-size:18px">Payout history</h2>
+      <div class="stats">
+        <div class="stat"><div class="k">Pending payable</div><div class="v">$1,240</div></div>
+        <div class="stat"><div class="k">Next payout</div><div class="v">2026-05-29</div></div>
+        <div class="stat"><div class="k">Paid this month</div><div class="v">$9,860</div></div>
+        <div class="stat"><div class="k">Method</div><div class="v" style="font-size:15px;padding-top:6px">mock-ach</div></div>
+      </div>
+      <div class="toolbar"><span class="chip on">All</span><span class="chip">Paid</span><span class="chip">Processing</span><span class="chip">Pending</span>
+        <span class="btn ghost" style="margin-left:auto">Export CSV</span></div>
+      <table>
+        <thead><tr><th>Payout</th><th>Batch</th><th>Method</th><th>Status</th><th>Settled</th><th class="num">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>PO-2291</td><td>PB-0418</td><td>mock-ach</td><td><span class="pill p-grey">pending</span></td><td>&mdash;</td><td class="num">$1,240.00</td></tr>
+          <tr><td>PO-2280</td><td>PB-0417</td><td>mock-rtp</td><td><span class="pill p-amber">processing</span></td><td>&mdash;</td><td class="num">$980.00</td></tr>
+          <tr><td>PO-2265</td><td>PB-0416</td><td>mock-ach</td><td><span class="pill p-green">paid</span></td><td>2026-05-27</td><td class="num">$2,310.00</td></tr>
+          <tr><td>PO-2251</td><td>PB-0414</td><td>mock-ach</td><td><span class="pill p-green">paid</span></td><td>2026-05-25</td><td class="num">$1,790.00</td></tr>
+          <tr><td>PO-2240</td><td>PB-0412</td><td>mock-ach</td><td><span class="pill p-red">reversed</span></td><td>2026-05-23</td><td class="num">$420.00</td></tr>
+        </tbody>
+      </table>
+      <p class="anno">Read-only view of disbursements to this partner. Amounts trace to settlement allocations posted in the double-entry ledger; status reflects the PayoutProvider (same/next-day).</p>
+    </div>
+  </div>
+
+</div>
+<!-- mockup interactivity kit (UI-only; no real data/backend) -->
+<style>
+  .tab,.chip,.side nav a,.qty span,[data-goto]{cursor:pointer}
+  .tab,.chip{user-select:none}
+  .btn{cursor:pointer}.btn:active{transform:translateY(1px)}
+  .tabpanel{display:none}.tabpanel.on{display:block}
+  .gms{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;
+    background:rgba(43,48,46,.93);padding:7px 10px;border-radius:30px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .gms b{font:600 11px system-ui,sans-serif;color:#cfd6d2;padding:0 4px}
+  .gms a{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font:700 11px system-ui,sans-serif;
+    color:#cfd6d2;background:rgba(255,255,255,.08);text-decoration:none}
+  .gms a:hover{background:rgba(255,255,255,.2);color:#fff}
+  .gms a.on{background:#f0c24a;color:#3a2f00}
+  @media print{.gms{display:none}}
+</style>
+<script>
+(function(){
+  document.addEventListener("click",function(e){
+    var tab=e.target.closest(".tab");
+    if(tab&&tab.closest(".tabs")){
+      tab.closest(".tabs").querySelectorAll(".tab").forEach(function(s){s.classList.remove("on");});
+      tab.classList.add("on");
+      var p=tab.getAttribute("data-panel");
+      if(p){var sc=tab.closest(".screen")||document;
+        sc.querySelectorAll(".tabpanel").forEach(function(pn){pn.classList.toggle("on",pn.id===p);});}
+      return;
+    }
+    var chip=e.target.closest(".chip");
+    if(chip&&chip.parentElement){
+      chip.parentElement.querySelectorAll(":scope > .chip").forEach(function(s){s.classList.remove("on");});
+      chip.classList.add("on");return;
+    }
+    var nav=e.target.closest(".side nav a");
+    if(nav){var n=nav.closest("nav");if(n)n.querySelectorAll("a").forEach(function(s){s.classList.remove("on");});
+      nav.classList.add("on");e.preventDefault();return;}
+    var qs=e.target.closest(".qty span");
+    if(qs){var box=qs.closest(".qty");var b=box.querySelector("b");if(b){var spans=box.querySelectorAll("span");
+      var n2=parseInt((b.textContent||"0").replace(/\D/g,""),10)||0;n2=Math.max(0,n2+(qs===spans[0]?-1:1));b.textContent=n2;}return;}
+    var gt=e.target.closest("[data-goto]");
+    if(gt){var dst=document.querySelector(gt.getAttribute("data-goto"));if(dst){e.preventDefault();dst.scrollIntoView({behavior:"smooth",block:"start"});}}
+  });
+  var screens=[].slice.call(document.querySelectorAll(".screen"));
+  if(screens.length>1){
+    var bar=document.createElement("div");bar.className="gms";
+    var lbl=document.createElement("b");lbl.textContent="Screens";bar.appendChild(lbl);
+    var links=[];
+    screens.forEach(function(s,i){if(!s.id)s.id="screen-"+(i+1);
+      var cap=s.querySelector(".cap");var title=cap?cap.textContent.replace(/\s+/g," ").trim():("Screen "+(i+1));
+      var a=document.createElement("a");a.href="#"+s.id;a.textContent=String(i+1);a.title=title;
+      a.addEventListener("click",function(e){e.preventDefault();s.scrollIntoView({behavior:"smooth",block:"start"});});
+      bar.appendChild(a);links.push(a);});
+    document.body.appendChild(bar);
+    if("IntersectionObserver" in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){
+        var idx=screens.indexOf(en.target);links.forEach(function(l,j){l.classList.toggle("on",j===idx);});}});},
+        {rootMargin:"-40% 0px -55% 0px"});
+      screens.forEach(function(s){io.observe(s);});
+    }
+  }
+})();
+</script>
+</body>
+</html>

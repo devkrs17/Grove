@@ -1,0 +1,211 @@
+<!doctype html>
+<!--
+  MOCKUP STARTER — copy this file to docs/mockups/<name>.html and fill it in.
+  House rules (match docs/mockups/storefront.html):
+    • Self-contained: inline CSS only, NO external assets, NO JS logic, NO real data.
+    • Keep the dark page header, the "← Grove docs" back link, the app-slug subtitle,
+      and the amber "Mockup — not functional" badge.
+    • One .screen per screen, numbered, each with its route in .cap .ref and a faux
+      browser .chrome URL. Use the wireframe primitives below — grey placeholders only.
+    • Annotate behavior with .anno notes that tie the screen to the architecture.
+    • Put the machine-readable mapping on each .screen via data-grove-* attributes
+      (app / route / collections / components / recipe / layer) — the build brief reads these.
+  Mockups are CLICKABLE (UI-only, no real data/backend). The interactivity kit at the bottom
+  of this file is generic — wire interactions by using these classes/attributes:
+    • Tabs: <div class="tabs"><span class="tab on" data-panel="p1">A</span>…</div> with sibling
+      panels <div class="tabpanel on" id="p1">…</div> — clicking a tab shows its panel.
+    • Segmented toggles / filters: sibling .chip elements — clicking sets the active one.
+    • Quantity steppers: <span class="qty"><span>−</span><b>1</b><span>+</span></span>.
+    • Jump to another screen: any element with data-goto="#screen-2".
+    • A floating screen-switcher is auto-built when a mockup has more than one .screen.
+  Keep the kit's <style>+<script> block verbatim at the end of every mockup.
+  Replace TODOs and delete the example screen once you've added the real ones.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MOCKUP — TODO screen name — Grove Platform</title>
+<style>
+  :root{
+    --bg:#eceeed; --paper:#ffffff; --ink:#2b302e; --muted:#6c7570; --soft:#9aa39e;
+    --line:#d3d8d5; --line2:#c2c8c4; --wire:#e6e9e8; --wire2:#dde1df; --accent:#8a948e;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  .pagehdr{background:#2b302e;color:#fff;padding:12px 0;position:sticky;top:0;z-index:10;border-bottom:3px solid #f0c24a}
+  .pagehdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .pagehdr a{color:#cfd6d2;text-decoration:none;font-size:13px;font-weight:600}
+  .pagehdr a:hover{color:#fff}
+  .badge{background:#f0c24a;color:#3a2f00;font-weight:700;font-size:11px;letter-spacing:.08em;
+    padding:4px 10px;border-radius:6px;text-transform:uppercase}
+  .pagehdr .title{font-weight:650;font-size:15px}
+  .pagehdr .title code{font-family:var(--mono);font-size:12px;color:#cfd6d2}
+
+  .intro{margin:26px 0 8px}
+  .intro h1{font-size:26px;margin:0 0 6px}
+  .intro p{color:var(--muted);font-size:14px;margin:0;max-width:80ch}
+
+  .screen{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:24px 0;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .screen > .cap{background:#f4f6f5;border-bottom:1px solid var(--line);padding:9px 16px;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:650;display:flex;
+    justify-content:space-between;align-items:center}
+  .cap .ref{font-family:var(--mono);font-size:10.5px;color:var(--soft);letter-spacing:0;text-transform:none}
+  .screen .pad{padding:18px}
+
+  /* faux browser chrome */
+  .chrome{display:flex;align-items:center;gap:7px;padding:8px 14px;background:#eceeed;border-bottom:1px solid var(--line)}
+  .chrome i{width:11px;height:11px;border-radius:50%;background:#c8cdc9;display:inline-block}
+  .chrome .url{margin-left:10px;background:#fff;border:1px solid var(--line);border-radius:6px;
+    font-family:var(--mono);font-size:11px;color:var(--muted);padding:3px 10px;flex:1}
+
+  /* top nav (storefront-style) */
+  .snav{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line)}
+  .snav .logo{width:90px;height:18px;background:var(--wire2);border-radius:4px}
+  .snav .links{display:flex;gap:18px}
+  .snav .links span{width:54px;height:10px;background:var(--wire);border-radius:3px}
+  .snav .cart{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px solid var(--line);
+    border-radius:8px;padding:5px 10px}
+  .snav .cart b{font-weight:700}
+
+  /* wireframe primitives */
+  .ph{background:var(--wire);border:1px dashed var(--line2);border-radius:6px}
+  .line{height:10px;background:var(--wire);border-radius:3px;margin:6px 0}
+  .line.sm{height:8px} .line.w25{width:25%} .line.w40{width:40%} .line.w60{width:60%} .line.w80{width:80%}
+  .btn{display:inline-block;background:#3a423e;color:#fff;font-size:12.5px;font-weight:600;border-radius:8px;
+    padding:9px 18px;text-align:center}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+  .btn.block{display:block}
+  .tag{font-family:var(--mono);font-size:10.5px;color:#fff;background:var(--accent);padding:2px 7px;border-radius:5px;display:inline-block}
+  .anno{font-size:11.5px;color:var(--soft);font-style:italic;margin-top:6px}
+  h3.sec{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:30px 0 4px}
+
+  /* common layouts — keep or delete as needed */
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .pcard .img{aspect-ratio:1/1;display:grid;place-items:center;color:var(--soft);font-size:11px}
+  .pcard .nm{height:11px;background:var(--wire);border-radius:3px;margin:9px 0 6px;width:75%}
+  .pcard .pr{height:11px;background:var(--wire2);border-radius:3px;width:35%}
+  .filters{display:flex;gap:10px;margin-bottom:16px}
+  .filters .chip{font-size:11.5px;color:var(--muted);border:1px solid var(--line2);border-radius:20px;padding:5px 12px;background:#fafbfa}
+  .filters .chip.on{background:#3a423e;color:#fff;border-color:#3a423e}
+  .fld{margin-bottom:12px}
+  .fld label{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .fld .input{height:36px;border:1px solid var(--line2);border-radius:8px;background:#fafbfa}
+
+  @media(max-width:820px){.pgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="pagehdr">
+  <div class="wrap">
+    <a href="../index.html">&larr; Grove docs</a>
+    <span class="title">TODO screen set &mdash; <code>apps/web</code></span>
+    <span class="badge">Mockup &mdash; not functional</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>TODO title</h1>
+    <p>TODO one-paragraph description: which screens, in what order, and the key behaviors.
+    Placeholder data only &mdash; no backend, no JS logic.</p>
+  </div>
+
+  <!-- ============ EXAMPLE SCREEN (delete once real screens are added) ============ -->
+  <!-- data-grove-* carries the mapping the build brief reads. Fill every attribute. -->
+  <div class="screen"
+       data-grove-app="apps/web"
+       data-grove-route="/example"
+       data-grove-collections="products"
+       data-grove-components="Card,Button"
+       data-grove-recipe="B"
+       data-grove-layer="tenant">
+    <div class="cap">1 &middot; Example screen <span class="ref">/example</span></div>
+    <div class="chrome"><i></i><i></i><i></i><span class="url">acme.grove.app/example</span></div>
+    <div class="snav"><div class="logo"></div>
+      <div class="links"><span></span><span></span><span></span></div>
+      <div class="cart">Cart <b>0</b></div>
+    </div>
+    <div class="pad">
+      <div class="pgrid">
+        <div class="pcard"><div class="ph img">image</div><div class="nm"></div><div class="pr"></div></div>
+        <div class="pcard"><div class="ph img">image</div><div class="nm"></div><div class="pr"></div></div>
+        <div class="pcard"><div class="ph img">image</div><div class="nm"></div><div class="pr"></div></div>
+        <div class="pcard"><div class="ph img">image</div><div class="nm"></div><div class="pr"></div></div>
+      </div>
+      <p class="anno">TODO annotation: tie this screen to the architecture (data source, server vs client, any tenant config or compliance gate).</p>
+    </div>
+  </div>
+  <!-- ============ /EXAMPLE SCREEN ============ -->
+
+</div>
+
+<!-- mockup interactivity kit (UI-only; no real data/backend) — keep verbatim at the end of every mockup -->
+<style>
+  .tab,.chip,.side nav a,.qty span,[data-goto]{cursor:pointer}
+  .tab,.chip{user-select:none}
+  .btn{cursor:pointer}.btn:active{transform:translateY(1px)}
+  .tabpanel{display:none}.tabpanel.on{display:block}
+  .gms{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;
+    background:rgba(43,48,46,.93);padding:7px 10px;border-radius:30px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .gms b{font:600 11px system-ui,sans-serif;color:#cfd6d2;padding:0 4px}
+  .gms a{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font:700 11px system-ui,sans-serif;
+    color:#cfd6d2;background:rgba(255,255,255,.08);text-decoration:none}
+  .gms a:hover{background:rgba(255,255,255,.2);color:#fff}
+  .gms a.on{background:#f0c24a;color:#3a2f00}
+  @media print{.gms{display:none}}
+</style>
+<script>
+(function(){
+  document.addEventListener("click",function(e){
+    var tab=e.target.closest(".tab");
+    if(tab&&tab.closest(".tabs")){
+      tab.closest(".tabs").querySelectorAll(".tab").forEach(function(s){s.classList.remove("on");});
+      tab.classList.add("on");
+      var p=tab.getAttribute("data-panel");
+      if(p){var sc=tab.closest(".screen")||document;
+        sc.querySelectorAll(".tabpanel").forEach(function(pn){pn.classList.toggle("on",pn.id===p);});}
+      return;
+    }
+    var chip=e.target.closest(".chip");
+    if(chip&&chip.parentElement){
+      chip.parentElement.querySelectorAll(":scope > .chip").forEach(function(s){s.classList.remove("on");});
+      chip.classList.add("on");return;
+    }
+    var nav=e.target.closest(".side nav a");
+    if(nav){var n=nav.closest("nav");if(n)n.querySelectorAll("a").forEach(function(s){s.classList.remove("on");});
+      nav.classList.add("on");e.preventDefault();return;}
+    var qs=e.target.closest(".qty span");
+    if(qs){var box=qs.closest(".qty");var b=box.querySelector("b");if(b){var spans=box.querySelectorAll("span");
+      var n2=parseInt((b.textContent||"0").replace(/\D/g,""),10)||0;n2=Math.max(0,n2+(qs===spans[0]?-1:1));b.textContent=n2;}return;}
+    var gt=e.target.closest("[data-goto]");
+    if(gt){var dst=document.querySelector(gt.getAttribute("data-goto"));if(dst){e.preventDefault();dst.scrollIntoView({behavior:"smooth",block:"start"});}}
+  });
+  var screens=[].slice.call(document.querySelectorAll(".screen"));
+  if(screens.length>1){
+    var bar=document.createElement("div");bar.className="gms";
+    var lbl=document.createElement("b");lbl.textContent="Screens";bar.appendChild(lbl);
+    var links=[];
+    screens.forEach(function(s,i){if(!s.id)s.id="screen-"+(i+1);
+      var cap=s.querySelector(".cap");var title=cap?cap.textContent.replace(/\s+/g," ").trim():("Screen "+(i+1));
+      var a=document.createElement("a");a.href="#"+s.id;a.textContent=String(i+1);a.title=title;
+      a.addEventListener("click",function(e){e.preventDefault();s.scrollIntoView({behavior:"smooth",block:"start"});});
+      bar.appendChild(a);links.push(a);});
+    document.body.appendChild(bar);
+    if("IntersectionObserver" in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){
+        var idx=screens.indexOf(en.target);links.forEach(function(l,j){l.classList.toggle("on",j===idx);});}});},
+        {rootMargin:"-40% 0px -55% 0px"});
+      screens.forEach(function(s){io.observe(s);});
+    }
+  }
+})();
+</script>
+</body>
+</html>

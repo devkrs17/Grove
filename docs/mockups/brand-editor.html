@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MOCKUP — Brand &amp; Theme Editor — Grove Platform</title>
+<style>
+  :root{
+    --bg:#eceeed; --paper:#ffffff; --ink:#2b302e; --muted:#6c7570; --soft:#9aa39e;
+    --line:#d3d8d5; --line2:#c2c8c4; --wire:#e6e9e8; --wire2:#dde1df; --accent:#8a948e;
+    /* a hint of the brand being edited (warm boutique palette) */
+    --brand:#b8552f; --brand-2:#5f7d5a; --brand-3:#d9a441;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:0 0 80px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  .pagehdr{background:#2b302e;color:#fff;padding:12px 0;position:sticky;top:0;z-index:10;border-bottom:3px solid #f0c24a}
+  .pagehdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .pagehdr a{color:#cfd6d2;text-decoration:none;font-size:13px;font-weight:600}
+  .pagehdr a:hover{color:#fff}
+  .badge{background:#f0c24a;color:#3a2f00;font-weight:700;font-size:11px;letter-spacing:.08em;
+    padding:4px 10px;border-radius:6px;text-transform:uppercase}
+  .pagehdr .title{font-weight:650;font-size:15px}
+  .pagehdr .title code{font-family:var(--mono);font-size:12px;color:#cfd6d2}
+
+  .intro{margin:26px 0 8px}
+  .intro h1{font-size:26px;margin:0 0 6px}
+  .intro p{color:var(--muted);font-size:14px;margin:0;max-width:84ch}
+
+  .screen{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:24px 0;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .screen > .cap{background:#f4f6f5;border-bottom:1px solid var(--line);padding:9px 16px;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:650;display:flex;
+    justify-content:space-between;align-items:center}
+  .cap .ref{font-family:var(--mono);font-size:10.5px;color:var(--soft);letter-spacing:0;text-transform:none}
+
+  /* editor top bar */
+  .ebar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap;gap:10px}
+  .ebar .crumb{font-size:13px;color:var(--muted)} .ebar .crumb b{color:var(--ink);font-weight:650}
+  .ebar .acts{display:flex;gap:8px;align-items:center}
+  .ebar .saved{font-size:11.5px;color:var(--soft);margin-right:4px}
+  .btn{display:inline-block;background:#3a423e;color:#fff;font-size:12px;font-weight:600;border-radius:8px;padding:8px 14px}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+  .btn.brand{background:var(--brand)}
+
+  /* split editor / preview */
+  .editor{display:grid;grid-template-columns:380px 1fr}
+  .epanel{padding:18px;border-right:1px solid var(--line)}
+  .pwrap{background:#f4f6f5;padding:18px}
+  .plabel{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:650;
+    margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .plabel .dev{font-family:var(--mono);font-size:10px;color:var(--soft);text-transform:none;letter-spacing:0}
+
+  .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+  .tab{font-size:12.5px;padding:8px 12px;color:var(--muted);border-bottom:2px solid transparent}
+  .tab.on{color:var(--ink);border-bottom-color:var(--brand);font-weight:650}
+  .tabpanel{display:none}.tabpanel.on{display:block}
+  .shead{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:650;margin:20px 0 11px}
+  .shead:first-child{margin-top:0}
+
+  .f{margin-bottom:13px}
+  .f label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .f .input{height:34px;border:1px solid var(--line2);border-radius:8px;background:#fafbfa;display:flex;align-items:center;
+    padding:0 10px;font-family:var(--mono);font-size:12px;color:var(--ink)}
+  .select{height:34px;border:1px solid var(--line2);border-radius:8px;background:#fff;display:flex;align-items:center;
+    justify-content:space-between;padding:0 10px;font-size:12.5px;color:var(--ink);cursor:pointer}
+  .select::after{content:"\25BE";color:var(--soft);font-size:11px}
+
+  .swatch-row{display:flex;align-items:center;gap:11px;margin-bottom:10px;cursor:pointer}
+  .swatch{width:34px;height:34px;border-radius:8px;border:1px solid rgba(0,0,0,.12);flex:none}
+  .swatch-row .meta{flex:1}
+  .swatch-row .nm{font-size:12.5px;font-weight:600}
+  .swatch-row .hex{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .ext{font-size:9px;background:#eef0ef;color:#7d8c83;border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .lock{font-size:9px;background:#faf1dc;color:#b8821f;border-radius:4px;padding:1px 6px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-left:6px}
+  .anno{font-size:11.5px;color:var(--soft);font-style:italic;margin:14px 16px 16px}
+
+  .drop{border:1.5px dashed var(--line2);border-radius:10px;background:#fafbfa;padding:20px;text-align:center;color:var(--soft);font-size:12px;cursor:pointer}
+  .drop .di{width:42px;height:42px;border-radius:9px;background:var(--wire);margin:0 auto 8px;border:1px dashed var(--line2)}
+  .assetrow{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .assetrow .thumb{width:46px;height:46px;border-radius:8px;background:var(--wire);border:1px dashed var(--line2);flex:none}
+  .assetrow .meta{flex:1}.assetrow .nm{font-size:12.5px;font-weight:600}.assetrow .sz{font-size:11px;color:var(--soft)}
+
+  /* the live, themed storefront preview */
+  .preview{background:var(--pbg,#fbf7f1);color:#2e2a26;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .preview .pnav{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:#fff;border-bottom:2px solid var(--brand)}
+  .preview .plogo{font-weight:800;color:var(--brand);font-size:15px;letter-spacing:.02em}
+  .preview .plinks{display:flex;gap:14px;color:#7a7066;font-size:11px}
+  .preview .phero{background:var(--brand);color:#fff;padding:24px 16px;text-align:center}
+  .preview .phero h4{margin:0 0 5px;font-size:17px}
+  .preview .phero p{margin:0;font-size:11.5px;opacity:.9}
+  .preview .phero .pbtn{display:inline-block;margin-top:11px;background:#fff;color:var(--brand);font-weight:700;font-size:11px;padding:7px 15px;border-radius:7px}
+  .preview .pgridp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}
+  .preview .ppc{background:#fff;border:1px solid #ece4d8;border-radius:8px;padding:8px}
+  .preview .ppc .pim{aspect-ratio:1/1;background:#f1e8db;border-radius:6px;display:grid;place-items:center;color:#c3b8a6;font-size:10px;position:relative}
+  .preview .pbadge{position:absolute;top:6px;left:6px;background:var(--brand-3);color:#3a2d00;font-size:8.5px;font-weight:800;padding:1px 6px;border-radius:4px}
+  .preview .ppc .pnm{font-weight:600;margin:7px 0 3px;font-size:11px}
+  .preview .ppc .ppr{color:var(--brand-2);font-weight:800;font-size:11.5px}
+  .preview .ppc .padd{margin-top:8px;background:var(--brand);color:#fff;text-align:center;font-size:10px;font-weight:700;padding:6px;border-radius:6px}
+
+  @media(max-width:860px){.editor{grid-template-columns:1fr}.epanel{border-right:none;border-bottom:1px solid var(--line)}
+    .preview .pgridp{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="pagehdr">
+  <div class="wrap">
+    <a href="../index.html">&larr; Grove docs</a>
+    <span class="title">Brand &amp; theme editor wireframes &mdash; <code>apps/dashboard</code></span>
+    <span class="badge">Mockup &mdash; not functional</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>Brand &amp; Theme Editor</h1>
+    <p>A friendly, no-code editor for a tenant's <strong>theme</strong> &mdash; colors, typography, logo and
+    identity &mdash; with a <strong>live storefront preview</strong>. <strong>Click the tabs</strong>
+    (Identity / Colors / Typography) to switch sections. It edits the existing
+    <code style="font-family:var(--mono);font-size:12px">brand-configs</code> collection (and pulls site
+    identity from <code style="font-family:var(--mono);font-size:12px">sites</code>); the storefront reads
+    those values at runtime, so publishing re-skins the live site with no CSS edits. Placeholder data only &mdash;
+    the colored preview shows an <em>example</em> palette.</p>
+  </div>
+
+  <!-- BRAND & THEME EDITOR -->
+  <div class="screen"
+       data-grove-app="apps/dashboard"
+       data-grove-route="/settings/brand"
+       data-grove-collections="brand-configs,sites,media"
+       data-grove-components="Input,Select,Button,Card"
+       data-grove-recipe="B"
+       data-grove-layer="tenant">
+    <div class="cap">Brand &amp; theme editor <span class="ref">/settings/brand</span></div>
+    <div class="ebar">
+      <div class="crumb">Settings &rsaquo; <b>Brand &amp; theme</b></div>
+      <div class="acts">
+        <span class="saved">Draft &middot; unsaved changes</span>
+        <span class="btn ghost">Save draft</span>
+        <span class="btn brand">Publish theme</span>
+      </div>
+    </div>
+    <div class="editor">
+      <div class="epanel">
+        <div class="tabs">
+          <span class="tab" data-panel="bp-identity">Identity</span>
+          <span class="tab on" data-panel="bp-colors">Colors</span>
+          <span class="tab" data-panel="bp-type">Typography</span>
+        </div>
+
+        <!-- Identity panel -->
+        <div class="tabpanel" id="bp-identity">
+          <div class="shead">Logo</div>
+          <div class="drop"><div class="di"></div>Drag a logo here, or click to upload<br/><span style="font-size:11px">PNG / SVG &middot; stored in media</span></div>
+          <div class="shead">Assets</div>
+          <div class="assetrow"><span class="thumb"></span><div class="meta"><div class="nm">Favicon <span class="ext">extends schema</span></div><div class="sz">32&times;32 &middot; media upload</div></div><span class="btn ghost">Replace</span></div>
+          <div class="assetrow"><span class="thumb"></span><div class="meta"><div class="nm">Social share image <span class="ext">extends schema</span></div><div class="sz">1200&times;630 &middot; media upload</div></div><span class="btn ghost">Replace</span></div>
+          <div class="shead">Site identity</div>
+          <div class="f"><label>Site name</label><div class="input" style="font-family:var(--sans)">Acme Goods</div></div>
+          <div class="f"><label>Domain <span class="lock">super-admin only</span></label><div class="input">acme.grove.app</div></div>
+        </div>
+
+        <!-- Colors panel -->
+        <div class="tabpanel on" id="bp-colors">
+          <div class="shead">Color palette</div>
+          <div class="swatch-row"><span class="swatch" style="background:#b8552f"></span>
+            <div class="meta"><div class="nm">Primary</div><div class="hex">#B8552F</div></div></div>
+          <div class="swatch-row"><span class="swatch" style="background:#5f7d5a"></span>
+            <div class="meta"><div class="nm">Secondary</div><div class="hex">#5F7D5A</div></div></div>
+          <div class="swatch-row"><span class="swatch" style="background:#d9a441"></span>
+            <div class="meta"><div class="nm">Accent <span class="ext">extends schema</span></div><div class="hex">#D9A441</div></div></div>
+          <div class="swatch-row"><span class="swatch" style="background:#fbf7f1"></span>
+            <div class="meta"><div class="nm">Background <span class="ext">extends schema</span></div><div class="hex">#FBF7F1</div></div></div>
+          <div class="swatch-row"><span class="swatch" style="background:#2e2a26"></span>
+            <div class="meta"><div class="nm">Text <span class="ext">extends schema</span></div><div class="hex">#2E2A26</div></div></div>
+        </div>
+
+        <!-- Typography panel -->
+        <div class="tabpanel" id="bp-type">
+          <div class="shead">Typography</div>
+          <div class="f"><label>Heading font</label><div class="select">Fraunces</div></div>
+          <div class="f"><label>Body font</label><div class="select">Inter</div></div>
+          <div class="f"><label>Base size</label><div class="input">16px</div></div>
+          <div class="f"><label>Scale</label><div class="select">1.25 &mdash; Major third</div></div>
+        </div>
+      </div>
+
+      <div class="pwrap">
+        <div class="plabel"><span>Live preview</span><span class="dev">acme.grove.app</span></div>
+        <div class="preview">
+          <div class="pnav"><span class="plogo">ACME</span>
+            <span class="plinks"><span>Shop</span><span>About</span><span>Cart</span></span></div>
+          <div class="phero"><h4>Summer collection</h4><p>Crafted goods, made to order</p>
+            <span class="pbtn">Shop now</span></div>
+          <div class="pgridp">
+            <div class="ppc"><div class="pim"><span class="pbadge">New</span>image</div><div class="pnm">Product name</div><div class="ppr">$24.00</div><div class="padd">Add to cart</div></div>
+            <div class="ppc"><div class="pim">image</div><div class="pnm">Product name</div><div class="ppr">$32.00</div><div class="padd">Add to cart</div></div>
+            <div class="ppc"><div class="pim">image</div><div class="pnm">Product name</div><div class="ppr">$18.00</div><div class="padd">Add to cart</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="anno">Tabs switch sections; the preview stays live. Editing <code>primaryColor</code> / <code>secondaryColor</code> + the <code>typography</code> JSON re-renders it instantly. "Publish theme" writes <code>brand-configs</code>; the storefront reads it at runtime and re-skins. Accent / background / text are proposed schema extensions (see brief). Site name &amp; domain come from <code>sites</code> &mdash; super-admin-only, so read-only here.</p>
+  </div>
+
+</div>
+
+<!-- mockup interactivity kit (UI-only; no real data/backend) -->
+<style>
+  .tab,.chip,.side nav a,.qty span,[data-goto]{cursor:pointer}
+  .tab,.chip{user-select:none}
+  .btn{cursor:pointer}.btn:active{transform:translateY(1px)}
+  .tabpanel{display:none}.tabpanel.on{display:block}
+  .gms{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;
+    background:rgba(43,48,46,.93);padding:7px 10px;border-radius:30px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .gms b{font:600 11px system-ui,sans-serif;color:#cfd6d2;padding:0 4px}
+  .gms a{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font:700 11px system-ui,sans-serif;
+    color:#cfd6d2;background:rgba(255,255,255,.08);text-decoration:none}
+  .gms a:hover{background:rgba(255,255,255,.2);color:#fff}
+  .gms a.on{background:#f0c24a;color:#3a2f00}
+  @media print{.gms{display:none}}
+</style>
+<script>
+(function(){
+  document.addEventListener("click",function(e){
+    var tab=e.target.closest(".tab");
+    if(tab&&tab.closest(".tabs")){
+      tab.closest(".tabs").querySelectorAll(".tab").forEach(function(s){s.classList.remove("on");});
+      tab.classList.add("on");
+      var p=tab.getAttribute("data-panel");
+      if(p){var sc=tab.closest(".screen")||document;
+        sc.querySelectorAll(".tabpanel").forEach(function(pn){pn.classList.toggle("on",pn.id===p);});}
+      return;
+    }
+    var chip=e.target.closest(".chip");
+    if(chip&&chip.parentElement){
+      chip.parentElement.querySelectorAll(":scope > .chip").forEach(function(s){s.classList.remove("on");});
+      chip.classList.add("on");return;
+    }
+    var nav=e.target.closest(".side nav a");
+    if(nav){var n=nav.closest("nav");if(n)n.querySelectorAll("a").forEach(function(s){s.classList.remove("on");});
+      nav.classList.add("on");e.preventDefault();return;}
+    var qs=e.target.closest(".qty span");
+    if(qs){var box=qs.closest(".qty");var b=box.querySelector("b");if(b){var spans=box.querySelectorAll("span");
+      var n2=parseInt((b.textContent||"0").replace(/\D/g,""),10)||0;n2=Math.max(0,n2+(qs===spans[0]?-1:1));b.textContent=n2;}return;}
+    var gt=e.target.closest("[data-goto]");
+    if(gt){var dst=document.querySelector(gt.getAttribute("data-goto"));if(dst){e.preventDefault();dst.scrollIntoView({behavior:"smooth",block:"start"});}}
+  });
+  var screens=[].slice.call(document.querySelectorAll(".screen"));
+  if(screens.length>1){
+    var bar=document.createElement("div");bar.className="gms";
+    var lbl=document.createElement("b");lbl.textContent="Screens";bar.appendChild(lbl);
+    var links=[];
+    screens.forEach(function(s,i){if(!s.id)s.id="screen-"+(i+1);
+      var cap=s.querySelector(".cap");var title=cap?cap.textContent.replace(/\s+/g," ").trim():("Screen "+(i+1));
+      var a=document.createElement("a");a.href="#"+s.id;a.textContent=String(i+1);a.title=title;
+      a.addEventListener("click",function(e){e.preventDefault();s.scrollIntoView({behavior:"smooth",block:"start"});});
+      bar.appendChild(a);links.push(a);});
+    document.body.appendChild(bar);
+    if("IntersectionObserver" in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){
+        var idx=screens.indexOf(en.target);links.forEach(function(l,j){l.classList.toggle("on",j===idx);});}});},
+        {rootMargin:"-40% 0px -55% 0px"});
+      screens.forEach(function(s){io.observe(s);});
+    }
+  }
+})();
+</script>
+</body>
+</html>

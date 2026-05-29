@@ -77,6 +77,19 @@ export interface Config {
     media: Media;
     customers: Customer;
     'service-requests': ServiceRequest;
+    orders: Order;
+    payments: Payment;
+    partners: Partner;
+    'partner-locations': PartnerLocation;
+    'inventory-levels': InventoryLevel;
+    fulfillments: Fulfillment;
+    'ledger-accounts': LedgerAccount;
+    'ledger-entries': LedgerEntry;
+    settlements: Settlement;
+    'payout-batches': PayoutBatch;
+    payouts: Payout;
+    'compliance-checks': ComplianceCheck;
+    'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +107,19 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     'service-requests': ServiceRequestsSelect<false> | ServiceRequestsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
+    'partner-locations': PartnerLocationsSelect<false> | PartnerLocationsSelect<true>;
+    'inventory-levels': InventoryLevelsSelect<false> | InventoryLevelsSelect<true>;
+    fulfillments: FulfillmentsSelect<false> | FulfillmentsSelect<true>;
+    'ledger-accounts': LedgerAccountsSelect<false> | LedgerAccountsSelect<true>;
+    'ledger-entries': LedgerEntriesSelect<false> | LedgerEntriesSelect<true>;
+    settlements: SettlementsSelect<false> | SettlementsSelect<true>;
+    'payout-batches': PayoutBatchesSelect<false> | PayoutBatchesSelect<true>;
+    payouts: PayoutsSelect<false> | PayoutsSelect<true>;
+    'compliance-checks': ComplianceChecksSelect<false> | ComplianceChecksSelect<true>;
+    'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -344,6 +370,288 @@ export interface ServiceRequest {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  orderNumber: string;
+  customer: number | Customer;
+  site: number | Site;
+  items?:
+    | {
+        product: number | Product;
+        quantity: number;
+        unitPrice: number;
+        lineTotal: number;
+        id?: string | null;
+      }[]
+    | null;
+  subtotal: number;
+  fees?: number | null;
+  total: number;
+  currency: string;
+  status?:
+    | ('pending' | 'confirmed' | 'routed' | 'fulfilling' | 'delivered' | 'completed' | 'cancelled' | 'refunded')
+    | null;
+  paymentStatus?: ('unpaid' | 'authorized' | 'paid' | 'refunded' | 'failed') | null;
+  fulfillmentStatus?: ('unfulfilled' | 'assigned' | 'in_transit' | 'delivered' | 'failed') | null;
+  shippingAddress?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  placedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  provider: string;
+  providerIntentRef?: string | null;
+  method?: ('ach' | 'rtp' | 'card' | 'pay_by_bank') | null;
+  amount: number;
+  currency: string;
+  status?: ('requires_action' | 'authorized' | 'captured' | 'failed' | 'refunded') | null;
+  capturedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  name: string;
+  type?: ('supplier' | 'fulfillment' | 'hybrid') | null;
+  status?: ('pending' | 'active' | 'suspended') | null;
+  contactEmail?: string | null;
+  credentials?:
+    | {
+        type?: string | null;
+        identifier?: string | null;
+        status?: ('pending' | 'verified' | 'expired' | 'rejected') | null;
+        expiresAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  payoutMethod?: {
+    provider?: string | null;
+    accountRef?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-locations".
+ */
+export interface PartnerLocation {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  partner: number | Partner;
+  label: string;
+  address?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  lat?: number | null;
+  lng?: number | null;
+  serviceRadiusKm?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inventory-levels".
+ */
+export interface InventoryLevel {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  product: number | Product;
+  partnerLocation: number | PartnerLocation;
+  quantityAvailable?: number | null;
+  quantityReserved?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments".
+ */
+export interface Fulfillment {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  partner: number | Partner;
+  partnerLocation?: (number | null) | PartnerLocation;
+  status?: ('assigned' | 'accepted' | 'picked_up' | 'in_transit' | 'delivered' | 'failed') | null;
+  assignedAt?: string | null;
+  deliveredAt?: string | null;
+  trackingRef?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-accounts".
+ */
+export interface LedgerAccount {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  name: string;
+  type: 'platform_fee' | 'customer_funds' | 'partner_payable' | 'supplier_payable' | 'refunds_payable';
+  ownerType?: ('platform' | 'partner' | 'supplier' | 'customer') | null;
+  ownerRef?: string | null;
+  currency: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-entries".
+ */
+export interface LedgerEntry {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  transactionId: string;
+  account: number | LedgerAccount;
+  direction: 'debit' | 'credit';
+  amount: number;
+  currency: string;
+  refType?: ('order' | 'settlement' | 'payout' | 'refund' | 'adjustment') | null;
+  refId?: string | null;
+  postedAt?: string | null;
+  memo?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settlements".
+ */
+export interface Settlement {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  status?: ('pending' | 'allocated' | 'posted' | 'reconciled') | null;
+  allocations?:
+    | {
+        payeeType?: ('platform' | 'supplier' | 'partner') | null;
+        payeeRef?: string | null;
+        amount?: number | null;
+        basis?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  computedAt?: string | null;
+  postedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payout-batches".
+ */
+export interface PayoutBatch {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  scheduledFor?: string | null;
+  status?: ('pending' | 'processing' | 'paid' | 'failed') | null;
+  provider?: string | null;
+  totalAmount?: number | null;
+  currency: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payouts".
+ */
+export interface Payout {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  batch: number | PayoutBatch;
+  payee: number | Partner;
+  amount: number;
+  currency: string;
+  status?: ('pending' | 'processing' | 'paid' | 'failed' | 'reversed') | null;
+  providerRef?: string | null;
+  method?: ('ach' | 'rtp' | 'card' | 'pay_by_bank') | null;
+  settledAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "compliance-checks".
+ */
+export interface ComplianceCheck {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  subjectType: 'customer' | 'partner' | 'order';
+  subjectRef?: string | null;
+  checkType: 'identity_kyc' | 'aml' | 'eligibility' | 'credential_verification';
+  status?: ('pending' | 'passed' | 'failed' | 'expired') | null;
+  provider?: string | null;
+  result?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  checkedAt?: string | null;
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs".
+ */
+export interface AuditLog {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  actorType?: ('user' | 'partner' | 'system') | null;
+  actorRef?: string | null;
+  action: string;
+  entityType?: string | null;
+  entityId?: string | null;
+  ipAddress?: string | null;
+  deviceId?: string | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -405,6 +713,58 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'service-requests';
         value: number | ServiceRequest;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: number | Payment;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'partner-locations';
+        value: number | PartnerLocation;
+      } | null)
+    | ({
+        relationTo: 'inventory-levels';
+        value: number | InventoryLevel;
+      } | null)
+    | ({
+        relationTo: 'fulfillments';
+        value: number | Fulfillment;
+      } | null)
+    | ({
+        relationTo: 'ledger-accounts';
+        value: number | LedgerAccount;
+      } | null)
+    | ({
+        relationTo: 'ledger-entries';
+        value: number | LedgerEntry;
+      } | null)
+    | ({
+        relationTo: 'settlements';
+        value: number | Settlement;
+      } | null)
+    | ({
+        relationTo: 'payout-batches';
+        value: number | PayoutBatch;
+      } | null)
+    | ({
+        relationTo: 'payouts';
+        value: number | Payout;
+      } | null)
+    | ({
+        relationTo: 'compliance-checks';
+        value: number | ComplianceCheck;
+      } | null)
+    | ({
+        relationTo: 'audit-logs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -623,6 +983,263 @@ export interface ServiceRequestsSelect<T extends boolean = true> {
   status?: T;
   priority?: T;
   requestedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  tenant?: T;
+  orderNumber?: T;
+  customer?: T;
+  site?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        unitPrice?: T;
+        lineTotal?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  fees?: T;
+  total?: T;
+  currency?: T;
+  status?: T;
+  paymentStatus?: T;
+  fulfillmentStatus?: T;
+  shippingAddress?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  placedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  provider?: T;
+  providerIntentRef?: T;
+  method?: T;
+  amount?: T;
+  currency?: T;
+  status?: T;
+  capturedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  tenant?: T;
+  name?: T;
+  type?: T;
+  status?: T;
+  contactEmail?: T;
+  credentials?:
+    | T
+    | {
+        type?: T;
+        identifier?: T;
+        status?: T;
+        expiresAt?: T;
+        id?: T;
+      };
+  payoutMethod?:
+    | T
+    | {
+        provider?: T;
+        accountRef?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-locations_select".
+ */
+export interface PartnerLocationsSelect<T extends boolean = true> {
+  tenant?: T;
+  partner?: T;
+  label?: T;
+  address?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  lat?: T;
+  lng?: T;
+  serviceRadiusKm?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inventory-levels_select".
+ */
+export interface InventoryLevelsSelect<T extends boolean = true> {
+  tenant?: T;
+  product?: T;
+  partnerLocation?: T;
+  quantityAvailable?: T;
+  quantityReserved?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments_select".
+ */
+export interface FulfillmentsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  partner?: T;
+  partnerLocation?: T;
+  status?: T;
+  assignedAt?: T;
+  deliveredAt?: T;
+  trackingRef?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-accounts_select".
+ */
+export interface LedgerAccountsSelect<T extends boolean = true> {
+  tenant?: T;
+  name?: T;
+  type?: T;
+  ownerType?: T;
+  ownerRef?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-entries_select".
+ */
+export interface LedgerEntriesSelect<T extends boolean = true> {
+  tenant?: T;
+  transactionId?: T;
+  account?: T;
+  direction?: T;
+  amount?: T;
+  currency?: T;
+  refType?: T;
+  refId?: T;
+  postedAt?: T;
+  memo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settlements_select".
+ */
+export interface SettlementsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  status?: T;
+  allocations?:
+    | T
+    | {
+        payeeType?: T;
+        payeeRef?: T;
+        amount?: T;
+        basis?: T;
+        id?: T;
+      };
+  computedAt?: T;
+  postedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payout-batches_select".
+ */
+export interface PayoutBatchesSelect<T extends boolean = true> {
+  tenant?: T;
+  scheduledFor?: T;
+  status?: T;
+  provider?: T;
+  totalAmount?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payouts_select".
+ */
+export interface PayoutsSelect<T extends boolean = true> {
+  tenant?: T;
+  batch?: T;
+  payee?: T;
+  amount?: T;
+  currency?: T;
+  status?: T;
+  providerRef?: T;
+  method?: T;
+  settledAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "compliance-checks_select".
+ */
+export interface ComplianceChecksSelect<T extends boolean = true> {
+  tenant?: T;
+  subjectType?: T;
+  subjectRef?: T;
+  checkType?: T;
+  status?: T;
+  provider?: T;
+  result?: T;
+  checkedAt?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  tenant?: T;
+  actorType?: T;
+  actorRef?: T;
+  action?: T;
+  entityType?: T;
+  entityId?: T;
+  ipAddress?: T;
+  deviceId?: T;
+  metadata?: T;
   updatedAt?: T;
   createdAt?: T;
 }

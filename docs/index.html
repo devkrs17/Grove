@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grove Platform — Documentation</title>
+<style>
+  :root{
+    --bg:#f6f8f7; --panel:#ffffff; --ink:#15201a; --muted:#5d6f64; --soft:#7d8c83;
+    --line:#e1e8e3; --line2:#cfdad3; --grove:#2f8f55; --grove-d:#236b40; --grove-bg:#e9f5ee;
+    --sky:#2f6fb0; --amber:#b8821f; --violet:#7c5bbf; --rose:#c0506a; --radius:14px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;padding:48px 20px 90px}
+  .wrap{max-width:1040px;margin:0 auto}
+  .brand{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:650;
+    color:var(--grove-d);letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+  .brand .leaf{width:22px;height:22px;border-radius:7px;background:var(--grove);
+    display:inline-grid;place-items:center;color:#fff;font-size:13px}
+  h1{font-size:34px;margin:0 0 10px;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin:0 0 8px;max-width:74ch;font-size:16px}
+  .meta{color:var(--soft);font-size:13px;margin:0 0 36px}
+  .meta code{font-family:var(--mono);background:var(--grove-bg);color:var(--grove-d);
+    padding:1px 6px;border-radius:6px;font-size:12px}
+
+  .section-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--soft);margin:34px 0 14px;font-weight:650}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px;
+    transition:border-color .12s,transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+  a.card:hover{border-color:var(--line2);transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(20,40,30,.07)}
+  a.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--grove))}
+  .card .kind{font-family:var(--mono);font-size:11px;color:var(--soft)}
+  .card h3{margin:8px 0 6px;font-size:18px}
+  .card p{margin:0;font-size:13.5px;color:var(--muted)}
+  .card .file{font-family:var(--mono);font-size:11px;color:var(--accent,var(--grove-d));margin-top:12px;display:block}
+  .doc{--accent:var(--grove)}
+  .arch{--accent:var(--sky)}
+  .dom{--accent:var(--violet)}
+  .flow{--accent:var(--amber)}
+  .mock{--accent:var(--rose)}
+
+  .blurb{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin:6px 0 12px}
+  .blurb p{margin:0 0 10px;font-size:14.5px;color:var(--muted)}
+  .blurb p:last-child{margin:0}
+  .blurb strong{color:var(--ink)}
+  .principles{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .principles span{font-size:12px;background:var(--grove-bg);color:var(--grove-d);
+    border:1px solid #cfe7da;padding:4px 11px;border-radius:20px;font-weight:550}
+  footer{margin-top:54px;color:var(--soft);font-size:12.5px;border-top:1px solid var(--line);
+    padding-top:18px}
+  footer code{font-family:var(--mono);font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand"><span class="leaf">&#127795;</span> Grove Platform</div>
+  <h1>Platform Documentation &amp; UI Mockups</h1>
+  <p class="sub">Grove is a multi-tenant <strong>commerce&nbsp;+&nbsp;settlement&nbsp;+&nbsp;fulfillment</strong>
+  SaaS platform. One codebase, one deployment, one Payload instance &mdash; each customer organization is
+  resolved at runtime by hostname. There are no forks.</p>
+  <p class="meta">Generalized infrastructure. The first tenant is a regulated-goods commerce &amp; delivery operator;
+  everything operator-specific lives in per-tenant <code>config</code> and swappable provider adapters &mdash;
+  never in the core.</p>
+
+  <div class="blurb">
+    <p><strong>How this platform stays generic.</strong> The same engines power any tenant. Industry-specific
+    behavior (eligibility gates, credential checks, a particular bank/ACH provider, fee splits) is expressed
+    through configuration and provider adapters behind generic interfaces.</p>
+    <div class="principles">
+      <span>Generic nouns only</span>
+      <span>Provider-agnostic integrations</span>
+      <span>Per-tenant config drives behavior</span>
+      <span>Multi-tenant from day one</span>
+      <span>Determinism over model calls</span>
+    </div>
+  </div>
+
+  <div class="section-label">Reference docs</div>
+  <div class="grid">
+    <a class="card arch" href="architecture.html">
+      <span class="kind">DOC &middot; system design</span>
+      <h3>Architecture</h3>
+      <p>Component map, multi-tenancy model, and the request &amp; money data flow. Apps, services
+      (routing / inventory / ledger / payout engines), Payload/Postgres, Auth0, hosting.</p>
+      <span class="file">architecture.html</span>
+    </a>
+    <a class="card dom" href="domain-model.html">
+      <span class="kind">DOC &middot; data model</span>
+      <h3>Domain Model</h3>
+      <p>Every Payload collection &mdash; existing and new &mdash; with its key fields, plus the
+      full relationship ERD rendered as a diagram.</p>
+      <span class="file">domain-model.html</span>
+    </a>
+    <a class="card flow" href="settlement-flow.html">
+      <span class="kind">DOC &middot; sequence</span>
+      <h3>Settlement Flow</h3>
+      <p>End-to-end: order placed &rarr; payment authorized &rarr; routing &rarr; fulfillment &rarr;
+      double-entry ledger postings &rarr; settlement split &rarr; payout batch.</p>
+      <span class="file">settlement-flow.html</span>
+    </a>
+  </div>
+
+  <div class="section-label">UI mockups (non-functional wireframes)</div>
+  <div class="grid">
+    <a class="card mock" href="mockups/storefront.html">
+      <span class="kind">MOCKUP &middot; apps/web</span>
+      <h3>Storefront</h3>
+      <p>Product listing, product detail + add-to-cart, cart, checkout (address + review),
+      and order confirmation.</p>
+      <span class="file">mockups/storefront.html</span>
+    </a>
+    <a class="card mock" href="mockups/dashboard.html">
+      <span class="kind">MOCKUP &middot; apps/dashboard</span>
+      <h3>Staff Dashboard</h3>
+      <p>Orders list + detail, inventory, payouts, and partners management screens.</p>
+      <span class="file">mockups/dashboard.html</span>
+    </a>
+    <a class="card mock" href="mockups/partner-portal.html">
+      <span class="kind">MOCKUP &middot; partner portal</span>
+      <h3>Partner Portal</h3>
+      <p>Assigned fulfillments, the partner's own inventory, and their payout history.</p>
+      <span class="file">mockups/partner-portal.html</span>
+    </a>
+    <a class="card mock" href="mockups/brand-editor.html">
+      <span class="kind">MOCKUP &middot; apps/dashboard</span>
+      <h3>Brand &amp; Theme Editor</h3>
+      <p>No-code theme editor &mdash; colors, typography, logo and identity &mdash; with a live
+      storefront preview that re-skins as values change.</p>
+      <span class="file">mockups/brand-editor.html</span>
+    </a>
+  </div>
+
+  <footer>
+    Self-contained static HTML &mdash; inline CSS, no build step, no external assets. Open any file by
+    double-clicking it; no tools or internet required. Source of truth:
+    <code>docs/platform/DESIGN-BRIEF.md</code>.
+  </footer>
+
+</div>
+</body>
+</html>
