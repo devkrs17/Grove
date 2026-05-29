@@ -18,6 +18,10 @@ import {
   ServiceRequests,
   Orders,
   Payments,
+  Partners,
+  PartnerLocations,
+  InventoryLevels,
+  Fulfillments,
   seed,
 } from "@grove/payload";
 
@@ -45,6 +49,10 @@ export default buildConfig({
     ServiceRequests,
     Orders,
     Payments,
+    Partners,
+    PartnerLocations,
+    InventoryLevels,
+    Fulfillments,
   ],
   admin: {
     user: Users.slug,
@@ -65,6 +73,10 @@ export default buildConfig({
         "service-requests": {},
         orders: {},
         payments: {},
+        partners: {},
+        "partner-locations": {},
+        "inventory-levels": {},
+        fulfillments: {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>

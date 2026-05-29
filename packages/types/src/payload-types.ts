@@ -79,6 +79,10 @@ export interface Config {
     'service-requests': ServiceRequest;
     orders: Order;
     payments: Payment;
+    partners: Partner;
+    'partner-locations': PartnerLocation;
+    'inventory-levels': InventoryLevel;
+    fulfillments: Fulfillment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +102,10 @@ export interface Config {
     'service-requests': ServiceRequestsSelect<false> | ServiceRequestsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
+    'partner-locations': PartnerLocationsSelect<false> | PartnerLocationsSelect<true>;
+    'inventory-levels': InventoryLevelsSelect<false> | InventoryLevelsSelect<true>;
+    fulfillments: FulfillmentsSelect<false> | FulfillmentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -406,6 +414,88 @@ export interface Payment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  name: string;
+  type?: ('supplier' | 'fulfillment' | 'hybrid') | null;
+  status?: ('pending' | 'active' | 'suspended') | null;
+  contactEmail?: string | null;
+  credentials?:
+    | {
+        type?: string | null;
+        identifier?: string | null;
+        status?: ('pending' | 'verified' | 'expired' | 'rejected') | null;
+        expiresAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  payoutMethod?: {
+    provider?: string | null;
+    accountRef?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-locations".
+ */
+export interface PartnerLocation {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  partner: number | Partner;
+  label: string;
+  address?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  lat?: number | null;
+  lng?: number | null;
+  serviceRadiusKm?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inventory-levels".
+ */
+export interface InventoryLevel {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  product: number | Product;
+  partnerLocation: number | PartnerLocation;
+  quantityAvailable?: number | null;
+  quantityReserved?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments".
+ */
+export interface Fulfillment {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  partner: number | Partner;
+  partnerLocation?: (number | null) | PartnerLocation;
+  status?: ('assigned' | 'accepted' | 'picked_up' | 'in_transit' | 'delivered' | 'failed') | null;
+  assignedAt?: string | null;
+  deliveredAt?: string | null;
+  trackingRef?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -475,6 +565,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'payments';
         value: number | Payment;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'partner-locations';
+        value: number | PartnerLocation;
+      } | null)
+    | ({
+        relationTo: 'inventory-levels';
+        value: number | InventoryLevel;
+      } | null)
+    | ({
+        relationTo: 'fulfillments';
+        value: number | Fulfillment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -749,6 +855,88 @@ export interface PaymentsSelect<T extends boolean = true> {
   currency?: T;
   status?: T;
   capturedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  tenant?: T;
+  name?: T;
+  type?: T;
+  status?: T;
+  contactEmail?: T;
+  credentials?:
+    | T
+    | {
+        type?: T;
+        identifier?: T;
+        status?: T;
+        expiresAt?: T;
+        id?: T;
+      };
+  payoutMethod?:
+    | T
+    | {
+        provider?: T;
+        accountRef?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner-locations_select".
+ */
+export interface PartnerLocationsSelect<T extends boolean = true> {
+  tenant?: T;
+  partner?: T;
+  label?: T;
+  address?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  lat?: T;
+  lng?: T;
+  serviceRadiusKm?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inventory-levels_select".
+ */
+export interface InventoryLevelsSelect<T extends boolean = true> {
+  tenant?: T;
+  product?: T;
+  partnerLocation?: T;
+  quantityAvailable?: T;
+  quantityReserved?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments_select".
+ */
+export interface FulfillmentsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  partner?: T;
+  partnerLocation?: T;
+  status?: T;
+  assignedAt?: T;
+  deliveredAt?: T;
+  trackingRef?: T;
   updatedAt?: T;
   createdAt?: T;
 }
