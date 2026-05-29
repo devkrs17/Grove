@@ -16,6 +16,8 @@ import {
   Media,
   Customers,
   ServiceRequests,
+  Orders,
+  Payments,
   seed,
 } from "@grove/payload";
 
@@ -41,6 +43,8 @@ export default buildConfig({
     Media,
     Customers,
     ServiceRequests,
+    Orders,
+    Payments,
   ],
   admin: {
     user: Users.slug,
@@ -59,6 +63,8 @@ export default buildConfig({
         media: {},
         customers: {},
         "service-requests": {},
+        orders: {},
+        payments: {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>

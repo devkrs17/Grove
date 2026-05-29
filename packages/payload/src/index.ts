@@ -8,5 +8,7 @@ export { Pages } from "./collections/pages";
 export { Media } from "./collections/media";
 export { Customers } from "./collections/customers";
 export { ServiceRequests } from "./collections/service-requests";
+export { Orders } from "./collections/orders";
+export { Payments } from "./collections/payments";
 export { isAuthenticated, isSuperAdmin } from "./access";
 export { seed } from "./seed";

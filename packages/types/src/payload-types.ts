@@ -77,6 +77,8 @@ export interface Config {
     media: Media;
     customers: Customer;
     'service-requests': ServiceRequest;
+    orders: Order;
+    payments: Payment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +96,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     'service-requests': ServiceRequestsSelect<false> | ServiceRequestsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -344,6 +348,64 @@ export interface ServiceRequest {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  orderNumber: string;
+  customer: number | Customer;
+  site: number | Site;
+  items?:
+    | {
+        product: number | Product;
+        quantity: number;
+        unitPrice: number;
+        lineTotal: number;
+        id?: string | null;
+      }[]
+    | null;
+  subtotal: number;
+  fees?: number | null;
+  total: number;
+  currency: string;
+  status?:
+    | ('pending' | 'confirmed' | 'routed' | 'fulfilling' | 'delivered' | 'completed' | 'cancelled' | 'refunded')
+    | null;
+  paymentStatus?: ('unpaid' | 'authorized' | 'paid' | 'refunded' | 'failed') | null;
+  fulfillmentStatus?: ('unfulfilled' | 'assigned' | 'in_transit' | 'delivered' | 'failed') | null;
+  shippingAddress?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  placedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  provider: string;
+  providerIntentRef?: string | null;
+  method?: ('ach' | 'rtp' | 'card' | 'pay_by_bank') | null;
+  amount: number;
+  currency: string;
+  status?: ('requires_action' | 'authorized' | 'captured' | 'failed' | 'refunded') | null;
+  capturedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -405,6 +467,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'service-requests';
         value: number | ServiceRequest;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: number | Payment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -623,6 +693,62 @@ export interface ServiceRequestsSelect<T extends boolean = true> {
   status?: T;
   priority?: T;
   requestedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  tenant?: T;
+  orderNumber?: T;
+  customer?: T;
+  site?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        unitPrice?: T;
+        lineTotal?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  fees?: T;
+  total?: T;
+  currency?: T;
+  status?: T;
+  paymentStatus?: T;
+  fulfillmentStatus?: T;
+  shippingAddress?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  placedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  provider?: T;
+  providerIntentRef?: T;
+  method?: T;
+  amount?: T;
+  currency?: T;
+  status?: T;
+  capturedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
