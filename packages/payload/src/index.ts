@@ -17,5 +17,7 @@ export { Fulfillments } from "./collections/fulfillments";
 export { LedgerAccounts } from "./collections/ledger-accounts";
 export { LedgerEntries } from "./collections/ledger-entries";
 export { Settlements } from "./collections/settlements";
+export { PayoutBatches } from "./collections/payout-batches";
+export { Payouts } from "./collections/payouts";
 export { isAuthenticated, isSuperAdmin } from "./access";
 export { seed } from "./seed";

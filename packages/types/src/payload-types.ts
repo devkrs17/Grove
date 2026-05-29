@@ -86,6 +86,8 @@ export interface Config {
     'ledger-accounts': LedgerAccount;
     'ledger-entries': LedgerEntry;
     settlements: Settlement;
+    'payout-batches': PayoutBatch;
+    payouts: Payout;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -112,6 +114,8 @@ export interface Config {
     'ledger-accounts': LedgerAccountsSelect<false> | LedgerAccountsSelect<true>;
     'ledger-entries': LedgerEntriesSelect<false> | LedgerEntriesSelect<true>;
     settlements: SettlementsSelect<false> | SettlementsSelect<true>;
+    'payout-batches': PayoutBatchesSelect<false> | PayoutBatchesSelect<true>;
+    payouts: PayoutsSelect<false> | PayoutsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -559,6 +563,39 @@ export interface Settlement {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payout-batches".
+ */
+export interface PayoutBatch {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  scheduledFor?: string | null;
+  status?: ('pending' | 'processing' | 'paid' | 'failed') | null;
+  provider?: string | null;
+  totalAmount?: number | null;
+  currency: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payouts".
+ */
+export interface Payout {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  batch: number | PayoutBatch;
+  payee: number | Partner;
+  amount: number;
+  currency: string;
+  status?: ('pending' | 'processing' | 'paid' | 'failed' | 'reversed') | null;
+  providerRef?: string | null;
+  method?: ('ach' | 'rtp' | 'card' | 'pay_by_bank') | null;
+  settledAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -656,6 +693,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'settlements';
         value: number | Settlement;
+      } | null)
+    | ({
+        relationTo: 'payout-batches';
+        value: number | PayoutBatch;
+      } | null)
+    | ({
+        relationTo: 'payouts';
+        value: number | Payout;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1066,6 +1111,37 @@ export interface SettlementsSelect<T extends boolean = true> {
       };
   computedAt?: T;
   postedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payout-batches_select".
+ */
+export interface PayoutBatchesSelect<T extends boolean = true> {
+  tenant?: T;
+  scheduledFor?: T;
+  status?: T;
+  provider?: T;
+  totalAmount?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payouts_select".
+ */
+export interface PayoutsSelect<T extends boolean = true> {
+  tenant?: T;
+  batch?: T;
+  payee?: T;
+  amount?: T;
+  currency?: T;
+  status?: T;
+  providerRef?: T;
+  method?: T;
+  settledAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

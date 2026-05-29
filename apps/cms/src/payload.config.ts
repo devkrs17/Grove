@@ -25,6 +25,8 @@ import {
   LedgerAccounts,
   LedgerEntries,
   Settlements,
+  PayoutBatches,
+  Payouts,
   seed,
 } from "@grove/payload";
 
@@ -59,6 +61,8 @@ export default buildConfig({
     LedgerAccounts,
     LedgerEntries,
     Settlements,
+    PayoutBatches,
+    Payouts,
   ],
   admin: {
     user: Users.slug,
@@ -86,6 +90,8 @@ export default buildConfig({
         "ledger-accounts": {},
         "ledger-entries": {},
         settlements: {},
+        "payout-batches": {},
+        payouts: {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>
