@@ -1,0 +1,17 @@
+{
+  "name": "@grove/services",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "check-types": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./payments": "./src/payments/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^22",
+    "@grove/config": "workspace:*"
+  }
+}
