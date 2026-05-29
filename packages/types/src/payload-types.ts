@@ -88,6 +88,8 @@ export interface Config {
     settlements: Settlement;
     'payout-batches': PayoutBatch;
     payouts: Payout;
+    'compliance-checks': ComplianceCheck;
+    'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -116,6 +118,8 @@ export interface Config {
     settlements: SettlementsSelect<false> | SettlementsSelect<true>;
     'payout-batches': PayoutBatchesSelect<false> | PayoutBatchesSelect<true>;
     payouts: PayoutsSelect<false> | PayoutsSelect<true>;
+    'compliance-checks': ComplianceChecksSelect<false> | ComplianceChecksSelect<true>;
+    'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -596,6 +600,58 @@ export interface Payout {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "compliance-checks".
+ */
+export interface ComplianceCheck {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  subjectType: 'customer' | 'partner' | 'order';
+  subjectRef?: string | null;
+  checkType: 'identity_kyc' | 'aml' | 'eligibility' | 'credential_verification';
+  status?: ('pending' | 'passed' | 'failed' | 'expired') | null;
+  provider?: string | null;
+  result?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  checkedAt?: string | null;
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs".
+ */
+export interface AuditLog {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  actorType?: ('user' | 'partner' | 'system') | null;
+  actorRef?: string | null;
+  action: string;
+  entityType?: string | null;
+  entityId?: string | null;
+  ipAddress?: string | null;
+  deviceId?: string | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -701,6 +757,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'payouts';
         value: number | Payout;
+      } | null)
+    | ({
+        relationTo: 'compliance-checks';
+        value: number | ComplianceCheck;
+      } | null)
+    | ({
+        relationTo: 'audit-logs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1142,6 +1206,40 @@ export interface PayoutsSelect<T extends boolean = true> {
   providerRef?: T;
   method?: T;
   settledAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "compliance-checks_select".
+ */
+export interface ComplianceChecksSelect<T extends boolean = true> {
+  tenant?: T;
+  subjectType?: T;
+  subjectRef?: T;
+  checkType?: T;
+  status?: T;
+  provider?: T;
+  result?: T;
+  checkedAt?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  tenant?: T;
+  actorType?: T;
+  actorRef?: T;
+  action?: T;
+  entityType?: T;
+  entityId?: T;
+  ipAddress?: T;
+  deviceId?: T;
+  metadata?: T;
   updatedAt?: T;
   createdAt?: T;
 }

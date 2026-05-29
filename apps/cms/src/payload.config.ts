@@ -27,6 +27,8 @@ import {
   Settlements,
   PayoutBatches,
   Payouts,
+  ComplianceChecks,
+  AuditLogs,
   seed,
 } from "@grove/payload";
 
@@ -63,6 +65,8 @@ export default buildConfig({
     Settlements,
     PayoutBatches,
     Payouts,
+    ComplianceChecks,
+    AuditLogs,
   ],
   admin: {
     user: Users.slug,
@@ -92,6 +96,8 @@ export default buildConfig({
         settlements: {},
         "payout-batches": {},
         payouts: {},
+        "compliance-checks": {},
+        "audit-logs": {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>
