@@ -214,8 +214,40 @@ export interface Product {
   id: number;
   tenant?: (number | null) | Tenant;
   name: string;
+  /**
+   * URL slug for the storefront product page, e.g. sour-grapes. Derived from the name on import when left blank.
+   */
+  slug?: string | null;
   price: number;
   status?: ('draft' | 'published') | null;
+  /**
+   * Short meta line shown under the name, e.g. 'Indica · live resin vape · 1g'.
+   */
+  subtitle?: string | null;
+  description?: string | null;
+  category?: ('Flower' | 'Concentrates' | 'Vapes' | 'Pre-rolls' | 'Edibles') | null;
+  strainType?: ('Indica' | 'Sativa' | 'Hybrid') | null;
+  effect?: ('sleep' | 'chill' | 'euphoric' | 'creative' | 'focus') | null;
+  /**
+   * Potency label as shown to shoppers, e.g. '82% THCa' or '10mg/pc'.
+   */
+  thcLabel?: string | null;
+  /**
+   * Batch / lot number traceable to the COA, e.g. 0421-A.
+   */
+  lot?: string | null;
+  /**
+   * Optional badge shown on the product card, e.g. 'Best seller', 'Limited'.
+   */
+  tag?: string | null;
+  /**
+   * Product image: a full https URL, or an Unsplash photo id consumed by the storefront image helper.
+   */
+  imageId?: string | null;
+  /**
+   * Optional terpene summary for the COA panel, e.g. 'Limonene · Myrcene · Caryophyllene'.
+   */
+  terpenes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -855,8 +887,19 @@ export interface TenantsSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   tenant?: T;
   name?: T;
+  slug?: T;
   price?: T;
   status?: T;
+  subtitle?: T;
+  description?: T;
+  category?: T;
+  strainType?: T;
+  effect?: T;
+  thcLabel?: T;
+  lot?: T;
+  tag?: T;
+  imageId?: T;
+  terpenes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -1,12 +1,14 @@
 // Highgrove product listing — ported from plp.jsx (cannabis branch).
-// Sort control is a plain uncontrolled <select> in this static shell.
+// Props-driven: `products` comes from Payload (live) or the static demo data
+// (preview). Sort/facet controls are presentational in this design shell.
 
 import { Eyebrow, ProductCard } from "./primitives";
-import { FACETS, PRODUCTS } from "../data";
+import { FACETS, type Product } from "../data";
+import { LIVE_ROUTES, type Routes } from "../routes";
 
 const SORT_OPTS = ["Best selling", "Newest drops", "Highest THCa", "Price: low to high", "Price: high to low"];
 
-export function Shop() {
+export function Shop({ products, routes = LIVE_ROUTES }: { products: Product[]; routes?: Routes }) {
   return (
     <div className="shell">
       <div className="plp">
@@ -21,7 +23,7 @@ export function Shop() {
             </p>
           </div>
           <div className="plp__sort">
-            <span className="plp__count">{PRODUCTS.length} strains</span>
+            <span className="plp__count">{products.length} strains</span>
             <span style={{ width: 1, height: 16, background: "var(--rule-strong)", marginInline: 12 }} />
             <label htmlFor="sort">Sort</label>
             <select id="sort" defaultValue="Best selling">
@@ -64,8 +66,8 @@ export function Shop() {
         </aside>
 
         <div className="plp__grid">
-          {PRODUCTS.map((p) => (
-            <ProductCard key={p.id} product={p} />
+          {products.map((p) => (
+            <ProductCard key={p.id} product={p} href={routes.product(p.slug ?? p.id)} />
           ))}
         </div>
       </div>

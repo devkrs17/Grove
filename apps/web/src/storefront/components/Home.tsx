@@ -1,10 +1,12 @@
 // Highgrove homepage — ported from home.jsx (HomeCannabis).
+// Props-driven: `products` comes from Payload (live) or the static demo data
+// (preview); `routes` swaps link targets between the two surfaces.
 
 import { Btn, Eyebrow, ProductCard } from "./primitives";
 import { Icon } from "./Icon";
-import { COMPARE_ROWS, EFFECTS, PRODUCTS, imgUrl } from "../data";
+import { COMPARE_ROWS, EFFECTS, imgUrl, type Product } from "../data";
+import { LIVE_ROUTES, type Routes } from "../routes";
 
-const SHOP = "/storefront-preview/shop";
 const bgImg = (id: string, w = 1200) => ({ backgroundImage: `url('${imgUrl(id, w)}')` });
 
 const REVIEWS = [
@@ -13,8 +15,9 @@ const REVIEWS = [
   { name: "Eli M.", loc: "Verified buyer", title: "Better than dispo.", body: "I switched from dispensary carts to Highgrove. Better taste, and I feel the difference.", strain: "Lemon Cherry THCa" },
 ];
 
-export function Home() {
-  const bestSellers = PRODUCTS.slice(4, 8);
+export function Home({ products, routes = LIVE_ROUTES }: { products: Product[]; routes?: Routes }) {
+  const bestSellers = products.slice(4, 8);
+  const hrefFor = (p: Product) => routes.product(p.slug ?? p.id);
 
   return (
     <div className="shell">
@@ -32,10 +35,10 @@ export function Home() {
             Columbia County. Every batch carries a lot number you can trace to the lab report.
           </p>
           <div className="hero__cta">
-            <Btn variant="primary" size="lg" href={SHOP}>
+            <Btn variant="primary" size="lg" href={routes.shop}>
               Shop the harvest →
             </Btn>
-            <Btn variant="ghost" size="lg" href={SHOP}>
+            <Btn variant="ghost" size="lg" href={routes.shop}>
               Browse by effect
             </Btn>
           </div>
@@ -62,8 +65,8 @@ export function Home() {
             </div>
             <ol className="effect-index__list">
               {EFFECTS.map((e, i) => {
-                const matches = PRODUCTS.filter((p) => p.effect === e.id).slice(0, 3);
-                const count = PRODUCTS.filter((p) => p.effect === e.id).length;
+                const matches = products.filter((p) => p.effect === e.id).slice(0, 3);
+                const count = products.filter((p) => p.effect === e.id).length;
                 return (
                   <li key={e.id} className="effect-row">
                     <span className="effect-row__num">{String(i + 1).padStart(2, "0")}</span>
@@ -111,7 +114,7 @@ export function Home() {
                   Hand-trimmed, slow-cured 21–30 days, never fan-leaf-mixed. Each lot is small enough that
                   we can actually tell you who hung it.
                 </p>
-                <a className="commit__cta" href={SHOP}>
+                <a className="commit__cta" href={routes.shop}>
                   Shop flower →
                 </a>
               </li>
@@ -126,7 +129,7 @@ export function Home() {
                   Ice and pressure. No butane, no chemistry. The cleanest expression of the plant we know
                   how to make — washed, pressed, jarred.
                 </p>
-                <a className="commit__cta" href={SHOP}>
+                <a className="commit__cta" href={routes.shop}>
                   Shop concentrates →
                 </a>
               </li>
@@ -160,13 +163,13 @@ export function Home() {
                 Best sellers.
               </h2>
             </div>
-            <a style={{ fontSize: 14, color: "var(--ink-2)" }} href={SHOP}>
-              Browse all 47 →
+            <a style={{ fontSize: 14, color: "var(--ink-2)" }} href={routes.shop}>
+              Browse all {products.length} →
             </a>
           </div>
           <div className="featured-grid">
             {bestSellers.map((p) => (
-              <ProductCard key={p.id} product={p} href={SHOP} />
+              <ProductCard key={p.id} product={p} href={hrefFor(p)} />
             ))}
           </div>
         </div>

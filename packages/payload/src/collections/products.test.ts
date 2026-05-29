@@ -42,9 +42,60 @@ describe("Products collection", () => {
     ]);
   });
 
-  it("has exactly 3 fields", () => {
-    expect(Products.fields).toHaveLength(3);
+  it("has exactly 14 fields", () => {
+    expect(Products.fields).toHaveLength(14);
   });
+
+  it("has an optional slug text field for storefront URLs", () => {
+    const slug = Products.fields.find((f) => "name" in f && f.name === "slug");
+    expect(slug).toMatchObject({ type: "text" });
+    // slug is optional — derived from name on import when blank.
+    expect((slug as { required?: boolean }).required).toBeUndefined();
+  });
+
+  it("has a category select scoped to the storefront's verticals", () => {
+    const category = Products.fields.find(
+      (f) => "name" in f && f.name === "category",
+    ) as { type: string; options: { value: string }[] };
+    expect(category.type).toBe("select");
+    expect(category.options.map((o) => o.value)).toEqual([
+      "Flower",
+      "Concentrates",
+      "Vapes",
+      "Pre-rolls",
+      "Edibles",
+    ]);
+  });
+
+  it("has a strainType select of Indica/Sativa/Hybrid", () => {
+    const strain = Products.fields.find(
+      (f) => "name" in f && f.name === "strainType",
+    ) as { type: string; options: { value: string }[] };
+    expect(strain.type).toBe("select");
+    expect(strain.options.map((o) => o.value)).toEqual(["Indica", "Sativa", "Hybrid"]);
+  });
+
+  it("stores effect as the storefront's lowercase id so cards filter without a lookup", () => {
+    const effect = Products.fields.find(
+      (f) => "name" in f && f.name === "effect",
+    ) as { type: string; options: { value: string }[] };
+    expect(effect.type).toBe("select");
+    expect(effect.options.map((o) => o.value)).toEqual([
+      "sleep",
+      "chill",
+      "euphoric",
+      "creative",
+      "focus",
+    ]);
+  });
+
+  it.each(["subtitle", "description", "thcLabel", "lot", "tag", "imageId", "terpenes"])(
+    "has a descriptive %s field",
+    (fieldName) => {
+      const field = Products.fields.find((f) => "name" in f && f.name === fieldName);
+      expect(field).toBeDefined();
+    },
+  );
 
   it("allows read for authenticated users", () => {
     expect(Products.access?.read).toBe(isAuthenticated);

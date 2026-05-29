@@ -1,6 +1,6 @@
 import { addDataAndFileToRequest } from "payload";
 import type { Endpoint, PayloadRequest } from "payload";
-import type { User } from "@grove/types";
+import type { Product, User } from "@grove/types";
 
 /**
  * Parses a CSV string into an array of row objects.
@@ -23,6 +23,45 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
 
   return rows;
+}
+
+/** Converts a product name into a URL-safe slug (lowercase, hyphenated). */
+export function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Optional product columns mapped 1:1 from CSV header → Payload field.
+ * Empty cells are skipped so selects aren't sent invalid empty values.
+ */
+const OPTIONAL_FIELDS = [
+  "subtitle",
+  "description",
+  "category",
+  "strainType",
+  "effect",
+  "thcLabel",
+  "lot",
+  "tag",
+  "imageId",
+  "terpenes",
+] as const;
+
+/** Collects the optional product fields that are present (non-empty) in a row. */
+function optionalFields(row: Record<string, string>): Partial<Product> {
+  const out: Record<string, string> = {};
+  for (const field of OPTIONAL_FIELDS) {
+    const value = row[field]?.trim();
+    if (value) {
+      out[field] = value;
+    }
+  }
+  // CSV cells are free-form text; Payload validates select options at write time.
+  return out as Partial<Product>;
 }
 
 export const importProductsEndpoint: Endpoint = {
@@ -88,6 +127,8 @@ export const importProductsEndpoint: Endpoint = {
           price,
           status,
           tenant: tenantId,
+          slug: row["slug"]?.trim() || slugify(name),
+          ...optionalFields(row),
         },
         user: req.user,
         overrideAccess: false,

@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import { parseCsv, importProductsEndpoint } from "./endpoint";
+import { parseCsv, slugify, importProductsEndpoint } from "./endpoint";
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -59,6 +59,22 @@ describe("parseCsv", () => {
   it("handles CRLF line endings", () => {
     const csv = "name,price\r\nGadget,5.00";
     expect(parseCsv(csv)).toEqual([{ name: "Gadget", price: "5.00" }]);
+  });
+});
+
+// ── slugify unit tests ─────────────────────────────────────────────────────
+
+describe("slugify", () => {
+  it("lowercases and hyphenates spaces", () => {
+    expect(slugify("Sour Grapes")).toBe("sour-grapes");
+  });
+
+  it("strips punctuation and collapses separators", () => {
+    expect(slugify("Dulce de Papaya!! (7g)")).toBe("dulce-de-papaya-7g");
+  });
+
+  it("trims leading and trailing separators", () => {
+    expect(slugify("  --Hudson Haze--  ")).toBe("hudson-haze");
   });
 });
 
@@ -189,6 +205,63 @@ describe("importProductsEndpoint handler", () => {
         data: expect.objectContaining({ tenant: 99 }),
       })
     );
+  });
+
+  it("derives a slug from the name when no slug column is present", async () => {
+    const csv = "name,price\nSour Grapes,44";
+    const req = makeReq({ file: makeFile(csv) });
+    await handler(req as never);
+    expect(req.payload.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ slug: "sour-grapes" }),
+      })
+    );
+  });
+
+  it("uses an explicit slug column when provided", async () => {
+    const csv = "name,price,slug\nSour Grapes,44,sour-grapes-og";
+    const req = makeReq({ file: makeFile(csv) });
+    await handler(req as never);
+    expect(req.payload.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ slug: "sour-grapes-og" }),
+      })
+    );
+  });
+
+  it("maps the storefront product columns through to Payload", async () => {
+    const csv = [
+      "name,price,category,strainType,effect,thcLabel,lot,tag,imageId,subtitle,terpenes,description",
+      "Sour Grapes,44,Vapes,Indica,chill,82% THCa,0421-A,Best seller,1603909223429-69bb7101f420,Indica · live resin vape · 1g,Limonene · Myrcene,Grape-forward and smooth",
+    ].join("\n");
+    const req = makeReq({ file: makeFile(csv) });
+    await handler(req as never);
+    expect(req.payload.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          category: "Vapes",
+          strainType: "Indica",
+          effect: "chill",
+          thcLabel: "82% THCa",
+          lot: "0421-A",
+          tag: "Best seller",
+          imageId: "1603909223429-69bb7101f420",
+          subtitle: "Indica · live resin vape · 1g",
+          terpenes: "Limonene · Myrcene",
+          description: "Grape-forward and smooth",
+        }),
+      })
+    );
+  });
+
+  it("omits optional columns that are blank (so selects never get empty values)", async () => {
+    const csv = "name,price,category,lot\nMystery,10,,";
+    const req = makeReq({ file: makeFile(csv) });
+    await handler(req as never);
+    const call = req.payload.create.mock.calls[0]![0] as { data: Record<string, unknown> };
+    expect(call.data).not.toHaveProperty("category");
+    expect(call.data).not.toHaveProperty("lot");
+    expect(call.data.slug).toBe("mystery");
   });
 
   it("returns created:0 and no errors for empty CSV", async () => {

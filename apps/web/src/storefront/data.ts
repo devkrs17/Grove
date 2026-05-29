@@ -19,6 +19,10 @@ export type Product = {
   thc: string;
   img: string;
   lot: string;
+  // Optional, populated from Payload for the live storefront (PDP, cart links).
+  slug?: string;
+  description?: string;
+  terpenes?: string;
 };
 
 export type Effect = { id: string; label: string; desc: string; img: string };
@@ -91,4 +95,6 @@ export const FOOT = {
 };
 
 export const imgUrl = (id: string, w = 900) =>
-  `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`;
+  id.startsWith("http")
+    ? id
+    : `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`;

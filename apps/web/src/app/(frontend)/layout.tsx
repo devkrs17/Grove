@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { getTenantContext } from "@/lib/tenant";
+import { CartProvider } from "@/storefront/cart/CartProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,8 +13,10 @@ export const metadata: Metadata = {
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   const { siteId } = await getTenantContext();
 
-  let primaryColor = "#000000";
-  let secondaryColor = "#666666";
+  // Highgrove palette defaults (matches the seed BrandConfig) so the storefront
+  // is themed even before a tenant resolves from the host.
+  let primaryColor = "#2d4a2b";
+  let secondaryColor = "#7a8c5c";
 
   if (siteId) {
     const payload = await getPayload({ config });
@@ -36,7 +39,9 @@ export default async function FrontendLayout({ children }: { children: React.Rea
 
   return (
     <html lang="en" style={cssVars}>
-      <body>{children}</body>
+      <body>
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

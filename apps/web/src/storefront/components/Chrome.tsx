@@ -1,12 +1,12 @@
 // Announce bar, top nav, and footer — ported from chrome.jsx (cannabis vertical).
-// Interactive popovers (search/account dropdowns) are omitted for the static
-// shell; links route between the preview surfaces.
+// Shared by the live storefront and the static preview: `routes` swaps the link
+// targets, and `cartCount` selects a static badge (preview) vs. the live,
+// reactive cart indicator.
 
 import { Icon } from "./Icon";
 import { ANNOUNCE, BRAND, FOOT, NAV, TAGLINE } from "../data";
-
-const HOME = "/storefront-preview";
-const SHOP = "/storefront-preview/shop";
+import { LIVE_ROUTES, type Routes } from "../routes";
+import { CartIndicator } from "../cart/CartIndicator";
 
 export function Announce({ message = ANNOUNCE }: { message?: string }) {
   return <div className="announce">{message}</div>;
@@ -16,16 +16,22 @@ function BrandMark({ name = BRAND }: { name?: string }) {
   return <i style={{ fontStyle: "italic" }}>{name}</i>;
 }
 
-export function Nav({ cartCount = 0 }: { cartCount?: number }) {
+export function Nav({
+  cartCount,
+  routes = LIVE_ROUTES,
+}: {
+  cartCount?: number;
+  routes?: Routes;
+}) {
   return (
     <div className="nav">
       <div className="nav__left">
-        <a className="nav__brand" href={HOME}>
+        <a className="nav__brand" href={routes.home}>
           <BrandMark />
         </a>
         <nav className="nav__links">
           {NAV.map((n) => (
-            <a key={n.slug} href={SHOP}>
+            <a key={n.slug} href={routes.shop}>
               {n.label}
             </a>
           ))}
@@ -38,16 +44,20 @@ export function Nav({ cartCount = 0 }: { cartCount?: number }) {
         <span className="nav__icon nav__icon--btn">
           <Icon name="user" size={18} />
         </span>
-        <a className="nav__icon" href={SHOP}>
-          <Icon name="shopping-bag" size={18} />
-          <span style={{ fontSize: 13 }}>Cart · {cartCount}</span>
-        </a>
+        {typeof cartCount === "number" ? (
+          <a className="nav__icon" href={routes.shop}>
+            <Icon name="shopping-bag" size={18} />
+            <span style={{ fontSize: 13 }}>Cart · {cartCount}</span>
+          </a>
+        ) : (
+          <CartIndicator />
+        )}
       </div>
     </div>
   );
 }
 
-export function Footer() {
+export function Footer({ routes = LIVE_ROUTES }: { routes?: Routes }) {
   return (
     <>
       <aside className="legal-band">
@@ -70,7 +80,7 @@ export function Footer() {
             <ul>
               {FOOT.shop.map((x) => (
                 <li key={x}>
-                  <a href={SHOP}>{x}</a>
+                  <a href={routes.shop}>{x}</a>
                 </li>
               ))}
             </ul>

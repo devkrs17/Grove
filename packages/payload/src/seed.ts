@@ -137,24 +137,53 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   payload.logger.info("Created 4 products across 2 tenants");
 
-  // Highgrove catalogue (prices in dollars, matching the seed convention above).
-  const highgroveProducts = [
-    { name: "Sour Grapes", price: 44 },
-    { name: "Super Boof", price: 38 },
-    { name: "Guava Cake", price: 49 },
-    { name: "Dulce de Papaya", price: 89 },
-    { name: "Maui Fruit", price: 49 },
-    { name: "Jelly Donuts", price: 65 },
-    { name: "Tropaya", price: 24 },
-    { name: "Sour Diesel", price: 45 },
-    { name: "Zlushiez Smalls", price: 89 },
-    { name: "Cool Cocol Push", price: 28 },
-    { name: "Hudson Haze", price: 54 },
+  // Highgrove catalogue — full design data ported from the storefront kit
+  // (apps/web/src/storefront/data.ts). slug doubles as the storefront URL.
+  type SeedProduct = {
+    slug: string;
+    name: string;
+    subtitle: string;
+    price: number;
+    tag: string;
+    category: "Flower" | "Concentrates" | "Vapes" | "Pre-rolls" | "Edibles";
+    effect: "sleep" | "chill" | "euphoric" | "creative" | "focus";
+    strainType: "Indica" | "Sativa" | "Hybrid";
+    thcLabel: string;
+    imageId: string;
+    lot: string;
+  };
+
+  const terpenesFor: Record<string, string> = {
+    Indica: "Myrcene · Linalool · Caryophyllene",
+    Sativa: "Limonene · Terpinolene · Pinene",
+    Hybrid: "Caryophyllene · Limonene · Humulene",
+  };
+
+  const highgroveProducts: SeedProduct[] = [
+    { slug: "sour-grapes", name: "Sour Grapes", subtitle: "Indica · live resin vape · 1g", price: 44, tag: "Best seller", category: "Vapes", effect: "chill", strainType: "Indica", thcLabel: "82% THCa", imageId: "1603909223429-69bb7101f420", lot: "0421-A" },
+    { slug: "super-boof", name: "Super Boof", subtitle: "Hybrid · pre-roll 5pk · 0.5g", price: 38, tag: "", category: "Pre-rolls", effect: "euphoric", strainType: "Hybrid", thcLabel: "27% THCa", imageId: "1620912189858-7c6e6e6e9e1a", lot: "0419-B" },
+    { slug: "guava-cake", name: "Guava Cake", subtitle: "Indica · 3.5g flower", price: 49, tag: "", category: "Flower", effect: "chill", strainType: "Indica", thcLabel: "29% THCa", imageId: "1603909223429-69bb7101f420", lot: "0418-A" },
+    { slug: "papaya", name: "Dulce de Papaya", subtitle: "Sativa · 7g flower", price: 89, tag: "Limited", category: "Flower", effect: "creative", strainType: "Sativa", thcLabel: "26% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0418-B" },
+    { slug: "maui-fruit", name: "Maui Fruit", subtitle: "Sativa · live resin cart · 1g", price: 49, tag: "", category: "Vapes", effect: "euphoric", strainType: "Sativa", thcLabel: "84% THCa", imageId: "1605283176567-0c98c0f57f50", lot: "0417-A" },
+    { slug: "jelly-donuts", name: "Jelly Donuts", subtitle: "Hybrid · live rosin · 1g", price: 65, tag: "Solventless", category: "Concentrates", effect: "euphoric", strainType: "Hybrid", thcLabel: "78% THCa", imageId: "1603909223429-69bb7101f420", lot: "0416-A" },
+    { slug: "tropaya", name: "Tropaya", subtitle: "Sativa · pre-roll 2pk · 1g", price: 24, tag: "", category: "Pre-rolls", effect: "creative", strainType: "Sativa", thcLabel: "28% THCa", imageId: "1620912189858-7c6e6e6e9e1a", lot: "0415-A" },
+    { slug: "sour-diesel", name: "Sour Diesel", subtitle: "Sativa · 3.5g flower", price: 45, tag: "", category: "Flower", effect: "focus", strainType: "Sativa", thcLabel: "31% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0414-A" },
+    { slug: "zlushiez", name: "Zlushiez Smalls", subtitle: "Hybrid · 14g · smalls", price: 89, tag: "Value", category: "Flower", effect: "chill", strainType: "Hybrid", thcLabel: "24% THCa", imageId: "1603909223429-69bb7101f420", lot: "0413-A" },
+    { slug: "cool-cocol", name: "Cool Cocol Push", subtitle: "Indica · rosin gummies · 100mg", price: 28, tag: "", category: "Edibles", effect: "sleep", strainType: "Indica", thcLabel: "10mg/pc", imageId: "1582719201953-1419caa3b91b", lot: "0412-A" },
+    { slug: "papaya-bomb", name: "Papaya Bomb", subtitle: "Hybrid · distillate vape · 1g", price: 39, tag: "", category: "Vapes", effect: "chill", strainType: "Hybrid", thcLabel: "88% THC", imageId: "1605283176567-0c98c0f57f50", lot: "0411-A" },
+    { slug: "hudson-haze", name: "Hudson Haze", subtitle: "Sativa · 3.5g · house strain", price: 54, tag: "House", category: "Flower", effect: "focus", strainType: "Sativa", thcLabel: "30% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0410-A" },
   ];
   for (const p of highgroveProducts) {
     await payload.create({
       collection: "products",
-      data: { name: p.name, price: p.price, status: "published", tenant: tenantC.id },
+      data: {
+        ...p,
+        status: "published",
+        tenant: tenantC.id,
+        tag: p.tag || undefined,
+        terpenes: terpenesFor[p.strainType],
+        description: `${p.name} — ${p.subtitle}. Single-farm THCa, hand-trimmed and slow-cured in Columbia County, NY. Lot ${p.lot}, third-party tested.`,
+      },
     });
   }
   payload.logger.info(`Created ${highgroveProducts.length} Highgrove products`);
