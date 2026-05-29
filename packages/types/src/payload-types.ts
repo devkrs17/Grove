@@ -83,6 +83,9 @@ export interface Config {
     'partner-locations': PartnerLocation;
     'inventory-levels': InventoryLevel;
     fulfillments: Fulfillment;
+    'ledger-accounts': LedgerAccount;
+    'ledger-entries': LedgerEntry;
+    settlements: Settlement;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +109,9 @@ export interface Config {
     'partner-locations': PartnerLocationsSelect<false> | PartnerLocationsSelect<true>;
     'inventory-levels': InventoryLevelsSelect<false> | InventoryLevelsSelect<true>;
     fulfillments: FulfillmentsSelect<false> | FulfillmentsSelect<true>;
+    'ledger-accounts': LedgerAccountsSelect<false> | LedgerAccountsSelect<true>;
+    'ledger-entries': LedgerEntriesSelect<false> | LedgerEntriesSelect<true>;
+    settlements: SettlementsSelect<false> | SettlementsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -496,6 +502,63 @@ export interface Fulfillment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-accounts".
+ */
+export interface LedgerAccount {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  name: string;
+  type: 'platform_fee' | 'customer_funds' | 'partner_payable' | 'supplier_payable' | 'refunds_payable';
+  ownerType?: ('platform' | 'partner' | 'supplier' | 'customer') | null;
+  ownerRef?: string | null;
+  currency: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-entries".
+ */
+export interface LedgerEntry {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  transactionId: string;
+  account: number | LedgerAccount;
+  direction: 'debit' | 'credit';
+  amount: number;
+  currency: string;
+  refType?: ('order' | 'settlement' | 'payout' | 'refund' | 'adjustment') | null;
+  refId?: string | null;
+  postedAt?: string | null;
+  memo?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settlements".
+ */
+export interface Settlement {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  order: number | Order;
+  status?: ('pending' | 'allocated' | 'posted' | 'reconciled') | null;
+  allocations?:
+    | {
+        payeeType?: ('platform' | 'supplier' | 'partner') | null;
+        payeeRef?: string | null;
+        amount?: number | null;
+        basis?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  computedAt?: string | null;
+  postedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -581,6 +644,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'fulfillments';
         value: number | Fulfillment;
+      } | null)
+    | ({
+        relationTo: 'ledger-accounts';
+        value: number | LedgerAccount;
+      } | null)
+    | ({
+        relationTo: 'ledger-entries';
+        value: number | LedgerEntry;
+      } | null)
+    | ({
+        relationTo: 'settlements';
+        value: number | Settlement;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -937,6 +1012,60 @@ export interface FulfillmentsSelect<T extends boolean = true> {
   assignedAt?: T;
   deliveredAt?: T;
   trackingRef?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-accounts_select".
+ */
+export interface LedgerAccountsSelect<T extends boolean = true> {
+  tenant?: T;
+  name?: T;
+  type?: T;
+  ownerType?: T;
+  ownerRef?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ledger-entries_select".
+ */
+export interface LedgerEntriesSelect<T extends boolean = true> {
+  tenant?: T;
+  transactionId?: T;
+  account?: T;
+  direction?: T;
+  amount?: T;
+  currency?: T;
+  refType?: T;
+  refId?: T;
+  postedAt?: T;
+  memo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settlements_select".
+ */
+export interface SettlementsSelect<T extends boolean = true> {
+  tenant?: T;
+  order?: T;
+  status?: T;
+  allocations?:
+    | T
+    | {
+        payeeType?: T;
+        payeeRef?: T;
+        amount?: T;
+        basis?: T;
+        id?: T;
+      };
+  computedAt?: T;
+  postedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

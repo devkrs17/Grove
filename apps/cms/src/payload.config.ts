@@ -22,6 +22,9 @@ import {
   PartnerLocations,
   InventoryLevels,
   Fulfillments,
+  LedgerAccounts,
+  LedgerEntries,
+  Settlements,
   seed,
 } from "@grove/payload";
 
@@ -53,6 +56,9 @@ export default buildConfig({
     PartnerLocations,
     InventoryLevels,
     Fulfillments,
+    LedgerAccounts,
+    LedgerEntries,
+    Settlements,
   ],
   admin: {
     user: Users.slug,
@@ -77,6 +83,9 @@ export default buildConfig({
         "partner-locations": {},
         "inventory-levels": {},
         fulfillments: {},
+        "ledger-accounts": {},
+        "ledger-entries": {},
+        settlements: {},
       },
       tenantsSlug: "tenants",
       userHasAccessToAllTenants: (user) =>
