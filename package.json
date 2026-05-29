@@ -9,6 +9,11 @@
     "test": "turbo test",
     "test:coverage": "turbo test -- --coverage",
     "generate:types": "pnpm --filter @grove/cms generate:types",
+    "docker:up": "docker compose -f docker-compose.full.yml up -d",
+    "docker:down": "docker compose -f docker-compose.full.yml down",
+    "docker:restart": "docker compose -f docker-compose.full.yml restart",
+    "docker:rebuild": "docker compose -f docker-compose.full.yml up -d --build",
+    "docker:logs": "docker compose -f docker-compose.full.yml logs -f",
     "prepare": "husky"
   },
   "devDependencies": {

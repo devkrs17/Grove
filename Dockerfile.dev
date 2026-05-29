@@ -1,0 +1,23 @@
+# Development image for the Grove monorepo.
+#
+# One image is shared by every app container (web, dashboard, cms) and by the
+# one-shot dependency installer. Source code and node_modules are supplied at
+# runtime as volumes (see docker-compose.full.yml), so nothing is copied in here
+# and a source edit on the host is picked up live by the running container.
+
+FROM node:22-bookworm-slim
+
+# sharp / @parcel/watcher / esbuild ship prebuilt binaries, but keep node-gyp's
+# toolchain available so the occasional source build won't fail.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends python3 make g++ \
+  && rm -rf /var/lib/apt/lists/*
+
+# Pin the exact pnpm version the repo declares (package.json "packageManager").
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
+
+# Keep the package store on a dedicated volume so reinstalls are fast.
+RUN pnpm config set store-dir /pnpm/store
+
+ENV NEXT_TELEMETRY_DISABLED=1
+WORKDIR /app

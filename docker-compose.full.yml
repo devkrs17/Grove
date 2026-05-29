@@ -1,0 +1,116 @@
+# Full Grove stack in containers, for local development with hot reload.
+#
+#   docker compose -f docker-compose.full.yml up
+#
+# Runs PostgreSQL plus all three apps. Your source folder is mounted into the
+# containers, so saving a file reloads the running app. You do NOT need Node or
+# pnpm installed on your computer for this — only Docker.
+#
+#   web        http://localhost:3000   public store / marketing site
+#   dashboard  http://localhost:3001   staff dashboard
+#   cms        http://localhost:3002   admin / content editor (Payload)
+#
+# Stop with Ctrl+C. To also wipe the database and installed packages:
+#   docker compose -f docker-compose.full.yml down -v
+#
+# Kept separate from docker-compose.yml (Postgres only) so the existing
+# `pnpm setup` + `pnpm dev` workflow is unaffected.
+
+name: grove-dev
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  init: true
+  environment: &app-env
+    NEXT_TELEMETRY_DISABLED: "1"
+    # Poll for file changes so hot reload works over the host bind mount
+    # (the native file-watch events don't cross the Windows/macOS boundary).
+    WATCHPACK_POLLING: "true"
+    CHOKIDAR_USEPOLLING: "true"
+  volumes: &app-volumes
+    - .:/app
+    - pnpm_store:/pnpm/store
+    # Keep each node_modules inside the container instead of the host mount.
+    - root_node_modules:/app/node_modules
+    - web_node_modules:/app/apps/web/node_modules
+    - dashboard_node_modules:/app/apps/dashboard/node_modules
+    - cms_node_modules:/app/apps/cms/node_modules
+    - payload_node_modules:/app/packages/payload/node_modules
+    - ui_node_modules:/app/packages/ui/node_modules
+    - types_node_modules:/app/packages/types/node_modules
+    - config_node_modules:/app/packages/config/node_modules
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: grove_dev
+      POSTGRES_USER: grove
+      POSTGRES_PASSWORD: grove_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grove -d grove_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Installs all workspace dependencies into the shared volumes once, then exits.
+  # The app services wait for this to finish before starting.
+  install:
+    <<: *app
+    command: pnpm install --frozen-lockfile
+    restart: "no"
+
+  web:
+    <<: *app
+    command: pnpm --filter @grove/web exec next dev -H 0.0.0.0 -p 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      install:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  dashboard:
+    <<: *app
+    command: pnpm --filter @grove/dashboard exec next dev -H 0.0.0.0 -p 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      install:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  cms:
+    <<: *app
+    command: pnpm --filter @grove/cms exec next dev -H 0.0.0.0 -p 3002
+    ports:
+      - "3002:3002"
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql://grove:grove_dev_password@postgres:5432/grove_dev
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-grove_dev_payload_secret_change_me}
+      SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL:-admin@grove.dev}
+    depends_on:
+      install:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  pnpm_store:
+  root_node_modules:
+  web_node_modules:
+  dashboard_node_modules:
+  cms_node_modules:
+  payload_node_modules:
+  ui_node_modules:
+  types_node_modules:
+  config_node_modules:
