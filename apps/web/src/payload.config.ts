@@ -72,6 +72,10 @@ export default buildConfig({
   endpoints: [importProductsEndpoint],
   admin: {
     user: Users.slug,
+    components: {
+      // CSV product import widget, rendered on the admin dashboard (KRI-94).
+      beforeDashboard: ["/components/ImportProducts#ImportProducts"],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
