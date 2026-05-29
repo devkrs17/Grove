@@ -45,7 +45,7 @@ describe("middleware", () => {
     await middleware(makeRequest("acme-art.localhost:3000"));
 
     expect(fetch).toHaveBeenCalledWith(
-      "http://localhost:3002/api/resolve-tenant?domain=acme-art.localhost"
+      "http://localhost:3000/api/resolve-tenant?domain=acme-art.localhost"
     );
     expect(NextResponse.next).toHaveBeenCalledWith({
       request: {
@@ -86,7 +86,7 @@ describe("middleware", () => {
 
     await middleware(makeRequest("acme-art.localhost:3000"));
     expect(fetch).toHaveBeenCalledWith(
-      "http://localhost:3002/api/resolve-tenant?domain=acme-art.localhost"
+      "http://localhost:3000/api/resolve-tenant?domain=acme-art.localhost"
     );
   });
 

@@ -8,7 +8,7 @@
     "check-types": "turbo check-types",
     "test": "turbo test",
     "test:coverage": "turbo test -- --coverage",
-    "generate:types": "pnpm --filter @grove/cms generate:types",
+    "generate:types": "pnpm --filter @grove/web generate:types",
     "docker:up": "docker compose -f docker-compose.full.yml up -d",
     "docker:down": "docker compose -f docker-compose.full.yml down",
     "docker:restart": "docker compose -f docker-compose.full.yml restart",

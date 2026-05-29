@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wildflower &amp; Wax — Storefront mockup</title>
+<!--
+  Static storefront mockup for the Wildflower & Wax demo tenant.
+  Pure HTML/CSS, no build step — open directly in a browser.
+  The brand palette below mirrors the seed BrandConfig (KRI-90) so this
+  mockup is the visual target the real storefront (apps/web) builds toward.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand tokens — mirror BrandConfig for the Wildflower & Wax site */
+    --brand-primary: #6B4E71;   /* muted plum   */
+    --brand-secondary: #E8D5C4; /* warm sand    */
+    --brand-accent: #C2956B;    /* caramel      */
+    --brand-bg: #FBF7F2;        /* cream        */
+    --brand-text: #2E2A2B;      /* near-black   */
+    --brand-primary-soft: #6b4e7115;
+    --font-heading: "Fraunces", Georgia, serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --radius: 14px;
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--brand-text);
+    background: var(--brand-bg);
+    line-height: 1.55;
+  }
+  h1, h2, h3 { font-family: var(--font-heading); font-weight: 600; margin: 0; line-height: 1.1; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Top bar ---- */
+  .announce {
+    background: var(--brand-primary);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: .04em;
+    text-align: center;
+    padding: 9px 12px;
+  }
+
+  header.site {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--brand-bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #00000010;
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 76px; gap: 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .mark {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--brand-accent), var(--brand-primary));
+    display: grid; place-items: center; color: #fff; font-family: var(--font-heading);
+    font-size: 18px;
+  }
+  .brand .name { font-family: var(--font-heading); font-size: 22px; letter-spacing: .01em; }
+  .brand .name small { display: block; font-family: var(--font-body); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--brand-primary); }
+  nav.links { display: flex; gap: 28px; font-size: 15px; }
+  nav.links a { padding: 6px 0; border-bottom: 2px solid transparent; }
+  nav.links a:hover { border-color: var(--brand-accent); }
+  .cart {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--brand-primary); color: #fff;
+    padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 500;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    background:
+      linear-gradient(180deg, transparent, var(--brand-bg) 96%),
+      linear-gradient(120deg, var(--brand-secondary), #f3e7da);
+    padding: 84px 0 72px;
+  }
+  .hero .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  .hero .eyebrow { text-transform: uppercase; letter-spacing: .22em; font-size: 12px; color: var(--brand-primary); font-weight: 600; }
+  .hero h1 { font-size: 54px; margin: 16px 0 18px; }
+  .hero p { font-size: 18px; max-width: 46ch; color: #4b4446; margin: 0 0 28px; }
+  .btn {
+    display: inline-block; background: var(--brand-primary); color: #fff;
+    padding: 14px 28px; border-radius: 999px; font-weight: 500; font-size: 15px;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); background: #5a4060; }
+  .btn.ghost { background: transparent; color: var(--brand-primary); border: 1.5px solid var(--brand-primary); margin-left: 10px; }
+  .hero .art {
+    aspect-ratio: 4/5; border-radius: var(--radius);
+    background:
+      radial-gradient(circle at 70% 20%, #ffffff55, transparent 40%),
+      linear-gradient(160deg, var(--brand-accent), var(--brand-primary));
+    box-shadow: 0 30px 60px -30px var(--brand-primary);
+    position: relative; overflow: hidden;
+  }
+  .hero .art span {
+    position: absolute; bottom: 22px; left: 24px; color: #fff;
+    font-family: var(--font-heading); font-size: 22px; opacity: .92;
+  }
+
+  /* ---- Products ---- */
+  section.products { padding: 72px 0 90px; }
+  .sec-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 34px; }
+  .sec-head h2 { font-size: 34px; }
+  .sec-head p { margin: 6px 0 0; color: #6b6366; }
+  .sec-head a { color: var(--brand-primary); font-weight: 500; font-size: 15px; }
+
+  .grid-products {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  }
+  .card {
+    background: #fff; border-radius: var(--radius); overflow: hidden;
+    border: 1px solid #00000008;
+    box-shadow: 0 1px 2px #0000000a;
+    transition: transform .18s ease, box-shadow .18s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -28px var(--brand-primary); }
+  .card .thumb { aspect-ratio: 1/1; position: relative; }
+  .card .thumb .badge {
+    position: absolute; top: 14px; left: 14px; background: #fff; color: var(--brand-primary);
+    font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 999px;
+  }
+  .card .body { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card h3 { font-size: 19px; }
+  .card .desc { font-size: 14px; color: #6b6366; flex: 1; }
+  .card .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .card .price { font-family: var(--font-heading); font-size: 20px; }
+  .card .add {
+    border: 1.5px solid var(--brand-primary); color: var(--brand-primary); background: transparent;
+    padding: 8px 16px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .card .add:hover { background: var(--brand-primary); color: #fff; }
+
+  /* product image swatches (stand-ins for real photography) */
+  .ph { width: 100%; height: 100%; }
+  .ph-1 { background: linear-gradient(150deg, #b9a0c4, var(--brand-primary)); }
+  .ph-2 { background: linear-gradient(150deg, #f0e2cf, var(--brand-accent)); }
+  .ph-3 { background: linear-gradient(150deg, #8fa68a, #51624d); }
+  .ph-4 { background: linear-gradient(150deg, #f4cf86, #d79a3f); }
+  .ph-5 { background: linear-gradient(150deg, #e6c9d4, #b07b93); }
+  .ph-6 { background: linear-gradient(150deg, #cfd2d6, #8c9197); }
+
+  /* ---- Footer ---- */
+  footer.site { background: var(--brand-primary); color: #fff; padding: 56px 0 40px; margin-top: 20px; }
+  footer .grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  footer h4 { font-family: var(--font-heading); font-size: 20px; margin: 0 0 6px; }
+  footer p, footer a { color: #ffffffcc; font-size: 14px; }
+  footer .cols { display: flex; gap: 56px; flex-wrap: wrap; }
+  footer .col a { display: block; margin: 8px 0; }
+  footer .legal { border-top: 1px solid #ffffff22; margin-top: 36px; padding-top: 18px; font-size: 12px; color: #ffffff99; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .mock-note { font-size: 12px; color: #ffffff99; }
+
+  @media (max-width: 880px) {
+    .hero .grid { grid-template-columns: 1fr; }
+    .hero .art { order: -1; aspect-ratio: 16/10; }
+    .grid-products { grid-template-columns: repeat(2, 1fr); }
+    nav.links { display: none; }
+    .hero h1 { font-size: 40px; }
+  }
+  @media (max-width: 560px) {
+    .grid-products { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Free local delivery on orders over $40 · Hand-poured in small batches</div>
+
+  <header class="site">
+    <div class="wrap nav">
+      <a class="brand" href="#">
+        <span class="mark">W</span>
+        <span class="name">Wildflower &amp; Wax<small>Boutique Candle Co.</small></span>
+      </a>
+      <nav class="links">
+        <a href="#shop">Shop</a>
+        <a href="#">Candles</a>
+        <a href="#">Natural Goods</a>
+        <a href="#">Our Story</a>
+      </nav>
+      <a class="cart" href="#">🛍 Cart · 0</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap grid">
+      <div>
+        <div class="eyebrow">Small-batch · Hand-poured</div>
+        <h1>Light that feels like home.</h1>
+        <p>Natural soy and beeswax candles, raw honey, and botanical goods — made slowly, in small batches, with ingredients you can pronounce.</p>
+        <a class="btn" href="#shop">Shop the collection</a>
+        <a class="btn ghost" href="#">Our story</a>
+      </div>
+      <div class="art"><span>Cedar &amp; Sage, freshly poured</span></div>
+    </div>
+  </section>
+
+  <section class="products" id="shop">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <h2>Best sellers</h2>
+          <p>Six of our most-loved pieces, ready to ship.</p>
+        </div>
+        <a href="#">View all →</a>
+      </div>
+
+      <div class="grid-products">
+        <article class="card">
+          <div class="thumb"><div class="ph ph-1"></div><span class="badge">Best seller</span></div>
+          <div class="body">
+            <h3>Lavender Soy Candle</h3>
+            <p class="desc">Hand-poured soy wax with French lavender essential oil, 50-hour burn.</p>
+            <div class="row"><span class="price">$24.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><div class="ph ph-2"></div></div>
+          <div class="body">
+            <h3>Beeswax Taper Set</h3>
+            <p class="desc">Pure beeswax tapers, naturally honey-scented and dripless. Sold as a pair.</p>
+            <div class="row"><span class="price">$18.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><div class="ph ph-3"></div><span class="badge">New</span></div>
+          <div class="body">
+            <h3>Cedar &amp; Sage Candle</h3>
+            <p class="desc">Smoky cedarwood balanced with fresh garden sage.</p>
+            <div class="row"><span class="price">$26.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><div class="ph ph-4"></div></div>
+          <div class="body">
+            <h3>Wildflower Honey, 8oz</h3>
+            <p class="desc">Raw, unfiltered local wildflower honey.</p>
+            <div class="row"><span class="price">$12.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><div class="ph ph-5"></div></div>
+          <div class="body">
+            <h3>Botanical Wax Melts</h3>
+            <p class="desc">Assorted floral wax melts for warmers. Six-pack.</p>
+            <div class="row"><span class="price">$14.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><div class="ph ph-6"></div></div>
+          <div class="body">
+            <h3>Reusable Candle Tin</h3>
+            <p class="desc">Refillable brushed-steel tin with a snug lid.</p>
+            <div class="row"><span class="price">$9.00</span><button class="add">Add to cart</button></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <h4>Wildflower &amp; Wax</h4>
+          <p>Hand-poured candles &amp; natural goods.<br />Made in small batches.</p>
+        </div>
+        <div class="cols">
+          <div class="col">
+            <strong>Shop</strong>
+            <a href="#">Candles</a><a href="#">Honey</a><a href="#">Wax melts</a>
+          </div>
+          <div class="col">
+            <strong>Company</strong>
+            <a href="#">Our story</a><a href="#">Stockists</a><a href="#">Contact</a>
+          </div>
+          <div class="col">
+            <strong>Help</strong>
+            <a href="#">Shipping</a><a href="#">Returns</a><a href="#">FAQ</a>
+          </div>
+        </div>
+      </div>
+      <div class="legal">
+        <span>© 2026 Wildflower &amp; Wax. All rights reserved.</span>
+        <span class="mock-note">Static demo mockup · powered by Grove · palette mirrors BrandConfig (KRI-90)</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

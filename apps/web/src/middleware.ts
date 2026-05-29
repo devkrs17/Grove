@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const hostname = host.split(":")[0];
-  const cmsUrl = process.env.CMS_URL ?? "http://localhost:3002";
+  const cmsUrl = process.env.CMS_URL ?? "http://localhost:3000";
 
   try {
     const response = await fetch(

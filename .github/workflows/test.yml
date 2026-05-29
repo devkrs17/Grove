@@ -87,9 +87,7 @@ jobs:
             const packages = [
               'packages/payload',
               'packages/ui',
-              'apps/cms',
               'apps/web',
-              'apps/dashboard',
             ];
 
             let summary = '## Test Results\n\n';

@@ -1,10 +1,11 @@
 {
   "extends": "@grove/config/tsconfig/nextjs",
   "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@payload-config": ["./src/payload.config.ts"]
     }
   },
   "include": [
@@ -14,7 +15,5 @@
     "src/**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
