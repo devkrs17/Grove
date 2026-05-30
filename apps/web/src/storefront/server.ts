@@ -11,8 +11,8 @@ import { mapProduct, mapProducts } from "@/lib/storefront";
 import type { Product } from "./data";
 
 // When no tenant resolves from the host (e.g. plain localhost), the storefront
-// falls back to the Highgrove demo tenant so the finished design is visible.
-const DEFAULT_TENANT_SLUG = "highgrove";
+// falls back to the Blinkers demo tenant so the finished design is visible.
+const DEFAULT_TENANT_SLUG = "blinkers";
 
 async function resolveTenantId(payload: Payload, tenantId: string | null): Promise<number | null> {
   if (tenantId) {

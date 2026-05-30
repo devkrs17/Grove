@@ -12,7 +12,7 @@ export function Announce({ message = ANNOUNCE }: { message?: string }) {
   return <div className="announce">{message}</div>;
 }
 
-// Footer Learn/Help labels map to CMS pages by slug (matches scripts/seed-pages.mjs).
+// Footer Learn/Help labels map to CMS pages by slug (matches the page slugs seeded in packages/payload/src/seed.ts).
 const pageHref = (label: string) =>
   `/${label.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`;
 

@@ -35,7 +35,7 @@ const DEFAULTS = {
   heroSubhead:
     "A tight shelf of THCa edibles, rosin, and vapes — lab-tested, traceable, shipped discreet. Picked because we actually use them.",
   heroRating: "4.9 · 15,000+ reviews · free shipping $99+",
-  heroImage: "/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg",
+  heroImage: "/packs/blinkers_flip_gelato_pie_pineapple_haze.jpg",
   marqueeItems: [
     "New drop",
     "Lab-tested lots",
@@ -52,7 +52,7 @@ const DEFAULTS = {
     "So we built the shelf we wanted. Litt's loud-flavored edibles, 710 Nomad's solventless rosin, and our own Blinkers Flip vapes. Every lot third-party tested and traceable.",
     "If we wouldn't hand it to a friend, it doesn't make the cut.",
   ],
-  storyImage: "/api/media/file/blinkers_flip_gushers_banana_mochi.jpg",
+  storyImage: "/packs/blinkers_flip_gushers_banana_mochi.jpg",
   reviewsHeading: "Loved by the group chat.",
   reviews: [
     { title: "Honestly obsessed", body: "The Blinkers Flip carts actually taste like the flavor on the box, and they last forever.", author: "Maya T." },
