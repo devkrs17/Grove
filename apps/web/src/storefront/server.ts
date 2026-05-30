@@ -5,7 +5,7 @@
 
 import { getPayload, type Payload, type Where } from "payload";
 import config from "@payload-config";
-import type { Page } from "@grove/types";
+import type { Page, Homepage } from "@grove/types";
 import { getTenantContext } from "@/lib/tenant";
 import { mapProduct, mapProducts } from "@/lib/storefront";
 import type { Product } from "./data";
@@ -97,6 +97,24 @@ export async function getStorefrontPageBySlug(slug: string): Promise<Page | null
     },
     overrideAccess: true,
     depth: 0,
+    limit: 1,
+  });
+  return docs[0] ?? null;
+}
+
+/** The per-tenant homepage document for the resolved (or default) tenant, or null. */
+export async function getHomepage(): Promise<Homepage | null> {
+  const payload = await getPayload({ config });
+  const { tenantId } = await getTenantContext();
+  const effective = await resolveTenantId(payload, tenantId);
+  if (!effective) {
+    return null;
+  }
+  const { docs } = await payload.find({
+    collection: "homepage",
+    where: { tenant: { equals: effective } },
+    overrideAccess: true,
+    depth: 1,
     limit: 1,
   });
   return docs[0] ?? null;

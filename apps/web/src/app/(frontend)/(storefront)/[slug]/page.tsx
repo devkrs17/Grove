@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RichText } from "@payloadcms/richtext-lexical/react";
 import { Announce, Footer, Nav } from "@/storefront/components/Chrome";
+import { GroveShell } from "@/storefront/components/GroveShell";
 import { getStorefrontPageBySlug } from "@/storefront/server";
 
 // Renders a CMS-managed marketing page (About, Lab reports, Contact, …) for the
@@ -24,7 +25,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
   if (!page) notFound();
 
   return (
-    <>
+    <GroveShell>
       <Announce />
       <Nav />
       <div className="shell">
@@ -38,6 +39,6 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
         </article>
       </div>
       <Footer />
-    </>
+    </GroveShell>
   );
 }

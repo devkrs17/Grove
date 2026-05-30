@@ -1,17 +1,14 @@
-import { Announce, Footer, Nav } from "@/storefront/components/Chrome";
-import { Home } from "@/storefront/components/Home";
-import { getStorefrontProducts } from "@/storefront/server";
+import "@/storefront/blinkers/blinkers.css";
+import { BlinkersHome } from "@/storefront/blinkers/BlinkersHome";
+import { getHomepage, getStorefrontProducts } from "@/storefront/server";
 
-export const metadata = { title: "Highgrove — Small-batch THCa" };
+export const metadata = { title: "Blinkers — Loud flavor, clean labs." };
 
 export default async function StorefrontHomePage() {
-  const products = await getStorefrontProducts();
+  const [products, homepage] = await Promise.all([getStorefrontProducts(), getHomepage()]);
   return (
-    <>
-      <Announce />
-      <Nav />
-      <Home products={products} />
-      <Footer />
-    </>
+    <div className="blinkers">
+      <BlinkersHome products={products} homepage={homepage} />
+    </div>
   );
 }

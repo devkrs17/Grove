@@ -1,19 +1,11 @@
-// Live storefront layout. Loads the design kit stylesheets and scopes them
-// under the kit's `.grove` root with the Highgrove theme — the same wrapper the
-// static /storefront-preview uses, so the promoted storefront renders
-// identically while reading live Payload data. (Route group adds no URL
-// segment: pages here resolve at /, /shop, /products/[slug], /cart.)
-
 import type { ReactNode } from "react";
-import "../../../storefront/styles/colors_and_type.css";
-import "../../../storefront/styles/storefront.css";
-import "../../../storefront/styles/home.css";
-import "../../../storefront/styles/cannabis.css";
 
+// Each storefront page loads its own design system so the two stylesheets stay
+// isolated per route: legacy pages (shop, PDP, cart, content pages) wrap their
+// markup in <GroveShell> (the grove theme CSS); the home route imports the
+// Blinkers kit (blinkers.css). This layout is therefore a pass-through.
+// (Route group adds no URL segment: pages resolve at /, /shop, /products/[slug],
+// /cart, and /<page-slug>.)
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="grove" data-theme="highgrove">
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }
