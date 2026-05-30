@@ -8,7 +8,11 @@
     "lint": "next lint",
     "check-types": "tsc --noEmit",
     "generate:types": "node --require ./scripts/payload-compat.cjs --import tsx scripts/generate-types.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "payload": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js",
+    "migrate": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js migrate",
+    "migrate:create": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js migrate:create",
+    "seed": "node --require ./scripts/payload-compat.cjs --import tsx scripts/seed.mjs"
   },
   "dependencies": {
     "@grove/payload": "workspace:*",
@@ -18,6 +22,7 @@
     "@payloadcms/next": "^3",
     "@payloadcms/plugin-multi-tenant": "^3",
     "@payloadcms/richtext-lexical": "^3",
+    "@payloadcms/storage-vercel-blob": "^3.80.0",
     "@payloadcms/ui": "^3",
     "graphql": "^16",
     "next": "15.4.11",
