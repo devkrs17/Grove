@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { isAuthenticated, isSuperAdmin } from "./access";
+import { isAuthenticated, isAuthenticatedOrReadingFile, isSuperAdmin } from "./access";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -51,5 +51,27 @@ describe("isSuperAdmin", () => {
       req: { user: { email: "any@test.com" } },
     } as any);
     expect(result).toBe(false);
+  });
+});
+
+describe("isAuthenticatedOrReadingFile", () => {
+  it("allows anonymous reads of the static file so storefront images load", () => {
+    const result = isAuthenticatedOrReadingFile({
+      isReadingStaticFile: true,
+      req: { user: null },
+    } as any);
+    expect(result).toBe(true);
+  });
+
+  it("requires auth for the document API (no static file)", () => {
+    expect(
+      isAuthenticatedOrReadingFile({ isReadingStaticFile: false, req: { user: null } } as any),
+    ).toBe(false);
+    expect(
+      isAuthenticatedOrReadingFile({
+        isReadingStaticFile: false,
+        req: { user: { email: "a@b.com" } },
+      } as any),
+    ).toBe(true);
   });
 });

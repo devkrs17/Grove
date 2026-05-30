@@ -106,11 +106,20 @@ export const Products: CollectionConfig = {
       },
     },
     {
+      name: "featuredImage",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description:
+          "Primary product image, served from the Media library. Preferred over imageId; falls back to imageId when empty. (Named featuredImage, not image, because imageId already owns the image_id column.)",
+      },
+    },
+    {
       name: "imageId",
       type: "text",
       admin: {
         description:
-          "Product image: a full https URL, or an Unsplash photo id consumed by the storefront image helper.",
+          "Fallback product image when no Media image is set: a full https URL, or an Unsplash photo id consumed by the storefront image helper.",
       },
     },
     {

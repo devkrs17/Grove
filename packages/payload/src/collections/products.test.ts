@@ -42,8 +42,13 @@ describe("Products collection", () => {
     ]);
   });
 
-  it("has exactly 14 fields", () => {
-    expect(Products.fields).toHaveLength(14);
+  it("has exactly 15 fields", () => {
+    expect(Products.fields).toHaveLength(15);
+  });
+
+  it("has a featuredImage upload field relating to the media library", () => {
+    const image = Products.fields.find((f) => "name" in f && f.name === "featuredImage");
+    expect(image).toMatchObject({ type: "upload", relationTo: "media" });
   });
 
   it("has an optional slug text field for storefront URLs", () => {

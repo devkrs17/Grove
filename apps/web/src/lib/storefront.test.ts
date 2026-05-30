@@ -81,6 +81,33 @@ describe("mapProduct", () => {
     expect(view.description).toBeUndefined();
     expect(view.terpenes).toBeUndefined();
   });
+
+  it("prefers the uploaded Media image URL over imageId", () => {
+    const view = mapProduct(
+      makeDoc({
+        featuredImage: { id: 3, url: "/api/media/file/sour-grapes.jpg" },
+        imageId: "1603909223429-69bb7101f420",
+      } as Partial<PayloadProduct>),
+    );
+    expect(view.img).toBe("/api/media/file/sour-grapes.jpg");
+  });
+
+  it("falls back to imageId when featuredImage is an unpopulated id (depth 0)", () => {
+    const view = mapProduct(
+      makeDoc({ featuredImage: 3, imageId: "1603909223429-69bb7101f420" } as Partial<PayloadProduct>),
+    );
+    expect(view.img).toBe("1603909223429-69bb7101f420");
+  });
+
+  it("falls back to imageId when the uploaded image record has no URL", () => {
+    const view = mapProduct(
+      makeDoc({
+        featuredImage: { id: 3, url: null },
+        imageId: "1603909223429-69bb7101f420",
+      } as Partial<PayloadProduct>),
+    );
+    expect(view.img).toBe("1603909223429-69bb7101f420");
+  });
 });
 
 describe("mapProducts", () => {

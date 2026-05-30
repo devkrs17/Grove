@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Media } from "./media";
-import { isAuthenticated, isSuperAdmin } from "../access";
+import { isAuthenticatedOrReadingFile, isAuthenticated, isSuperAdmin } from "../access";
 
 describe("Media collection", () => {
   it("has slug 'media'", () => {
@@ -13,6 +13,15 @@ describe("Media collection", () => {
     expect(upload.imageSizes).toHaveLength(2);
     expect(upload.imageSizes[0].name).toBe("thumbnail");
     expect(upload.imageSizes[1].name).toBe("card");
+  });
+
+  it("configures local-disk storage restricted to images", () => {
+    const upload = Media.upload as any;
+    // Absolute staticDir so uploads land predictably regardless of cwd.
+    expect(typeof upload.staticDir).toBe("string");
+    expect(upload.staticDir.length).toBeGreaterThan(0);
+    expect(upload.staticDir.endsWith("media")).toBe(true);
+    expect(upload.mimeTypes).toEqual(["image/*"]);
   });
 
   it("has required alt text field", () => {
@@ -33,8 +42,8 @@ describe("Media collection", () => {
     expect(Media.fields).toHaveLength(2);
   });
 
-  it("allows read for authenticated users", () => {
-    expect(Media.access?.read).toBe(isAuthenticated);
+  it("serves files publicly but gates the document API behind auth", () => {
+    expect(Media.access?.read).toBe(isAuthenticatedOrReadingFile);
   });
 
   it("allows create for authenticated users", () => {

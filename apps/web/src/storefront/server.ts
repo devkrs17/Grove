@@ -41,7 +41,7 @@ export async function getStorefrontProducts(): Promise<Product[]> {
     collection: "products",
     where: publishedWhere(effective),
     overrideAccess: true,
-    depth: 0,
+    depth: 1, // populate the `image` upload relationship so its URL is available
     limit: 200,
   });
   return mapProducts(docs);
@@ -58,7 +58,7 @@ export async function getStorefrontProductBySlug(slug: string): Promise<Product 
     collection: "products",
     where,
     overrideAccess: true,
-    depth: 0,
+    depth: 1, // populate the `image` upload relationship so its URL is available
     limit: 1,
   });
   return docs[0] ? mapProduct(docs[0]) : null;

@@ -17,6 +17,11 @@ export function productHref(slugOrId: string): string {
  * shape the static design data uses, so live and demo data render identically.
  */
 export function mapProduct(doc: PayloadProduct): Product {
+  // Prefer the uploaded Media image (a populated relationship when fetched with
+  // depth >= 1) over the legacy imageId (full URL or Unsplash id). A bare id
+  // (depth 0) or an unpopulated relationship collapses to the imageId fallback.
+  const uploaded =
+    doc.featuredImage && typeof doc.featuredImage === "object" ? doc.featuredImage : null;
   return {
     id: String(doc.id),
     slug: doc.slug ?? String(doc.id),
@@ -28,7 +33,7 @@ export function mapProduct(doc: PayloadProduct): Product {
     effect: doc.effect ?? "",
     type: doc.strainType ?? "",
     thc: doc.thcLabel ?? "",
-    img: doc.imageId ?? "",
+    img: uploaded?.url ?? doc.imageId ?? "",
     lot: doc.lot ?? "",
     description: doc.description ?? undefined,
     terpenes: doc.terpenes ?? undefined,

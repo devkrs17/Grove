@@ -94,7 +94,10 @@ export const FOOT = {
     "Hemp under the 2018 Farm Bill · less than 0.3% Δ9 by dry weight. Not for use by anyone under 21. Keep away from children and pets. Do not drive or operate machinery.",
 };
 
+// `http…` (absolute) and `/…` (root-relative, e.g. Payload Media at
+// /api/media/file/…) are already real URLs and pass through untouched; anything
+// else is treated as an Unsplash photo id and expanded with the requested width.
 export const imgUrl = (id: string, w = 900) =>
-  id.startsWith("http")
+  id.startsWith("http") || id.startsWith("/")
     ? id
     : `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`;

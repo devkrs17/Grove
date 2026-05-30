@@ -1,4 +1,11 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import type { Payload } from "payload";
+
+// Committed branded placeholder images (packages/payload/seed-assets/) uploaded
+// into the Media collection so a couple of Highgrove products render from the
+// CMS rather than a (possibly stale) Unsplash imageId.
+const seedAssetsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../seed-assets");
 
 export const seed = async (payload: Payload): Promise<void> => {
   payload.logger.info("Seeding database...");
@@ -173,6 +180,28 @@ export const seed = async (payload: Payload): Promise<void> => {
     { slug: "papaya-bomb", name: "Papaya Bomb", subtitle: "Hybrid · distillate vape · 1g", price: 39, tag: "", category: "Vapes", effect: "chill", strainType: "Hybrid", thcLabel: "88% THC", imageId: "1605283176567-0c98c0f57f50", lot: "0411-A" },
     { slug: "hudson-haze", name: "Hudson Haze", subtitle: "Sativa · 3.5g · house strain", price: 54, tag: "House", category: "Flower", effect: "focus", strainType: "Sativa", thcLabel: "30% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0410-A" },
   ];
+  // Upload a couple of real Media images and key them by product slug so those
+  // products render from the CMS (the rest fall back to imageId).
+  const imageFileBySlug: Record<string, string> = {
+    "sour-grapes": "sour-grapes.jpg",
+    "super-boof": "super-boof.jpg",
+  };
+  const mediaIdBySlug: Record<string, number> = {};
+  for (const [slug, file] of Object.entries(imageFileBySlug)) {
+    const product = highgroveProducts.find((p) => p.slug === slug);
+    const media = await payload.create({
+      collection: "media",
+      data: {
+        alt: `${product?.name ?? slug} — Highgrove`,
+        site: siteC.id,
+        tenant: tenantC.id,
+      },
+      filePath: path.join(seedAssetsDir, file),
+    });
+    mediaIdBySlug[slug] = media.id;
+  }
+  payload.logger.info(`Uploaded ${Object.keys(mediaIdBySlug).length} Highgrove media images`);
+
   for (const p of highgroveProducts) {
     await payload.create({
       collection: "products",
@@ -181,6 +210,7 @@ export const seed = async (payload: Payload): Promise<void> => {
         status: "published",
         tenant: tenantC.id,
         tag: p.tag || undefined,
+        featuredImage: mediaIdBySlug[p.slug],
         terpenes: terpenesFor[p.strainType],
         description: `${p.name} — ${p.subtitle}. Single-farm THCa, hand-trimmed and slow-cured in Columbia County, NY. Lot ${p.lot}, third-party tested.`,
       },

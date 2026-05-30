@@ -8,6 +8,8 @@
     "lint": "next lint",
     "check-types": "tsc --noEmit",
     "generate:types": "node --require ./scripts/payload-compat.cjs --import tsx scripts/generate-types.mjs",
+    "seed:images": "node scripts/generate-seed-images.mjs",
+    "seed:highgrove": "node --require ./scripts/payload-compat.cjs --import tsx scripts/seed-highgrove.mjs",
     "test": "vitest run"
   },
   "dependencies": {

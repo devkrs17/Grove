@@ -10,6 +10,18 @@
 // Catalogue mirrors packages/payload/src/seed.ts (kept in sync by hand).
 
 import { readFileSync } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Committed seed images live in packages/payload/seed-assets/.
+const SEED_ASSETS_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../../packages/payload/seed-assets",
+);
+const IMAGE_FILE_BY_SLUG = {
+  "sour-grapes": "sour-grapes.jpg",
+  "super-boof": "super-boof.jpg",
+};
 
 // Load .env (same approach as scripts/generate-types.mjs).
 const envContent = readFileSync(".env", "utf-8");
@@ -101,6 +113,27 @@ if (!brand) {
   console.log("Created Highgrove brand config.");
 }
 
+// 4b. Media images (idempotent by alt within the tenant). Uploads a couple of
+// real CMS images so those products render from Media instead of imageId.
+const mediaIdBySlug = {};
+for (const [slug, file] of Object.entries(IMAGE_FILE_BY_SLUG)) {
+  const product = CATALOGUE.find((p) => p.slug === slug);
+  const alt = `${product?.name ?? slug} — Highgrove`;
+  let media = await findOne("media", {
+    and: [{ tenant: { equals: tenant.id } }, { alt: { equals: alt } }],
+  });
+  if (!media) {
+    media = await payload.create({
+      collection: "media",
+      data: { alt, site: site.id, tenant: tenant.id },
+      filePath: path.join(SEED_ASSETS_DIR, file),
+      overrideAccess: true,
+    });
+    console.log(`Uploaded Highgrove media: ${file}`);
+  }
+  mediaIdBySlug[slug] = media.id;
+}
+
 // 5. Products (upsert by tenant + name)
 let created = 0;
 let updated = 0;
@@ -122,6 +155,7 @@ for (const p of CATALOGUE) {
     terpenes: terpenesFor[p.strainType],
     description: `${p.name} — ${p.subtitle}. Single-farm THCa, hand-trimmed and slow-cured in Columbia County, NY. Lot ${p.lot}, third-party tested.`,
   };
+  if (mediaIdBySlug[p.slug]) data.featuredImage = mediaIdBySlug[p.slug];
 
   const existing = await findOne("products", {
     and: [{ tenant: { equals: tenant.id } }, { name: { equals: p.name } }],

@@ -18,6 +18,9 @@ dist/
 
 # payload
 # payload-types.ts is versioned in packages/types/src/
+# uploaded media (local-disk storage adapter); seed source images live in
+# packages/payload/seed-assets/ and ARE committed
+packages/payload/media/
 
 # coverage
 coverage/

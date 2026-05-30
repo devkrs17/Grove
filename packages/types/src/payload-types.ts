@@ -241,7 +241,11 @@ export interface Product {
    */
   tag?: string | null;
   /**
-   * Product image: a full https URL, or an Unsplash photo id consumed by the storefront image helper.
+   * Primary product image, served from the Media library. Preferred over imageId; falls back to imageId when empty. (Named featuredImage, not image, because imageId already owns the image_id column.)
+   */
+  featuredImage?: (number | null) | Media;
+  /**
+   * Fallback product image when no Media image is set: a full https URL, or an Unsplash photo id consumed by the storefront image helper.
    */
   imageId?: string | null;
   /**
@@ -250,6 +254,45 @@ export interface Product {
   terpenes?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  alt: string;
+  site?: (number | null) | Site;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -300,45 +343,6 @@ export interface BrandConfig {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  tenant?: (number | null) | Tenant;
-  alt: string;
-  site?: (number | null) | Site;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -898,6 +902,7 @@ export interface ProductsSelect<T extends boolean = true> {
   thcLabel?: T;
   lot?: T;
   tag?: T;
+  featuredImage?: T;
   imageId?: T;
   terpenes?: T;
   updatedAt?: T;
