@@ -82,15 +82,98 @@ const PRODUCTS: SeedProduct[] = [
   { name: "710 Nomad Rosin Red Rings Jar", category: "Concentrates", price: 180, subtitle: "Red Rings", description: NOMAD_DESCRIPTION, image: "710_nomad_red_rings" },
 
   // Blinkers Flip — Vapes, $80, no subtitle.
-  { name: "Blinkers Flip ( Gelato Pie & Pineapple Haze )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_gelato_pie_pineapple_haze" },
-  { name: "Blinkers Flip ( Green Apple Diesel & Blue Nerdz )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_green_apple_diesel_blue_nerdz" },
-  { name: "Blinkers Flip ( Pink Champagne & Superglue )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_pink_champagne_superglue" },
-  { name: "Blinkers Flip ( Mango Tango & Lemon Heads )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_mango_tango_lemon_heads" },
-  { name: "Blinkers Flip ( Forbidden Fruit & Pink Runtz )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_forbidden_fruit_pink_runtz" },
-  { name: "Blinkers Flip ( Gushers & Banana Mochi )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_gushers_banana_mochi" },
-  { name: "Blinkers Flip ( Lemon Slushie & Strawberry Cough )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_lemon_slushie_strawberry_cough" },
-  { name: "Blinkers Flip ( Watermelon Z & Lemon Cherry Gelato )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_watermelon_z_lemon_cherry_gelato" },
-  { name: "Blinkers Flip ( Tropical Grape & Melon Burst )", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_tropical_grape_melon_burst" },
+  { name: "Blinkers Flip Gelato Pie & Pineapple Haze", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_gelato_pie_pineapple_haze" },
+  { name: "Blinkers Flip Green Apple Diesel & Blue Nerdz", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_green_apple_diesel_blue_nerdz" },
+  { name: "Blinkers Flip Pink Champagne & Superglue", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_pink_champagne_superglue" },
+  { name: "Blinkers Flip Mango Tango & Lemon Heads", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_mango_tango_lemon_heads" },
+  { name: "Blinkers Flip Forbidden Fruit & Pink Runtz", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_forbidden_fruit_pink_runtz" },
+  { name: "Blinkers Flip Gushers & Banana Mochi", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_gushers_banana_mochi" },
+  { name: "Blinkers Flip Lemon Slushie & Strawberry Cough", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_lemon_slushie_strawberry_cough" },
+  { name: "Blinkers Flip Watermelon Z & Lemon Cherry Gelato", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_watermelon_z_lemon_cherry_gelato" },
+  { name: "Blinkers Flip Tropical Grape & Melon Burst", category: "Vapes", price: 80, description: BLINKERS_DESCRIPTION, image: "blinkers_flip_tropical_grape_melon_burst" },
+];
+
+// --- Lab reports ------------------------------------------------------------
+// One COA (Certificate of Analysis) per product, parallel to PRODUCTS[] (same
+// order) so each report links to the product captured at the same index. Values
+// mirror apps/web/public/lab-reports-mock.html: batch/lot codes, headline
+// potency, tested dates, and the per-lab mapping (Litt Edibles → Green
+// Scientific Labs, 710 Nomad Rosin → ACS Laboratory, Blinkers Flip → Kaycha
+// Labs). Every lot passes every screen. Deterministic — no Date.now/random.
+
+type Analyte = { name: string; value: string };
+
+type SeedLabReport = {
+  batchLot: string;
+  potency: string;
+  testedDate: string;
+  lab: string;
+  cannabinoids: Analyte[];
+  terpenes: string;
+};
+
+// The six safety screens every lot is checked against (mock "Sample COA"),
+// shared by every report — all results "Pass".
+const SAFETY_SCREENS: { name: string; result: string }[] = [
+  { name: "Pesticides", result: "Pass" },
+  { name: "Heavy metals", result: "Pass" },
+  { name: "Residual solvents", result: "Pass" },
+  { name: "Microbials", result: "Pass" },
+  { name: "Mycotoxins", result: "Pass" },
+  { name: "Water activity", result: "Pass" },
+];
+
+// Cannabinoid panel for an inhalable lot (vapes/concentrates), keyed off the
+// headline THCa %. Δ9-THC stays compliant; Total runs a touch above THCa.
+function inhalablePanel(thcaPct: number, totalPct: number): Analyte[] {
+  return [
+    { name: "THCa", value: `${thcaPct.toFixed(1)}%` },
+    { name: "Δ9-THC", value: "<0.3%" },
+    { name: "CBG", value: "0.6%" },
+    { name: "CBD", value: "0.1%" },
+    { name: "Total", value: `${totalPct.toFixed(1)}%` },
+  ];
+}
+
+// Cannabinoid panel for a 1000mg edible package (10 × 100mg pieces).
+function ediblePanel(): Analyte[] {
+  return [
+    { name: "THCa", value: "1000mg" },
+    { name: "Δ9-THC", value: "<1mg" },
+    { name: "CBG", value: "8mg" },
+    { name: "CBD", value: "5mg" },
+    { name: "Total", value: "1013mg" },
+  ];
+}
+
+const LAB_REPORTS: SeedLabReport[] = [
+  // Litt Edibles — Green Scientific Labs, 1000mg total.
+  { batchLot: "LE-TT24", potency: "1000mg total", testedDate: "2026-04-09", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Limonene · Myrcene · Linalool" },
+  { batchLot: "LE-CV24", potency: "1000mg total", testedDate: "2026-04-04", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Limonene · Terpinolene · Pinene" },
+  { batchLot: "LE-RR24", potency: "1000mg total", testedDate: "2026-03-06", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Myrcene · Caryophyllene · Limonene" },
+  { batchLot: "LE-FF24", potency: "1000mg total", testedDate: "2026-03-03", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Pinene · Myrcene · Humulene" },
+  { batchLot: "LE-CC24", potency: "1000mg total", testedDate: "2026-02-04", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Limonene · Linalool · Caryophyllene" },
+  { batchLot: "LE-GB24", potency: "1000mg total", testedDate: "2026-01-15", lab: "Green Scientific Labs", cannabinoids: ediblePanel(), terpenes: "Terpinolene · Limonene · Myrcene" },
+
+  // 710 Nomad Rosin — ACS Laboratory, solventless concentrate.
+  { batchLot: "RN-MP24", potency: "79.4% THCa", testedDate: "2026-04-11", lab: "ACS Laboratory", cannabinoids: inhalablePanel(79.4, 81.0), terpenes: "Caryophyllene · Limonene · Linalool" },
+  { batchLot: "RN-MH24", potency: "81.6% THCa", testedDate: "2026-03-14", lab: "ACS Laboratory", cannabinoids: inhalablePanel(81.6, 83.3), terpenes: "Myrcene · Pinene · Caryophyllene" },
+  { batchLot: "RN-RG24", potency: "77.8% THCa", testedDate: "2026-03-10", lab: "ACS Laboratory", cannabinoids: inhalablePanel(77.8, 79.5), terpenes: "Limonene · Terpinolene · Myrcene" },
+  { batchLot: "RN-ZP24", potency: "82.9% THCa", testedDate: "2026-02-12", lab: "ACS Laboratory", cannabinoids: inhalablePanel(82.9, 84.6), terpenes: "Caryophyllene · Limonene · Humulene" },
+  { batchLot: "RN-MF24", potency: "76.5% THCa", testedDate: "2026-02-07", lab: "ACS Laboratory", cannabinoids: inhalablePanel(76.5, 78.2), terpenes: "Myrcene · Limonene · Pinene" },
+  { batchLot: "RN-RR24", potency: "80.2% THCa", testedDate: "2026-01-21", lab: "ACS Laboratory", cannabinoids: inhalablePanel(80.2, 81.9), terpenes: "Limonene · Caryophyllene · Linalool" },
+
+  // Blinkers Flip — Kaycha Labs, 2g liquid-diamond disposable. Gelato Pie uses
+  // the mock's exact "Sample COA" panel (86.4% THCa / 88.1% total).
+  { batchLot: "BF-GP24", potency: "86.4% THCa", testedDate: "2026-04-22", lab: "Kaycha Labs", cannabinoids: inhalablePanel(86.4, 88.1), terpenes: "Limonene · Caryophyllene · Linalool" },
+  { batchLot: "BF-GA24", potency: "84.1% THCa", testedDate: "2026-04-18", lab: "Kaycha Labs", cannabinoids: inhalablePanel(84.1, 85.8), terpenes: "Terpinolene · Myrcene · Limonene" },
+  { batchLot: "BF-PC24", potency: "87.2% THCa", testedDate: "2026-03-28", lab: "Kaycha Labs", cannabinoids: inhalablePanel(87.2, 88.9), terpenes: "Limonene · Linalool · Caryophyllene" },
+  { batchLot: "BF-MT24", potency: "85.0% THCa", testedDate: "2026-03-24", lab: "Kaycha Labs", cannabinoids: inhalablePanel(85.0, 86.7), terpenes: "Myrcene · Limonene · Pinene" },
+  { batchLot: "BF-FF24", potency: "88.3% THCa", testedDate: "2026-03-19", lab: "Kaycha Labs", cannabinoids: inhalablePanel(88.3, 90.0), terpenes: "Caryophyllene · Limonene · Humulene" },
+  { batchLot: "BF-GU24", potency: "83.6% THCa", testedDate: "2026-02-25", lab: "Kaycha Labs", cannabinoids: inhalablePanel(83.6, 85.3), terpenes: "Limonene · Myrcene · Linalool" },
+  { batchLot: "BF-LS24", potency: "85.9% THCa", testedDate: "2026-02-20", lab: "Kaycha Labs", cannabinoids: inhalablePanel(85.9, 87.6), terpenes: "Terpinolene · Limonene · Caryophyllene" },
+  { batchLot: "BF-WZ24", potency: "86.8% THCa", testedDate: "2026-02-17", lab: "Kaycha Labs", cannabinoids: inhalablePanel(86.8, 88.5), terpenes: "Limonene · Caryophyllene · Myrcene" },
+  { batchLot: "BF-TG24", potency: "84.7% THCa", testedDate: "2026-01-28", lab: "Kaycha Labs", cannabinoids: inhalablePanel(84.7, 86.4), terpenes: "Myrcene · Terpinolene · Limonene" },
 ];
 
 // --- Pages ------------------------------------------------------------------
@@ -272,6 +355,30 @@ export const seed = async (payload: Payload): Promise<void> => {
     productIds.push(doc.id);
   }
   payload.logger.info(`Created ${productIds.length} products`);
+
+  // 5b. Lab reports. One COA per product, in the same order as PRODUCTS[] so
+  // each report links to the product captured at the matching index.
+  let labReportCount = 0;
+  for (let i = 0; i < LAB_REPORTS.length; i++) {
+    const r = LAB_REPORTS[i];
+    await payload.create({
+      collection: "lab-reports",
+      data: {
+        product: productIds[i],
+        tenant: tenant.id,
+        batchLot: r.batchLot,
+        potency: r.potency,
+        testedDate: r.testedDate,
+        lab: r.lab,
+        status: "pass",
+        cannabinoids: r.cannabinoids,
+        safetyScreens: SAFETY_SCREENS,
+        terpenes: r.terpenes,
+      },
+    });
+    labReportCount++;
+  }
+  payload.logger.info(`Created ${labReportCount} lab reports`);
 
   // 6. Pages.
   for (const p of PAGES) {

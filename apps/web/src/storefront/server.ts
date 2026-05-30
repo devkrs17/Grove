@@ -7,8 +7,8 @@ import { getPayload, type Payload, type Where } from "payload";
 import config from "@payload-config";
 import type { Page, Homepage } from "@grove/types";
 import { getTenantContext } from "@/lib/tenant";
-import { mapProduct, mapProducts } from "@/lib/storefront";
-import type { Product } from "./data";
+import { mapProduct, mapProducts, mapLabReports } from "@/lib/storefront";
+import type { Product, LabReport } from "./data";
 
 // When no tenant resolves from the host (e.g. plain localhost), the storefront
 // falls back to the Blinkers demo tenant so the finished design is visible.
@@ -118,4 +118,25 @@ export async function getHomepage(): Promise<Homepage | null> {
     limit: 1,
   });
   return docs[0] ?? null;
+}
+
+/**
+ * All lab reports (COAs) for the resolved (or default) tenant, newest test
+ * first, as view-models. Depth 2 populates each report's product and that
+ * product's featuredImage so the COA card has a name, brand, and image. The
+ * collection has no draft/publish, so there is no status filter.
+ */
+export async function getLabReports(): Promise<LabReport[]> {
+  const payload = await getPayload({ config });
+  const { tenantId } = await getTenantContext();
+  const effective = await resolveTenantId(payload, tenantId);
+  const { docs } = await payload.find({
+    collection: "lab-reports",
+    where: effective ? { tenant: { equals: effective } } : {},
+    overrideAccess: true,
+    sort: "-testedDate",
+    depth: 2, // populate the product relationship and its featuredImage
+    limit: 200,
+  });
+  return mapLabReports(docs);
 }

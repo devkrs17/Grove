@@ -75,6 +75,7 @@ export interface Config {
     'brand-configs': BrandConfig;
     pages: Page;
     homepage: Homepage;
+    'lab-reports': LabReport;
     media: Media;
     customers: Customer;
     'service-requests': ServiceRequest;
@@ -106,6 +107,7 @@ export interface Config {
     'brand-configs': BrandConfigsSelect<false> | BrandConfigsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    'lab-reports': LabReportsSelect<false> | LabReportsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     'service-requests': ServiceRequestsSelect<false> | ServiceRequestsSelect<true>;
@@ -448,6 +450,50 @@ export interface Homepage {
   emailCta?: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lab-reports".
+ */
+export interface LabReport {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  product: number | Product;
+  batchLot: string;
+  /**
+   * Headline potency for the lot, e.g. '86.4% THCa' or '1000mg total'.
+   */
+  potency?: string | null;
+  testedDate?: string | null;
+  /**
+   * Third-party testing lab, e.g. 'Kaycha Labs'.
+   */
+  lab?: string | null;
+  status?: ('pass' | 'fail' | 'pending') | null;
+  cannabinoids?:
+    | {
+        name?: string | null;
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  safetyScreens?:
+    | {
+        name?: string | null;
+        result?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional dominant-terpene summary, e.g. 'Limonene · Caryophyllene · Linalool'.
+   */
+  terpenes?: string | null;
+  /**
+   * The COA PDF for this lot, served from the Media library.
+   */
+  reportFile?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -820,6 +866,10 @@ export interface PayloadLockedDocument {
         value: number | Homepage;
       } | null)
     | ({
+        relationTo: 'lab-reports';
+        value: number | LabReport;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1100,6 +1150,37 @@ export interface HomepageSelect<T extends boolean = true> {
   emailCta?: T;
   metaTitle?: T;
   metaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lab-reports_select".
+ */
+export interface LabReportsSelect<T extends boolean = true> {
+  tenant?: T;
+  product?: T;
+  batchLot?: T;
+  potency?: T;
+  testedDate?: T;
+  lab?: T;
+  status?: T;
+  cannabinoids?:
+    | T
+    | {
+        name?: T;
+        value?: T;
+        id?: T;
+      };
+  safetyScreens?:
+    | T
+    | {
+        name?: T;
+        result?: T;
+        id?: T;
+      };
+  terpenes?: T;
+  reportFile?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -28,6 +28,26 @@ export type Product = {
 export type Effect = { id: string; label: string; desc: string; img: string };
 export type Facet = { name: string; options: string[] };
 
+// A lab report (COA) view-model for the /lab-reports storefront page. Mirrors
+// the Product view-model convention: null/absent CMS fields collapse to empty
+// strings so live and demo data render identically.
+export type LabReport = {
+  id: string;
+  productName: string;
+  brand: string;
+  category: string;
+  img: string;
+  batchLot: string;
+  potency: string;
+  testedDate: string;
+  lab: string;
+  status: string;
+  cannabinoids: { name: string; value: string }[];
+  safetyScreens: { name: string; result: string }[];
+  terpenes: string;
+  reportUrl: string;
+};
+
 export const BRAND = "Highgrove";
 export const TAGLINE =
   "Small-batch THCa from a single farm in the Hudson Valley.";

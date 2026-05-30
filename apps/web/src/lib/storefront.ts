@@ -3,8 +3,8 @@
 // fully tested. Async Payload data-access lives in src/storefront/server.ts
 // (a server-only module), keeping this file pure and importable anywhere.
 
-import type { Product as PayloadProduct } from "@grove/types";
-import type { Product } from "@/storefront/data";
+import type { Product as PayloadProduct, LabReport as PayloadLabReport, Media } from "@grove/types";
+import type { Product, LabReport } from "@/storefront/data";
 
 /** Storefront route helper: path to a product detail page. */
 export function productHref(slugOrId: string): string {
@@ -43,4 +43,95 @@ export function mapProduct(doc: PayloadProduct): Product {
 /** Maps a list of Payload product documents to storefront view-models. */
 export function mapProducts(docs: PayloadProduct[]): Product[] {
   return docs.map(mapProduct);
+}
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+] as const;
+
+/**
+ * Derives the brand line from a product name. The seed encodes the line as a
+ * prefix on the name; these are the three Blinkers product families. Anything
+ * else collapses to "" so the COA card omits the brand.
+ */
+export function brandFromName(name: string): string {
+  if (name.startsWith("Litt")) return "Litt Edibles";
+  if (name.startsWith("710 Nomad Rosin")) return "710 Nomad Rosin";
+  if (name.startsWith("Blinkers Flip")) return "Blinkers Flip";
+  return "";
+}
+
+/**
+ * Extracts the flavor label from a product name by stripping the brand prefix
+ * and surrounding "( … )", then rendering a blend's "&" as "×". E.g.
+ * "Blinkers Flip ( Gelato Pie & Pineapple Haze )" → "Gelato Pie × Pineapple Haze".
+ * Falls back to the brand-stripped (or whole) name when no parens are present.
+ */
+export function flavorFromName(name: string): string {
+  const brand = brandFromName(name);
+  const withoutBrand = brand ? name.slice(brand.length).trim() : name.trim();
+  const parenMatch = withoutBrand.match(/^\((.*)\)$/);
+  const inner = (parenMatch ? parenMatch[1] : withoutBrand).trim();
+  return inner.replace(/ & /g, " × ");
+}
+
+/**
+ * Formats an ISO date string as "MMM DD, YYYY" (e.g. "Apr 22, 2026") from its
+ * UTC parts, so the output is deterministic and locale-independent. Returns ""
+ * when the date is absent or unparseable.
+ */
+export function formatLabDate(value: string | null | undefined): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const month = MONTHS[date.getUTCMonth()];
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${month} ${day}, ${date.getUTCFullYear()}`;
+}
+
+/**
+ * Maps a Payload lab-report document to the storefront COA view-model. Mirrors
+ * mapProduct's null-collapsing convention. Expects depth >= 2 so `product` (and
+ * its `featuredImage`) are populated; an unpopulated product id collapses the
+ * product-derived fields to "".
+ */
+export function mapLabReport(doc: PayloadLabReport): LabReport {
+  const product =
+    doc.product && typeof doc.product === "object" ? doc.product : null;
+  const uploaded =
+    product?.featuredImage && typeof product.featuredImage === "object"
+      ? product.featuredImage
+      : null;
+  const reportFile =
+    doc.reportFile && typeof doc.reportFile === "object"
+      ? (doc.reportFile as Media)
+      : null;
+  return {
+    id: String(doc.id),
+    productName: product ? (product.subtitle ?? flavorFromName(product.name)) : "",
+    brand: product ? brandFromName(product.name) : "",
+    category: product?.category ?? "",
+    img: uploaded?.url ?? product?.imageId ?? "",
+    batchLot: doc.batchLot ?? "",
+    potency: doc.potency ?? "",
+    testedDate: formatLabDate(doc.testedDate),
+    lab: doc.lab ?? "",
+    status: doc.status ?? "",
+    cannabinoids: (doc.cannabinoids ?? []).map((c) => ({
+      name: c.name ?? "",
+      value: c.value ?? "",
+    })),
+    safetyScreens: (doc.safetyScreens ?? []).map((s) => ({
+      name: s.name ?? "",
+      result: s.result ?? "",
+    })),
+    terpenes: doc.terpenes ?? "",
+    reportUrl: reportFile?.url ?? "",
+  };
+}
+
+/** Maps a list of Payload lab-report documents to storefront view-models. */
+export function mapLabReports(docs: PayloadLabReport[]): LabReport[] {
+  return docs.map(mapLabReport);
 }

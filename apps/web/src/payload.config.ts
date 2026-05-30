@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildConfig } from "payload";
+import { buildConfig, type CollectionConfig } from "payload";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { multiTenantPlugin } from "@payloadcms/plugin-multi-tenant";
@@ -15,6 +15,7 @@ import {
   BrandConfigs,
   Pages,
   Homepage,
+  LabReports,
   Media,
   Customers,
   ServiceRequests,
@@ -38,6 +39,35 @@ import { importProductsEndpoint } from "./app/api/import-products/endpoint";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// --- Temporary MVP admin simplification (reversible) ---
+// The platform defines ~24 collections, but the MVP storefront/admin only needs
+// a handful. Rather than delete the others (their schemas, data, code, and tests
+// stay intact for the longer-term platform), we just hide them from the admin
+// nav by setting `admin.hidden: true`. To un-hide a collection, remove its slug
+// from HIDDEN below. This keeps the change in one app file so the shared
+// @grove/payload package and its 100%-coverage tests are untouched.
+const HIDDEN = new Set([
+  "customers",
+  "site-memberships",
+  "service-requests",
+  "orders",
+  "payments",
+  "partners",
+  "partner-locations",
+  "inventory-levels",
+  "fulfillments",
+  "ledger-accounts",
+  "ledger-entries",
+  "settlements",
+  "payout-batches",
+  "payouts",
+  "compliance-checks",
+  "audit-logs",
+]);
+
+const withAdminHidden = (c: CollectionConfig): CollectionConfig =>
+  HIDDEN.has(c.slug) ? { ...c, admin: { ...(c.admin ?? {}), hidden: true } } : c;
+
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || "dev-secret-change-me",
   editor: lexicalEditor(),
@@ -59,6 +89,7 @@ export default buildConfig({
     BrandConfigs,
     Pages,
     Homepage,
+    LabReports,
     Media,
     Customers,
     ServiceRequests,
@@ -75,7 +106,7 @@ export default buildConfig({
     Payouts,
     ComplianceChecks,
     AuditLogs,
-  ],
+  ].map(withAdminHidden),
   endpoints: [importProductsEndpoint],
   admin: {
     user: Users.slug,
@@ -96,6 +127,7 @@ export default buildConfig({
         "brand-configs": { isGlobal: true },
         pages: {},
         homepage: { isGlobal: true },
+        "lab-reports": {},
         media: {},
         customers: {},
         "service-requests": {},
