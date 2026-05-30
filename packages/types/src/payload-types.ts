@@ -74,6 +74,7 @@ export interface Config {
     'site-memberships': SiteMembership;
     'brand-configs': BrandConfig;
     pages: Page;
+    homepage: Homepage;
     media: Media;
     customers: Customer;
     'service-requests': ServiceRequest;
@@ -104,6 +105,7 @@ export interface Config {
     'site-memberships': SiteMembershipsSelect<false> | SiteMembershipsSelect<true>;
     'brand-configs': BrandConfigsSelect<false> | BrandConfigsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     'service-requests': ServiceRequestsSelect<false> | ServiceRequestsSelect<true>;
@@ -373,6 +375,81 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  tenant?: (number | null) | Tenant;
+  announcement?: string | null;
+  heroEyebrow?: string | null;
+  heroHeadline: string;
+  heroHighlight?: string | null;
+  heroSubhead?: string | null;
+  heroImage?: (number | null) | Media;
+  heroRating?: string | null;
+  heroCtaPrimaryLabel?: string | null;
+  heroCtaPrimaryHref?: string | null;
+  heroCtaSecondaryLabel?: string | null;
+  heroCtaSecondaryHref?: string | null;
+  heroStickers?:
+    | {
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  marqueeItems?:
+    | {
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  featuredHeading?: string | null;
+  featuredProducts?: (number | Product)[] | null;
+  categoryTiles?:
+    | {
+        label?: string | null;
+        category?: ('Flower' | 'Concentrates' | 'Vapes' | 'Pre-rolls' | 'Edibles') | null;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  storyHeading?: string | null;
+  storyBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  storyImage?: (number | null) | Media;
+  reviewsHeading?: string | null;
+  reviews?:
+    | {
+        title?: string | null;
+        body?: string | null;
+        author?: string | null;
+        badge?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  emailHeading?: string | null;
+  emailSub?: string | null;
+  emailCta?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -739,6 +816,10 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
+        relationTo: 'homepage';
+        value: number | Homepage;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -961,6 +1042,66 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  tenant?: T;
+  announcement?: T;
+  heroEyebrow?: T;
+  heroHeadline?: T;
+  heroHighlight?: T;
+  heroSubhead?: T;
+  heroImage?: T;
+  heroRating?: T;
+  heroCtaPrimaryLabel?: T;
+  heroCtaPrimaryHref?: T;
+  heroCtaSecondaryLabel?: T;
+  heroCtaSecondaryHref?: T;
+  heroStickers?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  marqueeItems?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  featuredHeading?: T;
+  featuredProducts?: T;
+  categoryTiles?:
+    | T
+    | {
+        label?: T;
+        category?: T;
+        image?: T;
+        id?: T;
+      };
+  storyHeading?: T;
+  storyBody?: T;
+  storyImage?: T;
+  reviewsHeading?: T;
+  reviews?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        author?: T;
+        badge?: T;
+        id?: T;
+      };
+  emailHeading?: T;
+  emailSub?: T;
+  emailCta?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

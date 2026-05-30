@@ -5,6 +5,7 @@ export { Sites } from "./collections/sites";
 export { SiteMemberships } from "./collections/site-memberships";
 export { BrandConfigs } from "./collections/brand-configs";
 export { Pages } from "./collections/pages";
+export { Homepage } from "./collections/homepage";
 export { Media } from "./collections/media";
 export { Customers } from "./collections/customers";
 export { ServiceRequests } from "./collections/service-requests";
