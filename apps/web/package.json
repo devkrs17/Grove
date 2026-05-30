@@ -3,15 +3,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build",
+    "build": "node scripts/deploy-migrate.mjs && next build",
     "start": "next start --port 3000",
     "lint": "next lint",
     "check-types": "tsc --noEmit",
     "generate:types": "node --require ./scripts/payload-compat.cjs --import tsx scripts/generate-types.mjs",
     "test": "vitest run",
-    "payload": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js",
-    "migrate": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js migrate",
-    "migrate:create": "node --require ./scripts/payload-compat.cjs ./node_modules/payload/bin.js migrate:create",
+    "payload": "node --require ./scripts/payload-compat.cjs --import tsx ./node_modules/payload/bin.js",
+    "migrate": "node --require ./scripts/payload-compat.cjs --import tsx ./node_modules/payload/bin.js migrate",
+    "migrate:create": "node --require ./scripts/payload-compat.cjs --import tsx ./node_modules/payload/bin.js migrate:create",
     "seed": "node --require ./scripts/payload-compat.cjs --import tsx scripts/seed.mjs"
   },
   "dependencies": {
