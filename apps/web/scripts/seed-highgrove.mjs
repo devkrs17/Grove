@@ -1,27 +1,24 @@
-// Idempotent provisioning of the Highgrove demo tenant (KRI-95) for an existing
-// dev DB. `onInit` only seeds an empty database, so after adding the Highgrove
-// tenant + product fields this script back-fills everything without wiping
-// anything: find-or-create tenant / site / brand-config and upsert the 12
-// products by (tenant + name). Create/update only — never delete.
-// Booting getPayload also pushes any new columns (dev adapter, push mode).
+// Idempotent provisioning of the Highgrove tenant for an existing dev DB:
+// find-or-create tenant / site / brand-config, grant the admin access, and
+// remove the retired design-kit demo catalogue (the original 12 placeholder
+// THCa products + their generated images) so the storefront shows only the real
+// brand packs. Booting getPayload also pushes any new columns (dev adapter).
 //
-//   pnpm --filter @grove/web seed:highgrove
+//   pnpm --filter @grove/web seed:highgrove   # tenant setup + demo cleanup
+//   pnpm --filter @grove/web import:packs      # populate the real products
 //
-// Catalogue mirrors packages/payload/src/seed.ts (kept in sync by hand).
+// Products come from import:packs (Litt Edibles, 710 Nomad Rosin, Blinkers
+// Flip) — this script intentionally creates none.
 
 import { readFileSync } from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 
-// Committed seed images live in packages/payload/seed-assets/.
-const SEED_ASSETS_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../packages/payload/seed-assets",
-);
-const IMAGE_FILE_BY_SLUG = {
-  "sour-grapes": "sour-grapes.jpg",
-  "super-boof": "super-boof.jpg",
-};
+// Slugs / media filenames of the retired design-kit demo, removed if present.
+const LEGACY_DEMO_SLUGS = [
+  "sour-grapes", "super-boof", "guava-cake", "papaya", "maui-fruit",
+  "jelly-donuts", "tropaya", "sour-diesel", "zlushiez", "cool-cocol",
+  "papaya-bomb", "hudson-haze",
+];
+const LEGACY_DEMO_MEDIA = ["sour-grapes.jpg", "super-boof.jpg"];
 
 // Load .env (same approach as scripts/generate-types.mjs).
 const envContent = readFileSync(".env", "utf-8");
@@ -35,27 +32,6 @@ for (const line of envContent.split("\n")) {
 const { getPayload } = await import("payload");
 const { default: configPromise } = await import("../src/payload.config.ts");
 const config = await configPromise;
-
-const terpenesFor = {
-  Indica: "Myrcene · Linalool · Caryophyllene",
-  Sativa: "Limonene · Terpinolene · Pinene",
-  Hybrid: "Caryophyllene · Limonene · Humulene",
-};
-
-const CATALOGUE = [
-  { slug: "sour-grapes", name: "Sour Grapes", subtitle: "Indica · live resin vape · 1g", price: 44, tag: "Best seller", category: "Vapes", effect: "chill", strainType: "Indica", thcLabel: "82% THCa", imageId: "1603909223429-69bb7101f420", lot: "0421-A" },
-  { slug: "super-boof", name: "Super Boof", subtitle: "Hybrid · pre-roll 5pk · 0.5g", price: 38, tag: "", category: "Pre-rolls", effect: "euphoric", strainType: "Hybrid", thcLabel: "27% THCa", imageId: "1620912189858-7c6e6e6e9e1a", lot: "0419-B" },
-  { slug: "guava-cake", name: "Guava Cake", subtitle: "Indica · 3.5g flower", price: 49, tag: "", category: "Flower", effect: "chill", strainType: "Indica", thcLabel: "29% THCa", imageId: "1603909223429-69bb7101f420", lot: "0418-A" },
-  { slug: "papaya", name: "Dulce de Papaya", subtitle: "Sativa · 7g flower", price: 89, tag: "Limited", category: "Flower", effect: "creative", strainType: "Sativa", thcLabel: "26% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0418-B" },
-  { slug: "maui-fruit", name: "Maui Fruit", subtitle: "Sativa · live resin cart · 1g", price: 49, tag: "", category: "Vapes", effect: "euphoric", strainType: "Sativa", thcLabel: "84% THCa", imageId: "1605283176567-0c98c0f57f50", lot: "0417-A" },
-  { slug: "jelly-donuts", name: "Jelly Donuts", subtitle: "Hybrid · live rosin · 1g", price: 65, tag: "Solventless", category: "Concentrates", effect: "euphoric", strainType: "Hybrid", thcLabel: "78% THCa", imageId: "1603909223429-69bb7101f420", lot: "0416-A" },
-  { slug: "tropaya", name: "Tropaya", subtitle: "Sativa · pre-roll 2pk · 1g", price: 24, tag: "", category: "Pre-rolls", effect: "creative", strainType: "Sativa", thcLabel: "28% THCa", imageId: "1620912189858-7c6e6e6e9e1a", lot: "0415-A" },
-  { slug: "sour-diesel", name: "Sour Diesel", subtitle: "Sativa · 3.5g flower", price: 45, tag: "", category: "Flower", effect: "focus", strainType: "Sativa", thcLabel: "31% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0414-A" },
-  { slug: "zlushiez", name: "Zlushiez Smalls", subtitle: "Hybrid · 14g · smalls", price: 89, tag: "Value", category: "Flower", effect: "chill", strainType: "Hybrid", thcLabel: "24% THCa", imageId: "1603909223429-69bb7101f420", lot: "0413-A" },
-  { slug: "cool-cocol", name: "Cool Cocol Push", subtitle: "Indica · rosin gummies · 100mg", price: 28, tag: "", category: "Edibles", effect: "sleep", strainType: "Indica", thcLabel: "10mg/pc", imageId: "1582719201953-1419caa3b91b", lot: "0412-A" },
-  { slug: "papaya-bomb", name: "Papaya Bomb", subtitle: "Hybrid · distillate vape · 1g", price: 39, tag: "", category: "Vapes", effect: "chill", strainType: "Hybrid", thcLabel: "88% THC", imageId: "1605283176567-0c98c0f57f50", lot: "0411-A" },
-  { slug: "hudson-haze", name: "Hudson Haze", subtitle: "Sativa · 3.5g · house strain", price: 54, tag: "House", category: "Flower", effect: "focus", strainType: "Sativa", thcLabel: "30% THCa", imageId: "1604908554027-9d12c4be4cf7", lot: "0410-A" },
-];
 
 const payload = await getPayload({ config });
 
@@ -113,62 +89,37 @@ if (!brand) {
   console.log("Created Highgrove brand config.");
 }
 
-// 4b. Media images (idempotent by alt within the tenant). Uploads a couple of
-// real CMS images so those products render from Media instead of imageId.
-const mediaIdBySlug = {};
-for (const [slug, file] of Object.entries(IMAGE_FILE_BY_SLUG)) {
-  const product = CATALOGUE.find((p) => p.slug === slug);
-  const alt = `${product?.name ?? slug} — Highgrove`;
-  let media = await findOne("media", {
-    and: [{ tenant: { equals: tenant.id } }, { alt: { equals: alt } }],
+// 5. Remove the retired demo catalogue (products first, then their media so the
+// featuredImage foreign keys are already gone).
+let removedProducts = 0;
+for (const slug of LEGACY_DEMO_SLUGS) {
+  const { docs } = await payload.find({
+    collection: "products",
+    where: { and: [{ tenant: { equals: tenant.id } }, { slug: { equals: slug } }] },
+    limit: 100,
+    overrideAccess: true,
   });
-  if (!media) {
-    media = await payload.create({
-      collection: "media",
-      data: { alt, site: site.id, tenant: tenant.id },
-      filePath: path.join(SEED_ASSETS_DIR, file),
-      overrideAccess: true,
-    });
-    console.log(`Uploaded Highgrove media: ${file}`);
-  }
-  mediaIdBySlug[slug] = media.id;
-}
-
-// 5. Products (upsert by tenant + name)
-let created = 0;
-let updated = 0;
-for (const p of CATALOGUE) {
-  const data = {
-    slug: p.slug,
-    name: p.name,
-    subtitle: p.subtitle,
-    price: p.price,
-    status: "published",
-    tenant: tenant.id,
-    category: p.category,
-    effect: p.effect,
-    strainType: p.strainType,
-    thcLabel: p.thcLabel,
-    imageId: p.imageId,
-    lot: p.lot,
-    tag: p.tag || undefined,
-    terpenes: terpenesFor[p.strainType],
-    description: `${p.name} — ${p.subtitle}. Single-farm THCa, hand-trimmed and slow-cured in Columbia County, NY. Lot ${p.lot}, third-party tested.`,
-  };
-  if (mediaIdBySlug[p.slug]) data.featuredImage = mediaIdBySlug[p.slug];
-
-  const existing = await findOne("products", {
-    and: [{ tenant: { equals: tenant.id } }, { name: { equals: p.name } }],
-  });
-
-  if (existing) {
-    await payload.update({ collection: "products", id: existing.id, data, overrideAccess: true });
-    updated++;
-  } else {
-    await payload.create({ collection: "products", data, overrideAccess: true });
-    created++;
+  for (const doc of docs) {
+    await payload.delete({ collection: "products", id: doc.id, overrideAccess: true });
+    removedProducts++;
   }
 }
+let removedMedia = 0;
+for (const filename of LEGACY_DEMO_MEDIA) {
+  const { docs } = await payload.find({
+    collection: "media",
+    where: { and: [{ tenant: { equals: tenant.id } }, { filename: { equals: filename } }] },
+    limit: 100,
+    overrideAccess: true,
+  });
+  for (const doc of docs) {
+    await payload.delete({ collection: "media", id: doc.id, overrideAccess: true });
+    removedMedia++;
+  }
+}
+if (removedProducts || removedMedia) {
+  console.log(`Removed retired demo data: ${removedProducts} products, ${removedMedia} media.`);
+}
 
-console.log(`Highgrove catalogue reseeded: ${created} created, ${updated} updated.`);
+console.log("Highgrove tenant ready. Run `pnpm --filter @grove/web import:packs` to populate products.");
 process.exit(0);

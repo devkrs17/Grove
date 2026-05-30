@@ -1,16 +1,18 @@
 # Seed assets
 
-Committed images the seed scripts upload into the `media` collection so the
-Highgrove storefront has real CMS-managed product images (not just `imageId`
-Unsplash references, some of which are stale).
+Committed source data for the Highgrove catalogue, imported into the `media` and
+`products` collections so the storefront renders real CMS-managed images.
 
-These are **generated branded placeholders**, not photography. Regenerate them
-with:
+## `packs/`
 
-```bash
-pnpm --filter @grove/web seed:images   # edits apps/web/scripts/generate-seed-images.mjs
-```
+The three brand packs that make up the Highgrove catalogue — `litt-edibles`,
+`710-nomad-rosin`, `blinkers-flip` — each as a `products.csv` plus a `photos/`
+folder of web-optimized JPEGs.
 
-Consumed by `packages/payload/src/seed.ts` (fresh DB via `onInit`) and
-`apps/web/scripts/seed-highgrove.mjs` (idempotent reseed of an existing DB).
+- Produced from the downloaded zips by `apps/web/scripts/prep-packs.mjs`
+  (`pnpm --filter @grove/web seed:images` is gone; run prep-packs directly).
+- Imported into the Highgrove tenant by `apps/web/scripts/import-packs.mjs`
+  (`pnpm --filter @grove/web import:packs`): uploads each photo into Media and
+  upserts the product with `featuredImage` set.
+
 Uploaded files themselves live in `packages/payload/media/` (gitignored).
