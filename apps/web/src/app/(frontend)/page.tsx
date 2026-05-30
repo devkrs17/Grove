@@ -3,6 +3,10 @@ import type { Where } from "payload";
 import config from "@payload-config";
 import { getTenantContext } from "@/lib/tenant";
 
+// Tenant is resolved per-request from the hostname and products come from
+// Payload, so this must render dynamically (never prerendered at build time).
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const payload = await getPayload({ config });
   const { tenantId, tenantSlug } = await getTenantContext();

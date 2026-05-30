@@ -3,7 +3,15 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "DATABASE_URL",
+        "POSTGRES_URL",
+        "PAYLOAD_SECRET",
+        "PAYLOAD_DB_PUSH",
+        "BLOB_READ_WRITE_TOKEN",
+        "SUPER_ADMIN_EMAIL"
+      ]
     },
     "dev": {
       "cache": false,
