@@ -10,6 +10,7 @@
     "generate:types": "node --require ./scripts/payload-compat.cjs --import tsx scripts/generate-types.mjs",
     "seed:images": "node scripts/generate-seed-images.mjs",
     "seed:highgrove": "node --require ./scripts/payload-compat.cjs --import tsx scripts/seed-highgrove.mjs",
+    "import:packs": "node --require ./scripts/payload-compat.cjs --import tsx scripts/import-packs.mjs",
     "test": "vitest run"
   },
   "dependencies": {
