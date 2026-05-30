@@ -6,11 +6,14 @@ import { existsSync } from "fs";
 // seeded before the app ever serves traffic — no flaky serverless schema-push
 // and no racy onInit-at-runtime seeding.
 //
-// Two steps, both idempotent:
+// Three steps, all idempotent:
 //   1. `payload migrate` — applies the committed migrations in src/migrations,
 //      creating the full schema on a fresh DB (and a no-op on an up-to-date one).
 //   2. seed-if-empty — seeds the Blinkers data ONLY when the DB has zero users,
 //      so redeploys never duplicate rows or hit the unique-email constraint.
+//   3. seed-lab-reports — backfills the per-product COAs when the lab_reports
+//      table is empty (e.g. a DB first seeded before the lab-reports collection
+//      existed, so seed-if-empty's zero-user check never repopulated it).
 //
 // Guarded to run ONLY on Vercel — local builds and CI (no production DB) skip
 // cleanly.
@@ -59,5 +62,9 @@ if (process.env.PAYLOAD_DB_PUSH === "true") {
 
 // Step 2: seed the storefront, but only if the database is empty.
 run("seeding if empty", ["./scripts/seed-if-empty.mjs"]);
+
+// Step 3: backfill per-product lab-report COAs if that table is empty. Idempotent
+// — no-ops once the Blinkers tenant has lab reports.
+run("seeding lab reports if missing", ["./scripts/seed-lab-reports.mjs"]);
 
 process.exit(0);

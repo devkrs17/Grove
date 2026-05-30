@@ -279,6 +279,73 @@ const HOMEPAGE = {
   emailCta: "Sign me up",
 };
 
+/**
+ * Idempotently seed the per-product lab-report COAs for the Blinkers tenant.
+ * Where `seed` builds a fresh database, this backfills an ALREADY-seeded one
+ * (e.g. production, whose lab_reports table was created by schema-push but never
+ * populated): it finds the tenant and each product BY NAME, then creates its COA
+ * from LAB_REPORTS[i] (parallel to PRODUCTS[i]). No-ops if the tenant already has
+ * lab reports. Returns the number created.
+ */
+export const seedLabReports = async (payload: Payload): Promise<number> => {
+  const { docs: tenants } = await payload.find({
+    collection: "tenants",
+    where: { slug: { equals: "blinkers" } },
+    limit: 1,
+    overrideAccess: true,
+  });
+  const tenant = tenants[0];
+  if (!tenant) {
+    payload.logger.warn("[seedLabReports] no 'blinkers' tenant — nothing to do");
+    return 0;
+  }
+
+  const existing = await payload.count({
+    collection: "lab-reports",
+    where: { tenant: { equals: tenant.id } },
+    overrideAccess: true,
+  });
+  if (existing.totalDocs > 0) {
+    payload.logger.info(`[seedLabReports] ${existing.totalDocs} lab report(s) already present — skipping`);
+    return 0;
+  }
+
+  let created = 0;
+  for (let i = 0; i < LAB_REPORTS.length; i++) {
+    const r = LAB_REPORTS[i];
+    const productName = PRODUCTS[i].name;
+    const { docs: products } = await payload.find({
+      collection: "products",
+      where: { and: [{ tenant: { equals: tenant.id } }, { name: { equals: productName } }] },
+      limit: 1,
+      overrideAccess: true,
+    });
+    const product = products[0];
+    if (!product) {
+      payload.logger.warn(`[seedLabReports] product not found, skipping COA: ${productName}`);
+      continue;
+    }
+    await payload.create({
+      collection: "lab-reports",
+      data: {
+        product: product.id,
+        tenant: tenant.id,
+        batchLot: r.batchLot,
+        potency: r.potency,
+        testedDate: r.testedDate,
+        lab: r.lab,
+        status: "pass",
+        cannabinoids: r.cannabinoids,
+        safetyScreens: SAFETY_SCREENS,
+        terpenes: r.terpenes,
+      },
+    });
+    created++;
+  }
+  payload.logger.info(`[seedLabReports] created ${created} lab reports`);
+  return created;
+};
+
 export const seed = async (payload: Payload): Promise<void> => {
   payload.logger.info("Seeding Blinkers storefront...");
 

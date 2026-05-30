@@ -24,4 +24,4 @@ export { Payouts } from "./collections/payouts";
 export { ComplianceChecks } from "./collections/compliance-checks";
 export { AuditLogs } from "./collections/audit-logs";
 export { isAuthenticated, isSuperAdmin } from "./access";
-export { seed } from "./seed";
+export { seed, seedLabReports } from "./seed";
