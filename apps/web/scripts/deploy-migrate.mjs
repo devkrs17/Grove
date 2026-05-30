@@ -1,4 +1,5 @@
 import { spawnSync } from "child_process";
+import { existsSync } from "fs";
 
 // Apply Payload migrations as part of the Vercel build, so the database schema
 // is in place before the app serves traffic. Guarded to run ONLY on Vercel —
@@ -18,6 +19,17 @@ const dbUrl =
 
 if (!dbUrl) {
   console.log("[deploy-migrate] no database URL found — skipping migrations");
+  process.exit(0);
+}
+
+// First deploys use push mode (PAYLOAD_DB_PUSH=true): Payload creates/syncs the
+// schema on boot, so there are no committed migrations yet. Skip `migrate` in
+// that case so the build doesn't fail on a missing migrations directory. Once
+// you commit migrations (apps/web/src/migrations), this runs them instead.
+if (process.env.PAYLOAD_DB_PUSH === "true" || !existsSync("./src/migrations")) {
+  console.log(
+    "[deploy-migrate] push mode or no src/migrations — schema syncs on boot, skipping migrate",
+  );
   process.exit(0);
 }
 
