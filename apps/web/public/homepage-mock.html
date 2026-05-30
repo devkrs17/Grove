@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blinkers — Homepage mock</title>
+<!--
+  STATIC MOCK of the proposed Blinkers homepage (younger restyle, polish pass).
+  Not wired to React/Payload yet. Built from our real data (3 brands + Media).
+  Each section is annotated with its Payload mapping (data-pl="..."); full
+  content-model table at the bottom (#content-model). Modeling intent: per-site
+  `homepage` (Payload global, tenant-scoped) + reuse of `products` + `media`.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2e9; --paper:#ffffff; --ink:#14130d; --ink-2:#4b4a40; --ink-3:#86847a;
+    --lime:#c2f04a; --lime-deep:#a6db2f; --grape:#7b3ff2; --grape-soft:#d9c4ff; --tang:#ff7a3d; --pink:#ff5d8f; --sky:#37c2e0;
+    --rule:#e6e2d4; --rule-strong:#d6d1bf;
+    --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
+  .btn--lime{background:var(--lime);color:var(--ink)}
+  .btn--dark{background:var(--ink);color:#fff}
+  .btn--ghost{background:transparent;color:var(--ink)}
+
+  .announce{background:var(--ink);color:var(--lime);font-family:var(--disp);font-weight:600;text-align:center;font-size:13px;letter-spacing:.06em;padding:10px;text-transform:uppercase}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:1200px;margin:0 auto}
+  .brand{font-family:var(--disp);font-weight:700;font-size:25px;letter-spacing:-.04em;display:flex;align-items:center;gap:7px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(194,240,74,.3)}
+  .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
+  .nav__links a:hover{color:var(--lime-deep)}
+  .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
+  .cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  .blob--1{width:440px;height:440px;background:var(--lime);opacity:.45;top:-160px;left:-110px}
+  .blob--2{width:380px;height:380px;background:var(--grape-soft);opacity:.6;bottom:-180px;left:34%}
+  .hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding:40px 0 60px}
+  .hero__eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--rule-strong);border-radius:999px;padding:7px 14px}
+  .hero__title{font-size:84px;margin:20px 0 0;letter-spacing:-.03em}
+  .hero__title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hero__sub{font-size:18px;color:var(--ink-2);max-width:44ch;margin:22px 0 0}
+  .hero__cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .hero__trust{display:flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+  .hero__trust .stars{color:var(--lime-deep);letter-spacing:1px}
+  .hero__trust .sep{color:var(--rule-strong)}
+  .hero__media{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.55);border:3px solid var(--ink)}
+  .hero__media img{width:100%;height:100%;object-fit:cover}
+  .sticker{position:absolute;font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:10px 14px;border-radius:14px;border:2px solid var(--ink)}
+  .sticker--tr{top:16px;right:16px;background:var(--pink);color:#fff;transform:rotate(-7deg)}
+  .sticker--bl{bottom:18px;left:16px;transform:rotate(5deg)}
+
+  /* marquee */
+  .marquee{background:var(--ink);overflow:hidden;border-top:2px solid var(--lime);border-bottom:2px solid var(--lime);white-space:nowrap}
+  .marquee__track{display:inline-block;animation:scroll 26s linear infinite}
+  .marquee__track span{display:inline-flex;align-items:center;gap:30px;font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--bg);padding:14px 15px}
+  .marquee b{color:var(--lime)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* sections */
+  .section{padding:64px 0}
+  .section__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+  .section__head h2{font-size:44px}
+  .seeall{font-family:var(--disp);font-weight:600;font-size:15px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:9px 16px}
+
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .pcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:12px;transition:transform .12s}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard__media{aspect-ratio:1/1;border-radius:13px;overflow:hidden;background:#ece7d8;position:relative}
+  .pcard__media img{width:100%;height:100%;object-fit:cover}
+  .pcard__chip{position:absolute;top:9px;left:9px;font-family:var(--disp);font-weight:700;font-size:11px;color:var(--ink);padding:5px 9px;border-radius:999px;border:1.5px solid var(--ink)}
+  .pcard__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grape);margin:12px 4px 0}
+  .pcard__row{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 0;gap:8px}
+  .pcard__name{font-family:var(--disp);font-weight:600;font-size:16px}
+  .pcard__price{font-family:var(--disp);font-weight:700;font-size:15px;background:var(--lime);border-radius:999px;padding:3px 10px}
+  .pcard__stars{font-size:12px;color:var(--lime-deep);margin:6px 4px 4px}
+
+  .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .cat{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:5/4;display:flex;align-items:flex-end;border:3px solid var(--ink)}
+  .cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .3s}
+  .cat:hover img{transform:scale(1.05)}
+  .cat__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,19,13,0) 40%,rgba(20,19,13,.8))}
+  .cat__label{position:relative;color:#fff;padding:20px;width:100%;display:flex;justify-content:space-between;align-items:center}
+  .cat__label h3{font-size:27px}
+  .cat__pill{font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:7px 13px;border-radius:999px}
+
+  .story{background:var(--grape);color:#fff;border-radius:30px;margin:0 26px;overflow:hidden}
+  .story__grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:60px;max-width:1148px;margin:0 auto}
+  .story h2{font-size:46px;margin:14px 0 0;color:#fff}
+  .story p{color:#ede7ff;font-size:17px;margin:16px 0 0;max-width:50ch}
+  .story .eyebrow{color:var(--lime)}
+  .story__media{border-radius:18px;overflow:hidden;aspect-ratio:1/1;border:3px solid #fff}
+  .story__media img{width:100%;height:100%;object-fit:cover}
+
+  /* reviews */
+  .reviews__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .review{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+  .review__stars{color:var(--lime-deep);font-size:15px}
+  .review__title{font-family:var(--disp);font-weight:700;font-size:19px}
+  .review__body{color:var(--ink-2);font-size:15px;margin:0}
+  .review__by{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--ink-3);margin-top:auto;display:flex;align-items:center;gap:7px}
+  .review__by .v{background:var(--lime);color:var(--ink);font-size:11px;padding:2px 8px;border-radius:999px}
+
+  /* email band */
+  .email{background:var(--lime);border-radius:30px;margin:0 26px;border:3px solid var(--ink)}
+  .email__in{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:44px 50px;flex-wrap:wrap;max-width:1148px;margin:0 auto}
+  .email h2{font-size:40px;color:var(--ink)}
+  .email p{margin:10px 0 0;color:#2c3413;font-size:16px;max-width:42ch}
+  .email__form{display:flex;gap:10px;flex-wrap:wrap}
+  .email__form input{font-family:var(--body);font-size:15px;border:2px solid var(--ink);border-radius:999px;padding:13px 20px;min-width:240px;background:#fff}
+
+  .footer{background:var(--ink);color:#cfcdc2;font-family:var(--body);margin-top:56px}
+  .footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:54px 0 26px}
+  .footer__brand{font-family:var(--disp);font-weight:700;font-size:24px;color:#fff;display:flex;align-items:center;gap:7px}
+  .footer h5{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+  .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:14px}
+  .footer__bottom{border-top:1px solid #2c2b22;padding:18px 0;display:flex;justify-content:space-between;font-size:12px;color:#86847a;font-family:var(--disp);flex-wrap:wrap;gap:10px}
+  .footer__social{display:flex;gap:12px;color:#cfcdc2}
+
+  .cm{background:#0f0f0a;color:#cfcdc2;font-family:var(--body);font-size:13px}
+  .cm h2{color:#fff;font-size:26px;margin:0 0 6px}
+  .cm p{color:#8c8a7e;max-width:72ch}
+  .cm table{width:100%;border-collapse:collapse;margin-top:22px}
+  .cm th,.cm td{text-align:left;padding:11px 12px;border-bottom:1px solid #232219;vertical-align:top}
+  .cm th{color:var(--lime);font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .cm code{color:#e7edd6;background:#1b1b12;padding:1px 6px;border-radius:5px;font-size:12px}
+
+  @media(max-width:920px){
+    .hero__grid,.story__grid,.email__in{grid-template-columns:1fr;gap:26px}
+    .hero__title{font-size:54px}
+    .pgrid,.reviews__grid{grid-template-columns:repeat(2,1fr)}
+    .cats,.footer__top{grid-template-columns:1fr 1fr}
+    .nav__links{display:none}
+    .story,.email{margin:0 14px}.story__grid{padding:34px}.email__in{padding:32px}
+  }
+</style>
+</head>
+<body>
+
+<!-- data-pl="homepage.announcement (text)" -->
+<div class="announce">Free shipping over $99 · 21+ · ships discreet, no labels</div>
+
+<nav class="nav">
+  <div style="display:flex;gap:32px;align-items:center">
+    <a class="brand" href="#"><span class="dot"></span>blinkers</a>
+    <div class="nav__links"><a href="#">Edibles</a><a href="#">Concentrates</a><a href="#">Vapes</a><a href="#">Lab reports</a></div>
+  </div>
+  <div class="nav__right"><span>Search</span><span>Account</span><span class="cartpill">Cart · 0</span></div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<!-- data-pl="homepage.hero: heroEyebrow(text), heroHeadline(text w/ highlight), heroSubhead(textarea), heroRating(text), heroCtaPrimary/Secondary{label,href}, heroImage(upload→media), heroStickers[]" -->
+<section class="hero">
+  <span class="blob blob--1"></span><span class="blob blob--2"></span>
+  <div class="wrap hero__grid">
+    <div>
+      <span class="hero__eyebrow eyebrow" data-pl="homepage.heroEyebrow"><span class="dot" style="width:8px;height:8px;background:var(--lime);border-radius:50%;display:inline-block"></span> Small-batch THCa · since 2021</span>
+      <h1 class="hero__title" data-pl="homepage.heroHeadline"><span class="hl">Loud flavor.</span><br>Clean labs.</h1>
+      <p class="hero__sub" data-pl="homepage.heroSubhead">A tight shelf of THCa edibles, rosin, and vapes — lab-tested, traceable, shipped discreet. Picked because we actually use them.</p>
+      <div class="hero__cta">
+        <a class="btn btn--lime" href="#" data-pl="homepage.heroCtaPrimary">Shop the drop →</a>
+        <a class="btn btn--ghost" href="#" data-pl="homepage.heroCtaSecondary">See the lab reports</a>
+      </div>
+      <div class="hero__trust" data-pl="homepage.heroRating"><span class="stars">★★★★★</span> 4.9 · 15,000+ reviews <span class="sep">·</span> free shipping $99+</div>
+    </div>
+    <div class="hero__media" data-pl="homepage.heroImage (upload→media)">
+      <img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt="Blinkers Flip vape">
+      <span class="sticker sticker--tr">2g · dual flavor</span>
+      <span class="sticker sticker--bl">every lot lab-tested ✓</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<!-- data-pl="homepage.marqueeItems: array { text }" -->
+<div class="marquee"><div class="marquee__track">
+  <span><b>✦</b> New drop <b>✦</b> Lab-tested lots <b>✦</b> Solventless rosin <b>✦</b> Ships discreet <b>✦</b> 21+ only <b>✦</b> Loud flavor <b>✦</b> Free ship $99+ <b>✦</b> New drop <b>✦</b> Lab-tested lots <b>✦</b> Solventless rosin <b>✦</b> Ships discreet <b>✦</b> 21+ only <b>✦</b> Loud flavor <b>✦</b> Free ship $99+ </span>
+</div></div>
+
+<!-- ============ FEATURED PRODUCTS ============ -->
+<!-- data-pl="homepage.featuredHeading(text); homepage.featuredProducts (relationship→products, hasMany)" -->
+<section class="section"><div class="wrap">
+  <div class="section__head">
+    <div><div class="eyebrow">The lineup</div><h2 data-pl="homepage.featuredHeading" style="margin-top:8px">This week's favorites.</h2></div>
+    <a class="seeall" href="#">Browse all 21 →</a>
+  </div>
+  <div class="pgrid" data-pl="homepage.featuredProducts (relationship→products)">
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--lime)">Best seller</span><img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Gelato Pie × Pineapple Haze</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--tang);color:#fff;border-color:var(--tang)">1000mg</span><img src="/api/media/file/treasure_trove.jpg" alt=""></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Treasure Trove</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--sky);color:#fff;border-color:var(--sky)">Solventless</span><img src="/api/media/file/710_nomad_moroccan_peaches.jpg" alt=""></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Moroccan Peaches</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/candy_vibes.jpg" alt=""></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Candy Vibes</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Watermelon Z × Lemon Cherry</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/710_nomad_zoap.jpg" alt=""></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Zoap</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_forbidden_fruit_pink_runtz.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Forbidden Fruit × Pink Runtz</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/rainbow_ribbons.jpg" alt=""></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Rainbow Ribbons</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+  </div>
+</div></section>
+
+<!-- ============ SHOP BY CATEGORY ============ -->
+<!-- data-pl="homepage.categoryTiles: array { label, category(select→products.category), image(upload→media) }" -->
+<section class="section" style="padding-top:0"><div class="wrap">
+  <div class="section__head"><div><div class="eyebrow">Browse</div><h2 style="margin-top:8px">Pick your lane.</h2></div></div>
+  <div class="cats" data-pl="homepage.categoryTiles">
+    <a class="cat"><img src="/api/media/file/candy_vibes.jpg" alt=""><span class="cat__scrim"></span><span class="cat__label"><h3>Edibles</h3><span class="cat__pill">6 →</span></span></a>
+    <a class="cat"><img src="/api/media/file/710_nomad_zoap.jpg" alt=""><span class="cat__scrim"></span><span class="cat__label"><h3>Concentrates</h3><span class="cat__pill">6 →</span></span></a>
+    <a class="cat"><img src="/api/media/file/blinkers_flip_tropical_grape_melon_burst.jpg" alt=""><span class="cat__scrim"></span><span class="cat__label"><h3>Vapes</h3><span class="cat__pill">9 →</span></span></a>
+  </div>
+</div></section>
+
+<!-- ============ STORY ============ -->
+<!-- data-pl="homepage.story: storyEyebrow(text), storyHeading(text), storyBody(richText), storyImage(upload→media)" -->
+<section class="story"><div class="story__grid">
+  <div>
+    <div class="eyebrow">Why we exist</div>
+    <h2 data-pl="homepage.storyHeading">A shelf we'd actually shop.</h2>
+    <div data-pl="homepage.storyBody (richText)">
+      <p>Blinkers started with a simple gripe: good hemp shouldn't feel like a trip to the dispensary — over-serious, overpriced, kinda boring.</p>
+      <p>So we built the shelf we wanted. Litt's loud-flavored edibles, 710 Nomad's solventless rosin, and our own Blinkers Flip vapes. Every lot third-party tested and traceable.</p>
+      <p>If we wouldn't hand it to a friend, it doesn't make the cut.</p>
+    </div>
+  </div>
+  <div class="story__media" data-pl="homepage.storyImage (upload→media)"><img src="/api/media/file/blinkers_flip_gushers_banana_mochi.jpg" alt=""></div>
+</div></section>
+
+<!-- ============ REVIEWS ============ -->
+<!-- data-pl="homepage.reviewsHeading(text); homepage.reviews: array { title, body, author, badge }" -->
+<section class="section"><div class="wrap">
+  <div class="section__head"><div><div class="eyebrow">Don't take our word</div><h2 style="margin-top:8px">Loved by the group chat.</h2></div><div style="font-family:var(--disp);font-weight:600;color:var(--ink-2)">★ 4.9 / 5 · 15,000+ reviews</div></div>
+  <div class="reviews__grid" data-pl="homepage.reviews">
+    <article class="review"><div class="review__stars">★★★★★</div><h3 class="review__title">Honestly obsessed</h3><p class="review__body">The Blinkers Flip carts actually taste like the flavor on the box, and they last forever. No harsh hits.</p><div class="review__by">Maya T. <span class="v">Verified</span></div></article>
+    <article class="review"><div class="review__stars">★★★★★</div><h3 class="review__title">No more dispo runs</h3><p class="review__body">Switched from the dispensary and never looked back. COA on everything, ships fast and discreet.</p><div class="review__by">Devon R. <span class="v">Verified</span></div></article>
+    <article class="review"><div class="review__stars">★★★★★</div><h3 class="review__title">Litt edibles &gt;&gt;&gt;</h3><p class="review__body">Treasure Trove is dangerous lol. Real dosing, real flavor, none of that nasty aftertaste.</p><div class="review__by">Priya K. <span class="v">Verified</span></div></article>
+  </div>
+</div></section>
+
+<!-- ============ EMAIL / DROPS ============ -->
+<!-- data-pl="homepage.emailHeading(text), homepage.emailSub(text), homepage.emailCta(text) → newsletter signup" -->
+<section style="padding-bottom:8px"><div class="email"><div class="email__in">
+  <div>
+    <h2 data-pl="homepage.emailHeading">Get first dibs on drops.</h2>
+    <p data-pl="homepage.emailSub">New batches sell out. Subscribers get a heads-up — and 10% off the first order.</p>
+  </div>
+  <form class="email__form" onsubmit="return false">
+    <input type="email" placeholder="you@email.com" aria-label="email" />
+    <button class="btn btn--dark" data-pl="homepage.emailCta">Sign me up</button>
+  </form>
+</div></div></section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer"><div class="wrap">
+  <div class="footer__top">
+    <div><div class="footer__brand"><span class="dot" style="width:12px;height:12px;background:var(--lime);border-radius:50%"></span>blinkers</div><p style="margin-top:12px;max-width:34ch;color:#9b9a8c">A tight, lab-tested shelf of THCa. 21+ only.</p></div>
+    <div><h5>Shop</h5><ul><li>Edibles</li><li>Concentrates</li><li>Vapes</li><li>All products</li></ul></div>
+    <div><h5>Learn</h5><ul><li>About THCa</li><li>Lab reports</li><li>Journal</li><li>Wholesale</li></ul></div>
+    <div><h5>Help</h5><ul><li>Shipping &amp; states</li><li>Returns</li><li>Age verification</li><li>Contact</li></ul></div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Blinkers · 21+ only · keep away from children &amp; pets</span><span class="footer__social">Instagram · TikTok · X</span></div>
+</div></footer>
+
+<!-- ============ CONTENT MODEL (review only) ============ -->
+<section class="cm" id="content-model"><div class="wrap" style="padding:54px 0">
+  <h2>Proposed Payload content model</h2>
+  <p>The homepage becomes a per-site <code>homepage</code> global (tenant-scoped via the multi-tenant plugin), composed with the existing <code>products</code> and <code>media</code> collections. No new product/media model needed — it reuses what's already built (<code>featuredImage → media</code>, <code>products.category</code>).</p>
+  <table>
+    <thead><tr><th>Section</th><th>Field</th><th>Type</th><th>Source / notes</th></tr></thead>
+    <tbody>
+      <tr><td>Announce</td><td><code>announcement</code></td><td>text</td><td></td></tr>
+      <tr><td rowspan="6">Hero</td><td><code>heroEyebrow</code></td><td>text</td><td></td></tr>
+      <tr><td><code>heroHeadline</code> + <code>heroHighlight</code></td><td>text</td><td>highlighted word gets the lime mark</td></tr>
+      <tr><td><code>heroSubhead</code></td><td>textarea</td><td></td></tr>
+      <tr><td><code>heroImage</code> + <code>heroStickers[]</code></td><td>upload→<code>media</code> · array{text}</td><td></td></tr>
+      <tr><td><code>heroRating</code></td><td>text</td><td>"4.9 · 15,000+ reviews"</td></tr>
+      <tr><td><code>heroCtaPrimary / Secondary</code></td><td>group{label,href}</td><td>default href → /shop</td></tr>
+      <tr><td>Marquee</td><td><code>marqueeItems</code></td><td>array{text}</td><td>scrolling strip</td></tr>
+      <tr><td rowspan="2">Featured</td><td><code>featuredHeading</code></td><td>text</td><td></td></tr>
+      <tr><td><code>featuredProducts</code></td><td>relationship → <code>products</code> (hasMany)</td><td>card reads <code>name, price, category, tag, featuredImage</code></td></tr>
+      <tr><td>Categories</td><td><code>categoryTiles</code></td><td>array{label, category(select→<code>products.category</code>), image(upload→media)}</td><td></td></tr>
+      <tr><td>Story</td><td><code>storyHeading</code> · <code>storyBody</code> · <code>storyImage</code></td><td>text · richText · upload→media</td><td>richText = same lexical as <code>pages.content</code></td></tr>
+      <tr><td>Reviews</td><td><code>reviewsHeading</code> · <code>reviews</code></td><td>text · array{title,body,author,badge}</td><td></td></tr>
+      <tr><td>Email</td><td><code>emailHeading</code> · <code>emailSub</code> · <code>emailCta</code></td><td>text</td><td>wires to a newsletter list later</td></tr>
+      <tr><td>SEO</td><td><code>metaTitle / metaDescription</code></td><td>text / textarea</td><td></td></tr>
+      <tr><td>Footer</td><td>—</td><td>—</td><td>brand from <code>brand-configs</code>; Learn/Help → existing <code>pages</code></td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+</body>
+</html>

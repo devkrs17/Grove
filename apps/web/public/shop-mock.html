@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blinkers — Shop mock</title>
+<!--
+  STATIC MOCK of the proposed Blinkers SHOP (product listing / PLP) page.
+  Not wired to React/Payload yet. Built from our real data (3 brands, 21 products + Media).
+  Shares the homepage design system verbatim (head/announce/nav/footer + full style block).
+  Each region is annotated with its Payload mapping (data-pl="..."); the full grid is:
+  data-pl: payload.find('products', where: published + tenant + category/brand/price facets);
+  facets derived from products.category, brand field, price.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2e9; --paper:#ffffff; --ink:#14130d; --ink-2:#4b4a40; --ink-3:#86847a;
+    --lime:#c2f04a; --lime-deep:#a6db2f; --grape:#7b3ff2; --grape-soft:#d9c4ff; --tang:#ff7a3d; --pink:#ff5d8f; --sky:#37c2e0;
+    --rule:#e6e2d4; --rule-strong:#d6d1bf;
+    --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
+  .btn--lime{background:var(--lime);color:var(--ink)}
+  .btn--dark{background:var(--ink);color:#fff}
+  .btn--ghost{background:transparent;color:var(--ink)}
+
+  .announce{background:var(--ink);color:var(--lime);font-family:var(--disp);font-weight:600;text-align:center;font-size:13px;letter-spacing:.06em;padding:10px;text-transform:uppercase}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:1200px;margin:0 auto}
+  .brand{font-family:var(--disp);font-weight:700;font-size:25px;letter-spacing:-.04em;display:flex;align-items:center;gap:7px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(194,240,74,.3)}
+  .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
+  .nav__links a:hover{color:var(--lime-deep)}
+  .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
+  .cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  .blob--1{width:440px;height:440px;background:var(--lime);opacity:.45;top:-160px;left:-110px}
+  .blob--2{width:380px;height:380px;background:var(--grape-soft);opacity:.6;bottom:-180px;left:34%}
+  .hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding:40px 0 60px}
+  .hero__eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--rule-strong);border-radius:999px;padding:7px 14px}
+  .hero__title{font-size:84px;margin:20px 0 0;letter-spacing:-.03em}
+  .hero__title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hero__sub{font-size:18px;color:var(--ink-2);max-width:44ch;margin:22px 0 0}
+  .hero__cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .hero__trust{display:flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+  .hero__trust .stars{color:var(--lime-deep);letter-spacing:1px}
+  .hero__trust .sep{color:var(--rule-strong)}
+  .hero__media{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.55);border:3px solid var(--ink)}
+  .hero__media img{width:100%;height:100%;object-fit:cover}
+  .sticker{position:absolute;font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:10px 14px;border-radius:14px;border:2px solid var(--ink)}
+  .sticker--tr{top:16px;right:16px;background:var(--pink);color:#fff;transform:rotate(-7deg)}
+  .sticker--bl{bottom:18px;left:16px;transform:rotate(5deg)}
+
+  /* marquee */
+  .marquee{background:var(--ink);overflow:hidden;border-top:2px solid var(--lime);border-bottom:2px solid var(--lime);white-space:nowrap}
+  .marquee__track{display:inline-block;animation:scroll 26s linear infinite}
+  .marquee__track span{display:inline-flex;align-items:center;gap:30px;font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--bg);padding:14px 15px}
+  .marquee b{color:var(--lime)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* sections */
+  .section{padding:64px 0}
+  .section__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+  .section__head h2{font-size:44px}
+  .seeall{font-family:var(--disp);font-weight:600;font-size:15px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:9px 16px}
+
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .pcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:12px;transition:transform .12s}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard__media{aspect-ratio:1/1;border-radius:13px;overflow:hidden;background:#ece7d8;position:relative}
+  .pcard__media img{width:100%;height:100%;object-fit:cover}
+  .pcard__chip{position:absolute;top:9px;left:9px;font-family:var(--disp);font-weight:700;font-size:11px;color:var(--ink);padding:5px 9px;border-radius:999px;border:1.5px solid var(--ink)}
+  .pcard__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grape);margin:12px 4px 0}
+  .pcard__row{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 0;gap:8px}
+  .pcard__name{font-family:var(--disp);font-weight:600;font-size:16px}
+  .pcard__price{font-family:var(--disp);font-weight:700;font-size:15px;background:var(--lime);border-radius:999px;padding:3px 10px}
+  .pcard__stars{font-size:12px;color:var(--lime-deep);margin:6px 4px 4px}
+
+  .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .cat{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:5/4;display:flex;align-items:flex-end;border:3px solid var(--ink)}
+  .cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .3s}
+  .cat:hover img{transform:scale(1.05)}
+  .cat__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,19,13,0) 40%,rgba(20,19,13,.8))}
+  .cat__label{position:relative;color:#fff;padding:20px;width:100%;display:flex;justify-content:space-between;align-items:center}
+  .cat__label h3{font-size:27px}
+  .cat__pill{font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:7px 13px;border-radius:999px}
+
+  .story{background:var(--grape);color:#fff;border-radius:30px;margin:0 26px;overflow:hidden}
+  .story__grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:60px;max-width:1148px;margin:0 auto}
+  .story h2{font-size:46px;margin:14px 0 0;color:#fff}
+  .story p{color:#ede7ff;font-size:17px;margin:16px 0 0;max-width:50ch}
+  .story .eyebrow{color:var(--lime)}
+  .story__media{border-radius:18px;overflow:hidden;aspect-ratio:1/1;border:3px solid #fff}
+  .story__media img{width:100%;height:100%;object-fit:cover}
+
+  /* reviews */
+  .reviews__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .review{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+  .review__stars{color:var(--lime-deep);font-size:15px}
+  .review__title{font-family:var(--disp);font-weight:700;font-size:19px}
+  .review__body{color:var(--ink-2);font-size:15px;margin:0}
+  .review__by{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--ink-3);margin-top:auto;display:flex;align-items:center;gap:7px}
+  .review__by .v{background:var(--lime);color:var(--ink);font-size:11px;padding:2px 8px;border-radius:999px}
+
+  /* email band */
+  .email{background:var(--lime);border-radius:30px;margin:0 26px;border:3px solid var(--ink)}
+  .email__in{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:44px 50px;flex-wrap:wrap;max-width:1148px;margin:0 auto}
+  .email h2{font-size:40px;color:var(--ink)}
+  .email p{margin:10px 0 0;color:#2c3413;font-size:16px;max-width:42ch}
+  .email__form{display:flex;gap:10px;flex-wrap:wrap}
+  .email__form input{font-family:var(--body);font-size:15px;border:2px solid var(--ink);border-radius:999px;padding:13px 20px;min-width:240px;background:#fff}
+
+  .footer{background:var(--ink);color:#cfcdc2;font-family:var(--body);margin-top:56px}
+  .footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:54px 0 26px}
+  .footer__brand{font-family:var(--disp);font-weight:700;font-size:24px;color:#fff;display:flex;align-items:center;gap:7px}
+  .footer h5{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+  .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:14px}
+  .footer__bottom{border-top:1px solid #2c2b22;padding:18px 0;display:flex;justify-content:space-between;font-size:12px;color:#86847a;font-family:var(--disp);flex-wrap:wrap;gap:10px}
+  .footer__social{display:flex;gap:12px;color:#cfcdc2}
+
+  .cm{background:#0f0f0a;color:#cfcdc2;font-family:var(--body);font-size:13px}
+  .cm h2{color:#fff;font-size:26px;margin:0 0 6px}
+  .cm p{color:#8c8a7e;max-width:72ch}
+  .cm table{width:100%;border-collapse:collapse;margin-top:22px}
+  .cm th,.cm td{text-align:left;padding:11px 12px;border-bottom:1px solid #232219;vertical-align:top}
+  .cm th{color:var(--lime);font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .cm code{color:#e7edd6;background:#1b1b12;padding:1px 6px;border-radius:5px;font-size:12px}
+
+  /* ============================================================= */
+  /* ===============  SHOP / PLP-specific additions  ============== */
+  /* ============================================================= */
+
+  /* page header: breadcrumb + title + count + sort */
+  .plp-head{position:relative;overflow:hidden;border-bottom:2px solid var(--ink)}
+  .plp-head .blob--1{width:380px;height:380px;top:-180px;left:-120px;opacity:.4}
+  .plp-head .blob--2{width:320px;height:320px;bottom:-220px;left:62%;opacity:.5}
+  .plp-head__in{position:relative;z-index:1;padding:34px 0 30px}
+  .crumb{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);display:flex;align-items:center;gap:8px}
+  .crumb a:hover{color:var(--ink)}
+  .crumb .sep{color:var(--rule-strong)}
+  .crumb .here{color:var(--ink)}
+  .plp-head__row{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-top:14px}
+  .plp-title{font-size:64px;letter-spacing:-.03em}
+  .plp-title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .plp-count{font-family:var(--disp);font-weight:500;font-size:16px;color:var(--ink-2);margin-top:12px}
+  .plp-count b{color:var(--ink);font-weight:700}
+
+  /* sort control styled as a pill */
+  .sortpill{display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:8px 8px 8px 16px;font-family:var(--disp);font-weight:600;font-size:14px}
+  .sortpill label{color:var(--ink-2);font-weight:500}
+  .sortpill select{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--ink);background:var(--lime);border:2px solid var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%2314130d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px}
+
+  /* two-column shop body */
+  .shop{display:grid;grid-template-columns:264px 1fr;gap:34px;align-items:start;padding:36px 0 8px}
+
+  /* filter sidebar */
+  .filters{position:sticky;top:18px;background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:20px 20px 8px}
+  .filters__top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .filters__top h2{font-size:20px}
+  .filters__clear{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--grape)}
+  .filters__clear:hover{color:var(--ink)}
+  .fgroup{border-top:1px solid var(--rule);padding:16px 0}
+  .fgroup:first-of-type{border-top:0;padding-top:8px}
+  .fgroup__label{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 12px;display:flex;justify-content:space-between;align-items:center}
+  .fgroup__label .n{color:var(--ink-3);font-weight:600;letter-spacing:0}
+  .fopt{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:500;font-size:15px;padding:6px 0;cursor:pointer;color:var(--ink-2)}
+  .fopt:hover{color:var(--ink)}
+  .fopt .box{width:20px;height:20px;border:2px solid var(--ink);border-radius:6px;flex:0 0 auto;display:grid;place-items:center;background:#fff;transition:background .1s}
+  .fopt .box svg{opacity:0;width:12px;height:12px}
+  .fopt input{position:absolute;opacity:0;width:0;height:0}
+  .fopt input:checked + .box{background:var(--lime)}
+  .fopt input:checked + .box svg{opacity:1}
+  .fopt input:checked ~ .ftxt{color:var(--ink);font-weight:600}
+  .fopt .ct{margin-left:auto;font-weight:600;font-size:13px;color:var(--ink-3)}
+  /* radio variant (single-select strength) */
+  .fopt .box--round{border-radius:50%}
+  .fopt input:checked + .box--round{background:var(--ink);box-shadow:inset 0 0 0 4px var(--lime)}
+  .fopt input:checked + .box--round svg{opacity:0}
+
+  /* price range */
+  .price{display:flex;align-items:center;gap:9px}
+  .price__field{flex:1;display:flex;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 10px;gap:4px}
+  .price__field span{font-family:var(--disp);font-weight:700;font-size:14px;color:var(--ink-3)}
+  .price__field input{border:0;outline:0;width:100%;font-family:var(--disp);font-weight:600;font-size:14px;color:var(--ink);background:transparent;-moz-appearance:textfield}
+  .price__field input::-webkit-outer-spin-button,.price__field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .price__dash{color:var(--rule-strong);font-weight:700}
+  .pranger{margin-top:14px}
+  .pranger input[type=range]{width:100%;accent-color:var(--grape);height:4px}
+
+  /* active filter chips */
+  .activef{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:18px}
+  .activef__lead{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--ink-3)}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--disp);font-weight:600;font-size:13px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:6px 10px 6px 12px;cursor:pointer}
+  .chip--lime{background:var(--lime)}
+  .chip--grape{background:var(--grape);color:#fff;border-color:var(--grape)}
+  .chip--sky{background:var(--sky);color:#fff;border-color:var(--sky)}
+  .chip .x{width:16px;height:16px;border-radius:50%;background:rgba(20,19,13,.14);display:grid;place-items:center;font-size:11px;line-height:1}
+  .chip--grape .x,.chip--sky .x{background:rgba(255,255,255,.28);color:#fff}
+
+  /* results grid: 3 cols desktop */
+  .results{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+  /* tiny brand divider row inside results */
+  .results__note{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);margin:2px 2px 14px}
+
+  /* load-more / pagination footer of the grid */
+  .plp-more{display:flex;flex-direction:column;align-items:center;gap:12px;padding:42px 0 8px}
+  .plp-more span{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3)}
+
+  @media(max-width:1040px){
+    .shop{grid-template-columns:1fr}
+    .filters{position:static;display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+    .filters__top{grid-column:1 / -1}
+    .activef{grid-column:1 / -1}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .plp-title{font-size:52px}
+  }
+
+  @media(max-width:920px){
+    .hero__grid,.story__grid,.email__in{grid-template-columns:1fr;gap:26px}
+    .hero__title{font-size:54px}
+    .pgrid,.reviews__grid{grid-template-columns:repeat(2,1fr)}
+    .cats,.footer__top{grid-template-columns:1fr 1fr}
+    .nav__links{display:none}
+    .story,.email{margin:0 14px}.story__grid{padding:34px}.email__in{padding:32px}
+  }
+
+  @media(max-width:600px){
+    .filters{grid-template-columns:1fr}
+    .results{grid-template-columns:1fr}
+    .plp-title{font-size:40px}
+    .plp-head__row{align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<!-- data-pl="homepage.announcement (text) — shared site-wide banner, same source as homepage" -->
+<div class="announce">Free shipping over $99 · 21+ · ships discreet, no labels</div>
+
+<!-- nav reused VERBATIM from homepage (Shop link is the active page) -->
+<nav class="nav">
+  <div style="display:flex;gap:32px;align-items:center">
+    <a class="brand" href="#"><span class="dot"></span>blinkers</a>
+    <div class="nav__links"><a href="#">Edibles</a><a href="#">Concentrates</a><a href="#">Vapes</a><a href="#">Lab reports</a></div>
+  </div>
+  <div class="nav__right"><span>Search</span><span>Account</span><span class="cartpill">Cart · 0</span></div>
+</nav>
+
+<!-- ============ PLP HEADER: breadcrumb + title + count + sort ============ -->
+<!-- data-pl: breadcrumb is static route trail (/ → /shop). Title/intro could live on a `shop` global
+     (tenant-scoped); count = payload.find('products', where: published+tenant).totalDocs -->
+<header class="plp-head">
+  <span class="blob blob--1"></span><span class="blob blob--2"></span>
+  <div class="wrap plp-head__in">
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="#">Home</a><span class="sep">/</span><span class="here">Shop</span>
+    </nav>
+    <div class="plp-head__row">
+      <div>
+        <h1 class="plp-title">Shop <span class="hl">everything.</span></h1>
+        <!-- data-pl: count = payload.find('products', where: published + tenant).totalDocs -->
+        <div class="plp-count"><b>21 products</b> · lab-tested lots, shipped discreet</div>
+      </div>
+      <!-- data-pl: sort maps to payload.find sort param — 'featured'(default order) | 'price' | '-price' | '-createdAt' -->
+      <div class="sortpill">
+        <label for="sort">Sort</label>
+        <select id="sort" aria-label="Sort products">
+          <option value="featured">Featured</option>
+          <option value="price">Price: low → high</option>
+          <option value="-price">Price: high → low</option>
+          <option value="-createdAt">Newest</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SHOP BODY: filter sidebar + product grid ============ -->
+<section class="wrap shop">
+
+  <!-- ---------- FILTER SIDEBAR ---------- -->
+  <!-- data-pl: facets derived from distinct products.category, products.brand, and price range across
+       the published+tenant result set. Selecting an option appends to the `where` query and reloads. -->
+  <aside class="filters" aria-label="Filters">
+    <div class="filters__top">
+      <h2>Filters</h2>
+      <a class="filters__clear" href="#">Clear all</a>
+    </div>
+
+    <!-- Category facet — data-pl: where['category']['in'] = [...] (select field on products) -->
+    <div class="fgroup">
+      <p class="fgroup__label">Category <span class="n">3</span></p>
+      <label class="fopt">
+        <input type="checkbox" checked>
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">Edibles</span><span class="ct">6</span>
+      </label>
+      <label class="fopt">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">Concentrates</span><span class="ct">6</span>
+      </label>
+      <label class="fopt">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">Vapes</span><span class="ct">9</span>
+      </label>
+    </div>
+
+    <!-- Brand facet — data-pl: where['brand']['in'] = [...] (brand field/relationship on products) -->
+    <div class="fgroup">
+      <p class="fgroup__label">Brand <span class="n">3</span></p>
+      <label class="fopt">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">Litt Edibles</span><span class="ct">6</span>
+      </label>
+      <label class="fopt">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">710 Nomad Rosin</span><span class="ct">6</span>
+      </label>
+      <label class="fopt">
+        <input type="checkbox">
+        <span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.2 3.4L11 2" stroke="#14130d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="ftxt">Blinkers Flip</span><span class="ct">9</span>
+      </label>
+    </div>
+
+    <!-- Price facet — data-pl: where['price']['greater_than_equal'] / ['less_than_equal'] (number field) -->
+    <div class="fgroup">
+      <p class="fgroup__label">Price</p>
+      <div class="price">
+        <span class="price__field"><span>$</span><input type="number" inputmode="numeric" value="40" aria-label="Min price"></span>
+        <span class="price__dash">–</span>
+        <span class="price__field"><span>$</span><input type="number" inputmode="numeric" value="180" aria-label="Max price"></span>
+      </div>
+      <div class="pranger"><input type="range" min="40" max="180" value="180" aria-label="Max price slider"></div>
+    </div>
+
+    <!-- Optional Format / Strength group — single-select demo (radio look) -->
+    <!-- data-pl: optional where on a `strength`/`format` select if added to products -->
+    <div class="fgroup">
+      <p class="fgroup__label">Strength</p>
+      <label class="fopt">
+        <input type="radio" name="strength" checked>
+        <span class="box box--round"></span>
+        <span class="ftxt">Any</span>
+      </label>
+      <label class="fopt">
+        <input type="radio" name="strength">
+        <span class="box box--round"></span>
+        <span class="ftxt">Microdose</span>
+      </label>
+      <label class="fopt">
+        <input type="radio" name="strength">
+        <span class="box box--round"></span>
+        <span class="ftxt">Full send</span>
+      </label>
+    </div>
+
+    <!-- active filters chip row — data-pl: derived from the current `where` query -->
+    <div class="activef">
+      <span class="activef__lead">Active:</span>
+      <span class="chip chip--lime">Edibles <span class="x">×</span></span>
+      <span class="chip">$40–$180 <span class="x">×</span></span>
+    </div>
+  </aside>
+
+  <!-- ---------- PRODUCT GRID (all 21) ---------- -->
+  <!--
+    data-pl: payload.find('products', where: published + tenant + category/brand/price facets);
+    each card reads name, price, brand, category, featuredImage→media, and an optional tag/badge.
+    facets derived from products.category, brand field, price.
+  -->
+  <div>
+    <p class="results__note">Showing all 21 products</p>
+    <div class="results" data-pl="payload.find('products', …) result set">
+
+      <!-- Litt Edibles · Edibles · $40 -->
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--lime)">Best seller</span><img src="/api/media/file/treasure_trove.jpg" alt="Treasure Trove"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Treasure Trove</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/candy_vibes.jpg" alt="Candy Vibes"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Candy Vibes</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--tang);color:#fff;border-color:var(--tang)">1000mg</span><img src="/api/media/file/rainbow_ribbons.jpg" alt="Rainbow Ribbons"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Rainbow Ribbons</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★☆</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/forest_forage_gummies.jpg" alt="Forest Forage Gummies"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Forest Forage Gummies</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/cyber_chews.jpg" alt="Cyber Chews"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Cyber Chews</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★☆</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/galactic_gummy_blast.jpg" alt="Galactic Gummy Blast"></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Galactic Gummy Blast</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+
+      <!-- 710 Nomad Rosin · Concentrates · $180 -->
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--sky);color:#fff;border-color:var(--sky)">Solventless</span><img src="/api/media/file/710_nomad_moroccan_peaches.jpg" alt="Moroccan Peaches"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Moroccan Peaches</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/710_nomad_mad_honey.jpg" alt="Mad Honey"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Mad Honey</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--sky);color:#fff;border-color:var(--sky)">Solventless</span><img src="/api/media/file/710_nomad_rainbow_guava.jpg" alt="Rainbow Guava"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Rainbow Guava</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★☆</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--lime)">Best seller</span><img src="/api/media/file/710_nomad_zoap.jpg" alt="Zoap"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Zoap</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/710_nomad_maad_fruit.jpg" alt="Maad Fruit"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Maad Fruit</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/710_nomad_red_rings.jpg" alt="Red Rings"></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Red Rings</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★☆</div></a>
+
+      <!-- Blinkers Flip · Vapes · $80 -->
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--lime)">Best seller</span><img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt="Gelato Pie × Pineapple Haze"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Gelato Pie × Pineapple Haze</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_green_apple_diesel_blue_nerdz.jpg" alt="Green Apple Diesel × Blue Nerdz"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Green Apple Diesel × Blue Nerdz</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_pink_champagne_superglue.jpg" alt="Pink Champagne × Superglue"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Pink Champagne × Superglue</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★☆</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_mango_tango_lemon_heads.jpg" alt="Mango Tango × Lemon Heads"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Mango Tango × Lemon Heads</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--lime)">Best seller</span><img src="/api/media/file/blinkers_flip_forbidden_fruit_pink_runtz.jpg" alt="Forbidden Fruit × Pink Runtz"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Forbidden Fruit × Pink Runtz</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_gushers_banana_mochi.jpg" alt="Gushers × Banana Mochi"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Gushers × Banana Mochi</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★☆</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_lemon_slushie_strawberry_cough.jpg" alt="Lemon Slushie × Strawberry Cough"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Lemon Slushie × Strawberry Cough</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg" alt="Watermelon Z × Lemon Cherry Gelato"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Watermelon Z × Lemon Cherry Gelato</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+      <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_tropical_grape_melon_burst.jpg" alt="Tropical Grape × Melon Burst"></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Tropical Grape × Melon Burst</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★☆</div></a>
+
+    </div>
+
+    <!-- pagination affordance — data-pl: page/limit params on payload.find (all 21 fit one page here) -->
+    <div class="plp-more">
+      <span>You've seen all 21 products</span>
+      <a class="btn btn--lime" href="#">Back to top ↑</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EMAIL / DROPS (reused band, keeps the shop lively) ============ -->
+<!-- data-pl="homepage.emailHeading(text), homepage.emailSub(text), homepage.emailCta(text) → newsletter signup" -->
+<section style="padding:48px 0 8px"><div class="email"><div class="email__in">
+  <div>
+    <h2 data-pl="homepage.emailHeading">Get first dibs on drops.</h2>
+    <p data-pl="homepage.emailSub">New batches sell out. Subscribers get a heads-up — and 10% off the first order.</p>
+  </div>
+  <form class="email__form" onsubmit="return false">
+    <input type="email" placeholder="you@email.com" aria-label="email" />
+    <button class="btn btn--dark" data-pl="homepage.emailCta">Sign me up</button>
+  </form>
+</div></div></section>
+
+<!-- ============ FOOTER reused VERBATIM from homepage ============ -->
+<footer class="footer"><div class="wrap">
+  <div class="footer__top">
+    <div><div class="footer__brand"><span class="dot" style="width:12px;height:12px;background:var(--lime);border-radius:50%"></span>blinkers</div><p style="margin-top:12px;max-width:34ch;color:#9b9a8c">A tight, lab-tested shelf of THCa. 21+ only.</p></div>
+    <div><h5>Shop</h5><ul><li>Edibles</li><li>Concentrates</li><li>Vapes</li><li>All products</li></ul></div>
+    <div><h5>Learn</h5><ul><li>About THCa</li><li>Lab reports</li><li>Journal</li><li>Wholesale</li></ul></div>
+    <div><h5>Help</h5><ul><li>Shipping &amp; states</li><li>Returns</li><li>Age verification</li><li>Contact</li></ul></div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Blinkers · 21+ only · keep away from children &amp; pets</span><span class="footer__social">Instagram · TikTok · X</span></div>
+</div></footer>
+
+<!-- ============ CONTENT MODEL (review only) ============ -->
+<section class="cm" id="content-model"><div class="wrap" style="padding:54px 0">
+  <h2>Proposed Payload data flow — Shop / PLP</h2>
+  <p>The shop page is a query view over the existing <code>products</code> collection (no new model). The grid is one call:
+  <code>payload.find('products', { where: { _status: { equals: 'published' }, tenant: { equals: siteTenant }, …facets } })</code>.
+  Filter facets are derived from <code>products.category</code>, the <code>brand</code> field, and the <code>price</code> range; sort maps to the Payload <code>sort</code> param. Cards reuse <code>featuredImage → media</code>.</p>
+  <table>
+    <thead><tr><th>Region</th><th>Field / param</th><th>Type</th><th>Source / notes</th></tr></thead>
+    <tbody>
+      <tr><td>Breadcrumb</td><td>—</td><td>route trail</td><td>static <code>/</code> → <code>/shop</code></td></tr>
+      <tr><td>Title / count</td><td><code>totalDocs</code></td><td>number</td><td>from the <code>payload.find</code> result (published + tenant)</td></tr>
+      <tr><td>Sort</td><td><code>sort</code></td><td>enum</td><td><code>featured</code> | <code>price</code> | <code>-price</code> | <code>-createdAt</code></td></tr>
+      <tr><td rowspan="2">Category filter</td><td><code>where.category.in</code></td><td>select[]</td><td>distinct <code>products.category</code> (Edibles / Concentrates / Vapes)</td></tr>
+      <tr><td>counts</td><td>number</td><td>per-facet <code>totalDocs</code> (6 / 6 / 9)</td></tr>
+      <tr><td>Brand filter</td><td><code>where.brand.in</code></td><td>relationship/select[]</td><td>Litt Edibles / 710 Nomad Rosin / Blinkers Flip</td></tr>
+      <tr><td>Price filter</td><td><code>where.price.greater_than_equal</code> / <code>less_than_equal</code></td><td>number</td><td>range across result set ($40–$180)</td></tr>
+      <tr><td>Strength (optional)</td><td><code>where.strength</code></td><td>select</td><td>only if a <code>strength</code>/<code>format</code> field is added to products</td></tr>
+      <tr><td>Active chips</td><td>—</td><td>derived</td><td>reflects the current <code>where</code> query; × removes a clause</td></tr>
+      <tr><td rowspan="2">Product card</td><td><code>name, price, brand, category</code></td><td>fields</td><td>core <code>products</code> fields</td></tr>
+      <tr><td><code>featuredImage</code> + <code>tag</code></td><td>upload→<code>media</code> · select</td><td>chip = optional tag (Best seller / New / Solventless / 1000mg)</td></tr>
+      <tr><td>Pagination</td><td><code>page</code> / <code>limit</code></td><td>number</td><td>all 21 fit one page; load-more bumps <code>page</code></td></tr>
+      <tr><td>Footer</td><td>—</td><td>—</td><td>brand from <code>brand-configs</code>; Learn/Help → existing <code>pages</code></td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blinkers — Cart mock</title>
+<!--
+  STATIC MOCK of the proposed Blinkers cart page (matches homepage-mock.html design system).
+  Not wired to React/Payload yet.
+  data: cart is client state (CartProvider) — array of { productId, qty }; each row reads
+  products.{name, price, featuredImage→media, brand}; not a Payload collection.
+  Subtotal/total/free-ship threshold are derived client-side; checkout hands off to the
+  PaymentProvider abstraction. Annotated inline with data-pl="..." mappings.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2e9; --paper:#ffffff; --ink:#14130d; --ink-2:#4b4a40; --ink-3:#86847a;
+    --lime:#c2f04a; --lime-deep:#a6db2f; --grape:#7b3ff2; --grape-soft:#d9c4ff; --tang:#ff7a3d; --pink:#ff5d8f; --sky:#37c2e0;
+    --rule:#e6e2d4; --rule-strong:#d6d1bf;
+    --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
+  .btn--lime{background:var(--lime);color:var(--ink)}
+  .btn--dark{background:var(--ink);color:#fff}
+  .btn--ghost{background:transparent;color:var(--ink)}
+
+  .announce{background:var(--ink);color:var(--lime);font-family:var(--disp);font-weight:600;text-align:center;font-size:13px;letter-spacing:.06em;padding:10px;text-transform:uppercase}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:1200px;margin:0 auto}
+  .brand{font-family:var(--disp);font-weight:700;font-size:25px;letter-spacing:-.04em;display:flex;align-items:center;gap:7px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(194,240,74,.3)}
+  .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
+  .nav__links a:hover{color:var(--lime-deep)}
+  .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
+  .cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  .blob--1{width:440px;height:440px;background:var(--lime);opacity:.45;top:-160px;left:-110px}
+  .blob--2{width:380px;height:380px;background:var(--grape-soft);opacity:.6;bottom:-180px;left:34%}
+  .hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding:40px 0 60px}
+  .hero__eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--rule-strong);border-radius:999px;padding:7px 14px}
+  .hero__title{font-size:84px;margin:20px 0 0;letter-spacing:-.03em}
+  .hero__title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hero__sub{font-size:18px;color:var(--ink-2);max-width:44ch;margin:22px 0 0}
+  .hero__cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .hero__trust{display:flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+  .hero__trust .stars{color:var(--lime-deep);letter-spacing:1px}
+  .hero__trust .sep{color:var(--rule-strong)}
+  .hero__media{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.55);border:3px solid var(--ink)}
+  .hero__media img{width:100%;height:100%;object-fit:cover}
+  .sticker{position:absolute;font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:10px 14px;border-radius:14px;border:2px solid var(--ink)}
+  .sticker--tr{top:16px;right:16px;background:var(--pink);color:#fff;transform:rotate(-7deg)}
+  .sticker--bl{bottom:18px;left:16px;transform:rotate(5deg)}
+
+  /* marquee */
+  .marquee{background:var(--ink);overflow:hidden;border-top:2px solid var(--lime);border-bottom:2px solid var(--lime);white-space:nowrap}
+  .marquee__track{display:inline-block;animation:scroll 26s linear infinite}
+  .marquee__track span{display:inline-flex;align-items:center;gap:30px;font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--bg);padding:14px 15px}
+  .marquee b{color:var(--lime)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* sections */
+  .section{padding:64px 0}
+  .section__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+  .section__head h2{font-size:44px}
+  .seeall{font-family:var(--disp);font-weight:600;font-size:15px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:9px 16px}
+
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .pcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:12px;transition:transform .12s}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard__media{aspect-ratio:1/1;border-radius:13px;overflow:hidden;background:#ece7d8;position:relative}
+  .pcard__media img{width:100%;height:100%;object-fit:cover}
+  .pcard__chip{position:absolute;top:9px;left:9px;font-family:var(--disp);font-weight:700;font-size:11px;color:var(--ink);padding:5px 9px;border-radius:999px;border:1.5px solid var(--ink)}
+  .pcard__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grape);margin:12px 4px 0}
+  .pcard__row{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 0;gap:8px}
+  .pcard__name{font-family:var(--disp);font-weight:600;font-size:16px}
+  .pcard__price{font-family:var(--disp);font-weight:700;font-size:15px;background:var(--lime);border-radius:999px;padding:3px 10px}
+  .pcard__stars{font-size:12px;color:var(--lime-deep);margin:6px 4px 4px}
+
+  .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .cat{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:5/4;display:flex;align-items:flex-end;border:3px solid var(--ink)}
+  .cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .3s}
+  .cat:hover img{transform:scale(1.05)}
+  .cat__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,19,13,0) 40%,rgba(20,19,13,.8))}
+  .cat__label{position:relative;color:#fff;padding:20px;width:100%;display:flex;justify-content:space-between;align-items:center}
+  .cat__label h3{font-size:27px}
+  .cat__pill{font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:7px 13px;border-radius:999px}
+
+  .story{background:var(--grape);color:#fff;border-radius:30px;margin:0 26px;overflow:hidden}
+  .story__grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:60px;max-width:1148px;margin:0 auto}
+  .story h2{font-size:46px;margin:14px 0 0;color:#fff}
+  .story p{color:#ede7ff;font-size:17px;margin:16px 0 0;max-width:50ch}
+  .story .eyebrow{color:var(--lime)}
+  .story__media{border-radius:18px;overflow:hidden;aspect-ratio:1/1;border:3px solid #fff}
+  .story__media img{width:100%;height:100%;object-fit:cover}
+
+  /* reviews */
+  .reviews__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .review{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+  .review__stars{color:var(--lime-deep);font-size:15px}
+  .review__title{font-family:var(--disp);font-weight:700;font-size:19px}
+  .review__body{color:var(--ink-2);font-size:15px;margin:0}
+  .review__by{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--ink-3);margin-top:auto;display:flex;align-items:center;gap:7px}
+  .review__by .v{background:var(--lime);color:var(--ink);font-size:11px;padding:2px 8px;border-radius:999px}
+
+  /* email band */
+  .email{background:var(--lime);border-radius:30px;margin:0 26px;border:3px solid var(--ink)}
+  .email__in{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:44px 50px;flex-wrap:wrap;max-width:1148px;margin:0 auto}
+  .email h2{font-size:40px;color:var(--ink)}
+  .email p{margin:10px 0 0;color:#2c3413;font-size:16px;max-width:42ch}
+  .email__form{display:flex;gap:10px;flex-wrap:wrap}
+  .email__form input{font-family:var(--body);font-size:15px;border:2px solid var(--ink);border-radius:999px;padding:13px 20px;min-width:240px;background:#fff}
+
+  .footer{background:var(--ink);color:#cfcdc2;font-family:var(--body);margin-top:56px}
+  .footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:54px 0 26px}
+  .footer__brand{font-family:var(--disp);font-weight:700;font-size:24px;color:#fff;display:flex;align-items:center;gap:7px}
+  .footer h5{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+  .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:14px}
+  .footer__bottom{border-top:1px solid #2c2b22;padding:18px 0;display:flex;justify-content:space-between;font-size:12px;color:#86847a;font-family:var(--disp);flex-wrap:wrap;gap:10px}
+  .footer__social{display:flex;gap:12px;color:#cfcdc2}
+
+  .cm{background:#0f0f0a;color:#cfcdc2;font-family:var(--body);font-size:13px}
+  .cm h2{color:#fff;font-size:26px;margin:0 0 6px}
+  .cm p{color:#8c8a7e;max-width:72ch}
+  .cm table{width:100%;border-collapse:collapse;margin-top:22px}
+  .cm th,.cm td{text-align:left;padding:11px 12px;border-bottom:1px solid #232219;vertical-align:top}
+  .cm th{color:var(--lime);font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .cm code{color:#e7edd6;background:#1b1b12;padding:1px 6px;border-radius:5px;font-size:12px}
+
+  /* ============ CART PAGE ============ */
+  .cart__head{padding:44px 0 8px}
+  .cart__title{font-size:60px;letter-spacing:-.03em}
+  .cart__title .hl{background:var(--lime);padding:0 .08em;border-radius:10px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .cart__count{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink-2);margin-top:14px}
+  .cart__grid{display:grid;grid-template-columns:1.55fr .85fr;gap:34px;align-items:start;padding-bottom:30px}
+
+  /* line items */
+  .items{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:8px 22px}
+  .item{display:grid;grid-template-columns:96px 1fr auto;gap:20px;align-items:center;padding:22px 0;border-bottom:1.5px solid var(--rule)}
+  .item:last-child{border-bottom:none}
+  .item__media{width:96px;height:96px;border-radius:15px;overflow:hidden;background:#ece7d8;border:2px solid var(--ink)}
+  .item__media img{width:100%;height:100%;object-fit:cover}
+  .item__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grape)}
+  .item__name{font-family:var(--disp);font-weight:600;font-size:18px;margin:3px 0 0;line-height:1.15}
+  .item__meta{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+  .item__cat{font-family:var(--disp);font-weight:600;font-size:11px;color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:3px 10px}
+  .item__unit{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3)}
+  .item__right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+  .item__total{font-family:var(--disp);font-weight:700;font-size:17px;background:var(--lime);border-radius:999px;padding:4px 13px}
+  .item__controls{display:flex;align-items:center;gap:14px}
+
+  .stepper{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff}
+  .stepper button{font-family:var(--disp);font-weight:700;font-size:16px;width:34px;height:34px;border:none;background:transparent;color:var(--ink);cursor:pointer;line-height:1}
+  .stepper button:hover{background:var(--lime)}
+  .stepper .qty{font-family:var(--disp);font-weight:600;font-size:15px;min-width:26px;text-align:center}
+  .item__remove{font-family:var(--disp);font-weight:600;font-size:18px;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--rule-strong);background:#fff;color:var(--ink-3);cursor:pointer;line-height:1}
+  .item__remove:hover{border-color:var(--ink);color:var(--ink);background:var(--bg)}
+
+  /* order summary */
+  .summary{position:sticky;top:20px;background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:24px}
+  .summary h2{font-size:24px;margin-bottom:18px}
+  .ship{background:var(--bg);border:1.5px solid var(--rule-strong);border-radius:16px;padding:14px 16px;margin-bottom:20px}
+  .ship__msg{font-family:var(--disp);font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px}
+  .ship__bar{height:9px;border-radius:999px;background:#e2ddcd;margin-top:11px;overflow:hidden;border:1px solid var(--rule-strong)}
+  .ship__fill{height:100%;background:var(--lime);width:100%}
+  .sumrow{display:flex;justify-content:space-between;align-items:center;font-family:var(--disp);font-weight:500;font-size:15px;padding:9px 0;color:var(--ink-2)}
+  .sumrow .v{font-weight:600;color:var(--ink)}
+  .sumrow--free .v{background:var(--lime);color:var(--ink);border-radius:999px;padding:2px 11px;font-size:13px;font-weight:700}
+  .sumrule{border:none;border-top:1.5px solid var(--rule);margin:8px 0}
+  .sumrow--total{font-size:20px;font-weight:700;color:var(--ink);padding:12px 0 18px}
+  .sumrow--total .v{font-weight:700}
+  .summary .btn{width:100%;text-align:center;font-size:17px;padding:16px}
+  .summary__continue{display:block;text-align:center;font-family:var(--disp);font-weight:600;font-size:14px;color:var(--ink-2);margin-top:16px}
+  .summary__continue:hover{color:var(--ink)}
+  .trust{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:20px;padding-top:18px;border-top:1.5px solid var(--rule);font-family:var(--disp);font-weight:600;font-size:12px;color:var(--ink-3)}
+  .trust .sep{color:var(--rule-strong)}
+
+  @media(max-width:920px){
+    .hero__grid,.story__grid,.email__in{grid-template-columns:1fr;gap:26px}
+    .hero__title{font-size:54px}
+    .pgrid,.reviews__grid{grid-template-columns:repeat(2,1fr)}
+    .cats,.footer__top{grid-template-columns:1fr 1fr}
+    .nav__links{display:none}
+    .story,.email{margin:0 14px}.story__grid{padding:34px}.email__in{padding:32px}
+    /* cart responsive: summary stacks under items */
+    .cart__grid{grid-template-columns:1fr;gap:22px}
+    .summary{position:static}
+    .cart__title{font-size:44px}
+  }
+  @media(max-width:520px){
+    .item{grid-template-columns:72px 1fr;gap:14px}
+    .item__media{width:72px;height:72px}
+    .item__right{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center}
+    .pgrid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- data-pl="homepage.announcement (text)" — reused verbatim from homepage -->
+<div class="announce">Free shipping over $99 · 21+ · ships discreet, no labels</div>
+
+<nav class="nav">
+  <div style="display:flex;gap:32px;align-items:center">
+    <a class="brand" href="#"><span class="dot"></span>blinkers</a>
+    <div class="nav__links"><a href="#">Edibles</a><a href="#">Concentrates</a><a href="#">Vapes</a><a href="#">Lab reports</a></div>
+  </div>
+  <!-- data: cart count reflects CartProvider item count (3 lines / 4 units) -->
+  <div class="nav__right"><span>Search</span><span>Account</span><span class="cartpill">Cart · 4</span></div>
+</nav>
+
+<!-- ============ CART ============ -->
+<!-- data: cart is client state (CartProvider) — array of { productId, qty }; each row reads products.{name, price, featuredImage→media, brand}; not a Payload collection -->
+<section class="hero">
+  <span class="blob blob--1"></span><span class="blob blob--2"></span>
+  <div class="wrap" style="position:relative;z-index:1">
+
+    <div class="cart__head">
+      <h1 class="cart__title"><span class="hl">Your cart</span></h1>
+      <!-- data: derived — cart.items.length lines, sum(qty) units -->
+      <div class="cart__count">3 items · 4 in the bag</div>
+    </div>
+
+    <div class="cart__grid">
+
+      <!-- LEFT: line items -->
+      <!-- data: v-for over CartProvider items; each joins products by productId for {brand, name, category, price, featuredImage→media} -->
+      <div class="items">
+
+        <!-- line 1 — Blinkers Flip · qty 1 -->
+        <div class="item">
+          <div class="item__media"><img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt="Blinkers Flip — Gelato Pie × Pineapple Haze"></div>
+          <div>
+            <div class="item__brand">Blinkers Flip</div>
+            <h3 class="item__name">Gelato Pie × Pineapple Haze</h3>
+            <div class="item__meta">
+              <span class="item__cat">Vapes</span>
+              <span class="item__unit">$80 each</span>
+            </div>
+          </div>
+          <div class="item__right">
+            <div class="item__total">$80</div>
+            <div class="item__controls">
+              <!-- data: stepper mutates CartProvider qty for this productId -->
+              <div class="stepper"><button aria-label="Decrease quantity">−</button><span class="qty">1</span><button aria-label="Increase quantity">+</button></div>
+              <button class="item__remove" aria-label="Remove item" title="Remove">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- line 2 — Litt Edibles · qty 2 -->
+        <div class="item">
+          <div class="item__media"><img src="/api/media/file/treasure_trove.jpg" alt="Litt Edibles — Treasure Trove"></div>
+          <div>
+            <div class="item__brand">Litt Edibles</div>
+            <h3 class="item__name">Treasure Trove</h3>
+            <div class="item__meta">
+              <span class="item__cat">Edibles</span>
+              <span class="item__unit">$40 each</span>
+            </div>
+          </div>
+          <div class="item__right">
+            <!-- data: line total = price × qty = 40 × 2 -->
+            <div class="item__total">$80</div>
+            <div class="item__controls">
+              <div class="stepper"><button aria-label="Decrease quantity">−</button><span class="qty">2</span><button aria-label="Increase quantity">+</button></div>
+              <button class="item__remove" aria-label="Remove item" title="Remove">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- line 3 — 710 Nomad Rosin · qty 1 -->
+        <div class="item">
+          <div class="item__media"><img src="/api/media/file/710_nomad_zoap.jpg" alt="710 Nomad Rosin — Zoap"></div>
+          <div>
+            <div class="item__brand">710 Nomad Rosin</div>
+            <h3 class="item__name">Zoap</h3>
+            <div class="item__meta">
+              <span class="item__cat">Concentrates</span>
+              <span class="item__unit">$180 each</span>
+            </div>
+          </div>
+          <div class="item__right">
+            <div class="item__total">$180</div>
+            <div class="item__controls">
+              <div class="stepper"><button aria-label="Decrease quantity">−</button><span class="qty">1</span><button aria-label="Increase quantity">+</button></div>
+              <button class="item__remove" aria-label="Remove item" title="Remove">×</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: sticky order summary -->
+      <!-- data: all figures derived client-side from CartProvider; checkout → PaymentProvider abstraction -->
+      <aside class="summary">
+        <h2>Order summary</h2>
+
+        <!-- data: free-ship threshold = $99 (homepage.announcement / site config); subtotal $340 ≥ threshold → unlocked -->
+        <div class="ship">
+          <div class="ship__msg">You unlocked free shipping <span>🎉</span></div>
+          <div class="ship__bar"><span class="ship__fill"></span></div>
+        </div>
+
+        <!-- data: subtotal = sum(price × qty) = 80 + 80 + 180 -->
+        <div class="sumrow">Subtotal <span class="v">$340</span></div>
+        <div class="sumrow sumrow--free">Shipping <span class="v">Free</span></div>
+        <hr class="sumrule">
+        <!-- data: total = subtotal + shipping(0) = $340 -->
+        <div class="sumrow sumrow--total">Total <span class="v">$340</span></div>
+
+        <a class="btn btn--lime" href="#">Checkout →</a>
+        <a class="summary__continue" href="/">← Continue shopping</a>
+
+        <div class="trust">
+          <span>Ships discreet</span><span class="sep">·</span><span>21+ age-gated</span><span class="sep">·</span><span>Secure checkout</span>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ UPSELL: YOU MIGHT ALSO LIKE ============ -->
+<!-- data: upsell products = relationship→products (or simple "more from these brands" query); same product-card shape as homepage.featuredProducts -->
+<section class="section" style="padding-top:18px"><div class="wrap">
+  <div class="section__head">
+    <div><div class="eyebrow">Before you go</div><h2 style="margin-top:8px">You might also like.</h2></div>
+    <a class="seeall" href="/">Browse all 21 →</a>
+  </div>
+  <div class="pgrid" style="grid-template-columns:repeat(3,1fr)" data-pl="cart.upsellProducts (relationship→products)">
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/candy_vibes.jpg" alt=""></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Candy Vibes</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--sky);color:#fff;border-color:var(--sky)">Solventless</span><img src="/api/media/file/710_nomad_moroccan_peaches.jpg" alt=""></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Moroccan Peaches</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/blinkers_flip_forbidden_fruit_pink_runtz.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Forbidden Fruit × Pink Runtz</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+  </div>
+</div></section>
+
+<!-- ============ FOOTER ============ — reused verbatim from homepage -->
+<footer class="footer"><div class="wrap">
+  <div class="footer__top">
+    <div><div class="footer__brand"><span class="dot" style="width:12px;height:12px;background:var(--lime);border-radius:50%"></span>blinkers</div><p style="margin-top:12px;max-width:34ch;color:#9b9a8c">A tight, lab-tested shelf of THCa. 21+ only.</p></div>
+    <div><h5>Shop</h5><ul><li>Edibles</li><li>Concentrates</li><li>Vapes</li><li>All products</li></ul></div>
+    <div><h5>Learn</h5><ul><li>About THCa</li><li>Lab reports</li><li>Journal</li><li>Wholesale</li></ul></div>
+    <div><h5>Help</h5><ul><li>Shipping &amp; states</li><li>Returns</li><li>Age verification</li><li>Contact</li></ul></div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Blinkers · 21+ only · keep away from children &amp; pets</span><span class="footer__social">Instagram · TikTok · X</span></div>
+</div></footer>
+
+</body>
+</html>

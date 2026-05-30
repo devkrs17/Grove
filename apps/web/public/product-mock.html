@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blinkers Flip — Gelato Pie × Pineapple Haze — Product mock</title>
+<!--
+  STATIC MOCK of the proposed Blinkers PRODUCT DETAIL page (PDP).
+  Not wired to React/Payload yet. Reuses the homepage-mock design system
+  (head, style base, announce, nav, footer copied verbatim) + PDP classes.
+  Each section is annotated with its Payload mapping (data-pl="...").
+  data-pl: single product by slug → products.{name, price, featuredImage→media,
+  gallery→media[], category, description, brand, rating, specs, coa}; related =
+  products with same category (hasMany), excluding self.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2e9; --paper:#ffffff; --ink:#14130d; --ink-2:#4b4a40; --ink-3:#86847a;
+    --lime:#c2f04a; --lime-deep:#a6db2f; --grape:#7b3ff2; --grape-soft:#d9c4ff; --tang:#ff7a3d; --pink:#ff5d8f; --sky:#37c2e0;
+    --rule:#e6e2d4; --rule-strong:#d6d1bf;
+    --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
+  .btn--lime{background:var(--lime);color:var(--ink)}
+  .btn--dark{background:var(--ink);color:#fff}
+  .btn--ghost{background:transparent;color:var(--ink)}
+
+  .announce{background:var(--ink);color:var(--lime);font-family:var(--disp);font-weight:600;text-align:center;font-size:13px;letter-spacing:.06em;padding:10px;text-transform:uppercase}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:1200px;margin:0 auto}
+  .brand{font-family:var(--disp);font-weight:700;font-size:25px;letter-spacing:-.04em;display:flex;align-items:center;gap:7px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(194,240,74,.3)}
+  .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
+  .nav__links a:hover{color:var(--lime-deep)}
+  .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
+  .cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  .blob--1{width:440px;height:440px;background:var(--lime);opacity:.45;top:-160px;left:-110px}
+  .blob--2{width:380px;height:380px;background:var(--grape-soft);opacity:.6;bottom:-180px;left:34%}
+  .hero__grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding:40px 0 60px}
+  .hero__eyebrow{display:inline-flex;gap:8px;align-items:center;background:var(--paper);border:1px solid var(--rule-strong);border-radius:999px;padding:7px 14px}
+  .hero__title{font-size:84px;margin:20px 0 0;letter-spacing:-.03em}
+  .hero__title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hero__sub{font-size:18px;color:var(--ink-2);max-width:44ch;margin:22px 0 0}
+  .hero__cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .hero__trust{display:flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+  .hero__trust .stars{color:var(--lime-deep);letter-spacing:1px}
+  .hero__trust .sep{color:var(--rule-strong)}
+  .hero__media{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.55);border:3px solid var(--ink)}
+  .hero__media img{width:100%;height:100%;object-fit:cover}
+  .sticker{position:absolute;font-family:var(--disp);font-weight:700;font-size:13px;background:var(--lime);color:var(--ink);padding:10px 14px;border-radius:14px;border:2px solid var(--ink)}
+  .sticker--tr{top:16px;right:16px;background:var(--pink);color:#fff;transform:rotate(-7deg)}
+  .sticker--bl{bottom:18px;left:16px;transform:rotate(5deg)}
+
+  /* marquee */
+  .marquee{background:var(--ink);overflow:hidden;border-top:2px solid var(--lime);border-bottom:2px solid var(--lime);white-space:nowrap}
+  .marquee__track{display:inline-block;animation:scroll 26s linear infinite}
+  .marquee__track span{display:inline-flex;align-items:center;gap:30px;font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--bg);padding:14px 15px}
+  .marquee b{color:var(--lime)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* sections */
+  .section{padding:64px 0}
+  .section__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+  .section__head h2{font-size:44px}
+  .seeall{font-family:var(--disp);font-weight:600;font-size:15px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:9px 16px}
+
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .pcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:12px;transition:transform .12s}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard__media{aspect-ratio:1/1;border-radius:13px;overflow:hidden;background:#ece7d8;position:relative}
+  .pcard__media img{width:100%;height:100%;object-fit:cover}
+  .pcard__chip{position:absolute;top:9px;left:9px;font-family:var(--disp);font-weight:700;font-size:11px;color:var(--ink);padding:5px 9px;border-radius:999px;border:1.5px solid var(--ink)}
+  .pcard__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--grape);margin:12px 4px 0}
+  .pcard__row{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 0;gap:8px}
+  .pcard__name{font-family:var(--disp);font-weight:600;font-size:16px}
+  .pcard__price{font-family:var(--disp);font-weight:700;font-size:15px;background:var(--lime);border-radius:999px;padding:3px 10px}
+  .pcard__stars{font-size:12px;color:var(--lime-deep);margin:6px 4px 4px}
+
+  .footer{background:var(--ink);color:#cfcdc2;font-family:var(--body);margin-top:56px}
+  .footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:54px 0 26px}
+  .footer__brand{font-family:var(--disp);font-weight:700;font-size:24px;color:#fff;display:flex;align-items:center;gap:7px}
+  .footer h5{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+  .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:14px}
+  .footer__bottom{border-top:1px solid #2c2b22;padding:18px 0;display:flex;justify-content:space-between;font-size:12px;color:#86847a;font-family:var(--disp);flex-wrap:wrap;gap:10px}
+  .footer__social{display:flex;gap:12px;color:#cfcdc2}
+
+  /* ====================== PDP-SPECIFIC ====================== */
+  /* breadcrumb */
+  .crumb{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);padding:18px 0 0}
+  .crumb a:hover{color:var(--ink)}
+  .crumb .sep{color:var(--rule-strong);margin:0 8px}
+  .crumb .now{color:var(--ink)}
+
+  /* product layout */
+  .pdp{position:relative;overflow:hidden}
+  .pdp__grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;padding:26px 0 18px}
+
+  /* gallery */
+  .gallery{position:sticky;top:18px}
+  .gallery__hero{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:1/1;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.5);border:3px solid var(--ink)}
+  .gallery__hero img{width:100%;height:100%;object-fit:cover}
+  .gallery__thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+  .thumb{aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#ece7d8;border:2px solid var(--ink);cursor:pointer;transition:transform .12s}
+  .thumb:hover{transform:translateY(-3px)}
+  .thumb.is-active{outline:3px solid var(--lime);outline-offset:2px}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+
+  /* buy box */
+  .buy__brand{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--grape)}
+  .buy__title{font-size:46px;margin:8px 0 0;letter-spacing:-.03em}
+  .buy__rate{display:flex;align-items:center;gap:9px;margin-top:14px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2)}
+  .buy__rate .stars{color:var(--lime-deep);letter-spacing:1px;font-size:16px}
+  .buy__rate .sep{color:var(--rule-strong)}
+  .buy__pricerow{display:flex;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .buy__price{font-family:var(--disp);font-weight:700;font-size:34px;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:6px 22px;line-height:1.1}
+  .buy__unit{font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-3)}
+  .buy__blurb{font-size:16px;color:var(--ink-2);max-width:48ch;margin:20px 0 0}
+
+  .specs{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px}
+  .specs li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--ink)}
+  .specs li::before{content:"";flex:0 0 auto;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--lime);border:2px solid var(--ink)}
+
+  .buy__order{display:flex;gap:12px;align-items:center;margin-top:26px;flex-wrap:wrap}
+  .stepper{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:999px;background:var(--paper);overflow:hidden}
+  .stepper button{font-family:var(--disp);font-weight:700;font-size:20px;width:46px;height:48px;background:transparent;border:0;cursor:pointer;color:var(--ink);line-height:1}
+  .stepper button:hover{background:var(--lime)}
+  .stepper .qty{font-family:var(--disp);font-weight:700;font-size:17px;min-width:38px;text-align:center}
+  .buy__add{flex:1;min-width:200px;text-align:center}
+  .buy__buynow{margin-top:12px;display:block;width:100%;text-align:center}
+
+  .trustrow{display:flex;align-items:center;gap:14px;margin-top:22px;padding-top:20px;border-top:1px solid var(--rule);font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-2);flex-wrap:wrap}
+  .trustrow span{display:inline-flex;align-items:center;gap:7px}
+  .trustrow .ic{width:9px;height:9px;border-radius:50%;background:var(--lime-deep)}
+  .trustrow .sep{color:var(--rule-strong)}
+
+  /* description + COA + faq band */
+  .detail{padding:18px 0 8px}
+  .detail__grid{display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:start}
+  .prose h2{font-size:32px;margin:0 0 14px}
+  .prose p{color:var(--ink-2);font-size:16px;margin:0 0 14px;max-width:62ch}
+
+  .coa{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:22px}
+  .coa__top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+  .coa__top h3{font-size:21px}
+  .coa__badge{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px}
+  .coa__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .coa__cell{border:1.5px solid var(--rule-strong);border-radius:14px;padding:13px 14px;background:#fcfbf6}
+  .coa__k{font-family:var(--disp);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+  .coa__v{font-family:var(--disp);font-weight:700;font-size:18px;margin-top:5px}
+  .coa__v.hl{color:var(--lime-deep)}
+  .coa__link{display:inline-block;margin-top:16px;font-family:var(--disp);font-weight:600;font-size:14px;background:var(--ink);color:#fff;border-radius:999px;padding:10px 18px}
+
+  /* faq */
+  .faq{margin-top:36px}
+  .faq h2{font-size:32px;margin:0 0 16px}
+  details.q{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:0 18px;margin-bottom:12px;overflow:hidden}
+  details.q summary{font-family:var(--disp);font-weight:600;font-size:17px;list-style:none;cursor:pointer;padding:17px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  details.q summary::-webkit-details-marker{display:none}
+  details.q summary::after{content:"+";font-family:var(--disp);font-weight:700;font-size:24px;color:var(--grape);line-height:1}
+  details.q[open] summary::after{content:"–"}
+  details.q .a{color:var(--ink-2);font-size:15px;padding:0 0 18px;margin:0;max-width:64ch}
+
+  @media(max-width:920px){
+    .hero__grid{grid-template-columns:1fr;gap:26px}
+    .hero__title{font-size:54px}
+    .pgrid{grid-template-columns:repeat(2,1fr)}
+    .footer__top{grid-template-columns:1fr 1fr}
+    .nav__links{display:none}
+    .pdp__grid{grid-template-columns:1fr;gap:28px}
+    .gallery{position:static}
+    .buy__title{font-size:36px}
+    .detail__grid{grid-template-columns:1fr;gap:28px}
+    .coa{position:static}
+  }
+  @media(max-width:560px){
+    .coa__grid{grid-template-columns:1fr}
+    .buy__order{flex-direction:column;align-items:stretch}
+    .stepper{justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<!-- data-pl="homepage.announcement (text) — shared site-wide banner (brand-configs)" -->
+<div class="announce">Free shipping over $99 · 21+ · ships discreet, no labels</div>
+
+<nav class="nav">
+  <div style="display:flex;gap:32px;align-items:center">
+    <a class="brand" href="#"><span class="dot"></span>blinkers</a>
+    <div class="nav__links"><a href="#">Edibles</a><a href="#">Concentrates</a><a href="#">Vapes</a><a href="#">Lab reports</a></div>
+  </div>
+  <div class="nav__right"><span>Search</span><span>Account</span><span class="cartpill">Cart · 0</span></div>
+</nav>
+
+<!-- ============ BREADCRUMB ============ -->
+<!-- data-pl="derived: products.category → 'Vapes'; products.name → leaf" -->
+<div class="wrap">
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href="#">Shop</a><span class="sep">/</span><a href="#">Vapes</a><span class="sep">/</span><span class="now">Gelato Pie × Pineapple Haze</span>
+  </nav>
+</div>
+
+<!-- ============ PRODUCT (gallery + buy box) ============ -->
+<!-- data-pl="single product by slug → products.{name, price, featuredImage→media, gallery→media[], category, brand, rating, specs[]}" -->
+<section class="pdp">
+  <span class="blob blob--1"></span><span class="blob blob--2"></span>
+  <div class="wrap pdp__grid">
+
+    <!-- LEFT: gallery -->
+    <div class="gallery" data-pl="products.gallery (upload→media, hasMany) + products.featuredImage">
+      <div class="gallery__hero">
+        <img id="heroImg" src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt="Blinkers Flip — Gelato Pie × Pineapple Haze, 2g liquid-diamond disposable">
+        <span class="sticker sticker--tr">2g · dual flavor</span>
+        <span class="sticker sticker--bl">every lot lab-tested ✓</span>
+      </div>
+      <div class="gallery__thumbs">
+        <button class="thumb is-active" onclick="swapHero(this,'/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg')" aria-label="View main image"><img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt=""></button>
+        <button class="thumb" onclick="swapHero(this,'/api/media/file/blinkers_flip_gushers_banana_mochi.jpg')" aria-label="View alternate angle"><img src="/api/media/file/blinkers_flip_gushers_banana_mochi.jpg" alt=""></button>
+        <button class="thumb" onclick="swapHero(this,'/api/media/file/blinkers_flip_mango_tango_lemon_heads.jpg')" aria-label="View alternate angle"><img src="/api/media/file/blinkers_flip_mango_tango_lemon_heads.jpg" alt=""></button>
+        <button class="thumb" onclick="swapHero(this,'/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg')" aria-label="View alternate angle"><img src="/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg" alt=""></button>
+      </div>
+    </div>
+
+    <!-- RIGHT: buy box -->
+    <div class="buy">
+      <div class="buy__brand" data-pl="products.brand">Blinkers Flip</div>
+      <h1 class="buy__title" data-pl="products.name">Gelato Pie × Pineapple Haze</h1>
+      <div class="buy__rate" data-pl="products.rating (group{stars,count})"><span class="stars">★★★★★</span> 4.9 <span class="sep">·</span> 128 reviews</div>
+
+      <div class="buy__pricerow">
+        <span class="buy__price" data-pl="products.price">$80</span>
+        <span class="buy__unit">2g disposable · ~$40/g</span>
+      </div>
+
+      <p class="buy__blurb" data-pl="products.shortDescription (textarea)">A 2g dual-flavor liquid-diamond disposable. Gelato Pie's creamy dessert pull on one side, juicy tropical Pineapple Haze on the other — flip between them mid-session. Smooth, loud, and lab-clean.</p>
+
+      <!-- data-pl="products.specs (array{ text }) — short highlight bullets" -->
+      <ul class="specs" data-pl="products.specs">
+        <li>2g dual-flavor disposable — flip between two strains</li>
+        <li>Liquid diamonds (THCa-rich) for a clean, full-flavor hit</li>
+        <li>Third-party lab-tested — every batch</li>
+        <li>Lot-traceable — scan to pull the exact COA</li>
+      </ul>
+
+      <!-- data-pl="UI only: quantity → cart line item; add/buy → checkout (not modeled in products)" -->
+      <div class="buy__order">
+        <div class="stepper" role="group" aria-label="Quantity">
+          <button type="button" onclick="step(-1)" aria-label="Decrease quantity">−</button>
+          <span class="qty" id="qty">1</span>
+          <button type="button" onclick="step(1)" aria-label="Increase quantity">+</button>
+        </div>
+        <a class="btn btn--lime buy__add" href="#">Add to cart · $80</a>
+      </div>
+      <a class="btn btn--dark buy__buynow" href="#">Buy it now</a>
+
+      <div class="trustrow">
+        <span><span class="ic"></span> Ships discreet</span><span class="sep">·</span>
+        <span><span class="ic"></span> Lab-tested</span><span class="sep">·</span>
+        <span><span class="ic"></span> 21+ age-gated</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ DESCRIPTION + COA ============ -->
+<section class="section detail" style="padding-top:30px"><div class="wrap">
+  <div class="detail__grid">
+
+    <!-- description -->
+    <div class="prose" data-pl="products.description (richText → lexical, same as pages.content)">
+      <h2>The full story</h2>
+      <p>Two strains, one device. Blinkers Flip pairs <strong>Gelato Pie</strong> — a creamy, dessert-leaning indica cross — with <strong>Pineapple Haze</strong>, a bright, citrus-forward sativa. A flick of the switch moves you between the two, so a single 2g cart covers the whole mood board.</p>
+      <p>Inside is a liquid-diamond formulation: THCa-rich crystalline concentrate re-introduced into a high-terpene sauce. That means flavor that actually tastes like the strain on the box, and vapor that stays smooth from the first pull to the last.</p>
+      <p>Like everything on the Blinkers shelf, this lot is third-party tested and traceable. Scan the device, pull the exact COA, see what's in it. No mystery hardware, no mystery oil.</p>
+    </div>
+
+    <!-- COA / lab report panel -->
+    <!-- data-pl="products.coa (group{potency, batchLot, testedDate, lab, reportFile→media})" -->
+    <aside class="coa" data-pl="products.coa">
+      <div class="coa__top">
+        <h3>Lab report · COA</h3>
+        <span class="coa__badge">Verified ✓</span>
+      </div>
+      <div class="coa__grid">
+        <div class="coa__cell"><div class="coa__k">Potency (THCa)</div><div class="coa__v hl">86.4%</div></div>
+        <div class="coa__cell"><div class="coa__k">Batch / Lot</div><div class="coa__v">BF-GP24</div></div>
+        <div class="coa__cell"><div class="coa__k">Tested</div><div class="coa__v">Apr 2026</div></div>
+        <div class="coa__cell"><div class="coa__k">Lab</div><div class="coa__v">Kaycha Labs</div></div>
+      </div>
+      <a class="coa__link" href="#" data-pl="products.coa.reportFile (upload→media)">View full COA (PDF) →</a>
+    </aside>
+
+  </div>
+
+  <!-- ============ FAQ ============ -->
+  <!-- data-pl="products.faqs (array{ question, answer }) — or shared site FAQ global" -->
+  <div class="faq" data-pl="products.faqs">
+    <h2>Good to know</h2>
+    <details class="q" open>
+      <summary>Is THCa legal?</summary>
+      <p class="a">THCa hemp products derived from cannabis with under 0.3% delta-9 THC by dry weight are federally compliant under the 2018 Farm Bill. State rules vary — a few restrict THCa specifically — so we age-gate and ship only where it's allowed. You must be 21+ to order.</p>
+    </details>
+    <details class="q">
+      <summary>How should I store it?</summary>
+      <p class="a">Keep it upright at room temperature, away from direct heat and sunlight. Extreme cold can thicken the oil and clog airflow — if that happens, let it warm to room temp and take slow, gentle pulls to prime it again.</p>
+    </details>
+    <details class="q">
+      <summary>Which states do you ship to?</summary>
+      <p class="a">We ship discreet (no branding on the box) to most U.S. states where THCa hemp is permitted. Restricted states are blocked at checkout automatically based on your shipping address. Check the Shipping &amp; states page for the current list.</p>
+    </details>
+  </div>
+
+</div></section>
+
+<!-- ============ MORE LIKE THIS (related products) ============ -->
+<!-- data-pl="related = products where category == this.category (Vapes), excluding self; falls back to cross-category picks. Card reads name, price, brand, featuredImage" -->
+<section class="section" style="padding-top:18px"><div class="wrap">
+  <div class="section__head">
+    <div><div class="eyebrow">More like this</div><h2 style="margin-top:8px">You'll probably want these too.</h2></div>
+    <a class="seeall" href="#">Browse all Vapes →</a>
+  </div>
+  <div class="pgrid" data-pl="products (relationship, same category)">
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--pink);color:#fff;border-color:var(--pink)">New</span><img src="/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Watermelon Z × Lemon Cherry Gelato</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><img src="/api/media/file/blinkers_flip_forbidden_fruit_pink_runtz.jpg" alt=""></div><div class="pcard__brand">Blinkers Flip</div><div class="pcard__row"><div class="pcard__name">Forbidden Fruit × Pink Runtz</div><div class="pcard__price">$80</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--tang);color:#fff;border-color:var(--tang)">1000mg</span><img src="/api/media/file/treasure_trove.jpg" alt=""></div><div class="pcard__brand">Litt Edibles</div><div class="pcard__row"><div class="pcard__name">Treasure Trove</div><div class="pcard__price">$40</div></div><div class="pcard__stars">★★★★★</div></a>
+    <a class="pcard"><div class="pcard__media"><span class="pcard__chip" style="background:var(--sky);color:#fff;border-color:var(--sky)">Solventless</span><img src="/api/media/file/710_nomad_moroccan_peaches.jpg" alt=""></div><div class="pcard__brand">710 Nomad Rosin</div><div class="pcard__row"><div class="pcard__name">Moroccan Peaches</div><div class="pcard__price">$180</div></div><div class="pcard__stars">★★★★★</div></a>
+  </div>
+</div></section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer"><div class="wrap">
+  <div class="footer__top">
+    <div><div class="footer__brand"><span class="dot" style="width:12px;height:12px;background:var(--lime);border-radius:50%"></span>blinkers</div><p style="margin-top:12px;max-width:34ch;color:#9b9a8c">A tight, lab-tested shelf of THCa. 21+ only.</p></div>
+    <div><h5>Shop</h5><ul><li>Edibles</li><li>Concentrates</li><li>Vapes</li><li>All products</li></ul></div>
+    <div><h5>Learn</h5><ul><li>About THCa</li><li>Lab reports</li><li>Journal</li><li>Wholesale</li></ul></div>
+    <div><h5>Help</h5><ul><li>Shipping &amp; states</li><li>Returns</li><li>Age verification</li><li>Contact</li></ul></div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Blinkers · 21+ only · keep away from children &amp; pets</span><span class="footer__social">Instagram · TikTok · X</span></div>
+</div></footer>
+
+<script>
+  // Mock-only interactivity (no Payload wiring): gallery swap + quantity stepper.
+  function swapHero(btn, src){
+    document.getElementById('heroImg').src = src;
+    document.querySelectorAll('.gallery__thumbs .thumb').forEach(function(t){ t.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+  }
+  function step(delta){
+    var el = document.getElementById('qty');
+    var n = Math.max(1, (parseInt(el.textContent, 10) || 1) + delta);
+    el.textContent = n;
+  }
+</script>
+
+</body>
+</html>
