@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blinkers — Lab reports mock</title>
+<!--
+  STATIC MOCK of the proposed Blinkers LAB REPORTS page (the COA / Certificate-of-
+  Analysis library linked from the nav + footer "Lab reports"). Not wired to React/
+  Payload yet. Shares the homepage/shop design system VERBATIM (announce / nav /
+  footer / blobs / style base) + lab-report-specific classes.
+
+  DATA NOTE: today `products` only carries flat COA-ish fields — lot, thcLabel,
+  terpenes. The per-lot report data this page needs (tested date, testing lab, the
+  pass/fail safety panel, and the COA PDF) is NOT modelled yet. This mock proposes a
+  dedicated `lab-reports` collection; the content-model section at the bottom spells
+  out the mapping and flags the gap. Potency / batch / lab values are plausible
+  placeholders (consistent with the PDP mock's COA panel: Gelato Pie = BF-GP24,
+  86.4% THCa, Kaycha Labs).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2e9; --paper:#ffffff; --ink:#14130d; --ink-2:#4b4a40; --ink-3:#86847a;
+    --lime:#c2f04a; --lime-deep:#a6db2f; --grape:#7b3ff2; --grape-soft:#d9c4ff; --tang:#ff7a3d; --pink:#ff5d8f; --sky:#37c2e0;
+    --rule:#e6e2d4; --rule-strong:#d6d1bf;
+    --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+  h1,h2,h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
+  .btn--lime{background:var(--lime);color:var(--ink)}
+  .btn--dark{background:var(--ink);color:#fff}
+  .btn--ghost{background:transparent;color:var(--ink)}
+
+  .announce{background:var(--ink);color:var(--lime);font-family:var(--disp);font-weight:600;text-align:center;font-size:13px;letter-spacing:.06em;padding:10px;text-transform:uppercase}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:1200px;margin:0 auto}
+  .brand{font-family:var(--disp);font-weight:700;font-size:25px;letter-spacing:-.04em;display:flex;align-items:center;gap:7px}
+  .brand .dot{width:13px;height:13px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(194,240,74,.3)}
+  .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
+  .nav__links a:hover{color:var(--lime-deep)}
+  .nav__links a[aria-current]{color:var(--lime-deep);font-weight:600}
+  .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
+  .cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+
+  /* shared decorative blobs */
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  .blob--1{width:440px;height:440px;background:var(--lime);opacity:.45;top:-160px;left:-110px}
+  .blob--2{width:380px;height:380px;background:var(--grape-soft);opacity:.6;bottom:-180px;left:34%}
+
+  /* sections */
+  .section{padding:64px 0}
+  .section__head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+  .section__head h2{font-size:44px}
+
+  .footer{background:var(--ink);color:#cfcdc2;font-family:var(--body);margin-top:56px}
+  .footer__top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;padding:54px 0 26px}
+  .footer__brand{font-family:var(--disp);font-weight:700;font-size:24px;color:#fff;display:flex;align-items:center;gap:7px}
+  .footer h5{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+  .footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:14px}
+  .footer__bottom{border-top:1px solid #2c2b22;padding:18px 0;display:flex;justify-content:space-between;font-size:12px;color:#86847a;font-family:var(--disp);flex-wrap:wrap;gap:10px}
+  .footer__social{display:flex;gap:12px;color:#cfcdc2}
+
+  /* page header (shared with shop PLP head) */
+  .plp-head{position:relative;overflow:hidden;border-bottom:2px solid var(--ink)}
+  .plp-head .blob--1{width:380px;height:380px;top:-180px;left:-120px;opacity:.4}
+  .plp-head .blob--2{width:320px;height:320px;bottom:-220px;left:62%;opacity:.5}
+  .plp-head__in{position:relative;z-index:1;padding:34px 0 30px}
+  .crumb{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);display:flex;align-items:center;gap:8px}
+  .crumb a:hover{color:var(--ink)}
+  .crumb .sep{color:var(--rule-strong)}
+  .crumb .here{color:var(--ink)}
+  .plp-head__row{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-top:14px}
+  .plp-title{font-size:64px;letter-spacing:-.03em}
+  .plp-title .hl{background:var(--lime);padding:0 .08em;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .plp-lead{font-family:var(--body);font-size:16px;color:var(--ink-2);max-width:52ch;margin:16px 0 0}
+
+  /* trust stat strip under the title */
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .stat{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:12px 18px;min-width:120px}
+  .stat__n{font-family:var(--disp);font-weight:700;font-size:26px;line-height:1}
+  .stat__l{font-family:var(--disp);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+
+  /* "what we test for" band — reuses the COA cell aesthetic */
+  .tests{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .test{background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px}
+  .test__top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .test__name{font-family:var(--disp);font-weight:700;font-size:17px}
+  .test__note{font-size:14px;color:var(--ink-2);margin:0;max-width:38ch}
+  .pass{display:inline-flex;align-items:center;gap:6px;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .pass .tick{width:14px;height:14px;display:grid;place-items:center}
+
+  /* toolbar: search + category pills */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .search{display:flex;align-items:center;gap:10px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:11px 18px;flex:1;min-width:240px;max-width:420px}
+  .search svg{flex:0 0 auto;opacity:.6}
+  .search input{border:0;outline:0;background:transparent;width:100%;font-family:var(--body);font-size:15px;color:var(--ink)}
+  .pills{display:flex;gap:9px;flex-wrap:wrap}
+  .pill{font-family:var(--disp);font-weight:600;font-size:14px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer;color:var(--ink-2)}
+  .pill:hover{color:var(--ink)}
+  .pill.is-active{background:var(--lime);color:var(--ink)}
+
+  /* report library table */
+  .libcard{background:var(--paper);border:2px solid var(--ink);border-radius:22px;overflow:hidden}
+  .libcard__scroll{overflow-x:auto}
+  .lib{width:100%;border-collapse:collapse;min-width:880px}
+  .lib thead th{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:16px 18px;background:#fbfaf4;border-bottom:2px solid var(--ink);white-space:nowrap}
+  .lib tbody td{padding:14px 18px;border-bottom:1px solid var(--rule);vertical-align:middle;font-size:15px}
+  .lib tbody tr:last-child td{border-bottom:0}
+  .lib tbody tr:hover{background:#fcfbf6}
+  .lib tbody tr.is-hidden{display:none}
+  .lib__prod{display:flex;align-items:center;gap:12px;min-width:230px}
+  .lib__thumb{width:46px;height:46px;flex:0 0 auto;border-radius:11px;overflow:hidden;background:#ece7d8;border:2px solid var(--ink)}
+  .lib__thumb img{width:100%;height:100%;object-fit:cover}
+  .lib__name{font-family:var(--disp);font-weight:600;font-size:15px;line-height:1.2}
+  .lib__brand{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--grape);margin-top:3px}
+  .lib__lot{font-family:var(--disp);font-weight:700;font-size:14px}
+  .lib__cat{font-family:var(--disp);font-weight:600;font-size:12px;background:#f1eede;border:1.5px solid var(--rule-strong);border-radius:999px;padding:4px 11px;white-space:nowrap}
+  .lib__pot{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--lime-deep)}
+  .lib__muted{color:var(--ink-2);white-space:nowrap}
+  .lib__coa{font-family:var(--disp);font-weight:600;font-size:13px;background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px;white-space:nowrap}
+  .lib__coa:hover{background:var(--grape)}
+  .lib__empty{padding:34px 18px;text-align:center;color:var(--ink-3);font-family:var(--disp);font-weight:500}
+  .lib__count{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);margin:16px 2px 0}
+  .lib__count b{color:var(--ink);font-weight:700}
+
+  /* expanded sample COA */
+  .report{background:var(--paper);border:2px solid var(--ink);border-radius:24px;overflow:hidden;margin-top:22px}
+  .report__head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:24px 26px;border-bottom:2px solid var(--ink);background:#fbfaf4}
+  .report__title{font-size:26px}
+  .report__sub{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .report__sub .sep{color:var(--rule-strong)}
+  .report__sub b{color:var(--ink-2);font-weight:600}
+  .report__grid{display:grid;grid-template-columns:1.2fr .8fr;gap:0}
+  .report__col{padding:24px 26px}
+  .report__col + .report__col{border-left:2px solid var(--rule)}
+  .report h4{font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+
+  /* cannabinoid analyte rows with bar */
+  .ana{display:grid;gap:13px}
+  .ana__row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+  .ana__k{font-family:var(--disp);font-weight:600;font-size:15px}
+  .ana__v{font-family:var(--disp);font-weight:700;font-size:15px}
+  .ana__bar{grid-column:1 / -1;height:7px;border-radius:999px;background:var(--rule);overflow:hidden}
+  .ana__fill{height:100%;background:var(--lime-deep);border-radius:999px}
+  .ana__row--tot{border-top:1.5px solid var(--rule-strong);padding-top:12px;margin-top:2px}
+  .ana__row--tot .ana__k,.ana__row--tot .ana__v{font-size:17px}
+
+  /* safety screen checklist */
+  .screens{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+  .screens li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--disp);font-weight:600;font-size:15px}
+  .screens .name{display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .screens .ic{width:18px;height:18px;flex:0 0 auto;border-radius:50%;background:var(--lime);border:2px solid var(--ink);display:grid;place-items:center}
+  .terps{border-top:1.5px solid var(--rule);padding-top:18px}
+  .terps__list{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink-2);margin:8px 0 0}
+  .report__cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+  /* faq (shared with PDP) */
+  .faq{margin-top:14px}
+  .faq h2{font-size:32px;margin:0 0 16px}
+  details.q{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:0 18px;margin-bottom:12px;overflow:hidden}
+  details.q summary{font-family:var(--disp);font-weight:600;font-size:17px;list-style:none;cursor:pointer;padding:17px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  details.q summary::-webkit-details-marker{display:none}
+  details.q summary::after{content:"+";font-family:var(--disp);font-weight:700;font-size:24px;color:var(--grape);line-height:1}
+  details.q[open] summary::after{content:"\2013"}
+  details.q .a{color:var(--ink-2);font-size:15px;padding:0 0 18px;margin:0;max-width:72ch}
+
+  /* content-model review (shared with shop mock) */
+  .cm{background:#0f0f0a;color:#cfcdc2;font-family:var(--body);font-size:13px}
+  .cm h2{color:#fff;font-size:26px;margin:0 0 6px}
+  .cm p{color:#8c8a7e;max-width:74ch}
+  .cm table{width:100%;border-collapse:collapse;margin-top:22px}
+  .cm th,.cm td{text-align:left;padding:11px 12px;border-bottom:1px solid #232219;vertical-align:top}
+  .cm th{color:var(--lime);font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .cm code{color:#e7edd6;background:#1b1b12;padding:1px 6px;border-radius:5px;font-size:12px}
+  .cm .flag{color:var(--tang);font-weight:600}
+
+  @media(max-width:1040px){
+    .tests{grid-template-columns:1fr 1fr}
+    .plp-title{font-size:52px}
+    .report__grid{grid-template-columns:1fr}
+    .report__col + .report__col{border-left:0;border-top:2px solid var(--rule)}
+  }
+  @media(max-width:920px){
+    .nav__links{display:none}
+    .footer__top{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:600px){
+    .tests{grid-template-columns:1fr}
+    .plp-title{font-size:40px}
+    .toolbar{align-items:stretch}
+    .search{max-width:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- data-pl="homepage.announcement (text) — shared site-wide banner, same source as homepage" -->
+<div class="announce">Free shipping over $99 · 21+ · ships discreet, no labels</div>
+
+<!-- nav reused VERBATIM from homepage (Lab reports is the active page) -->
+<nav class="nav">
+  <div style="display:flex;gap:32px;align-items:center">
+    <a class="brand" href="#"><span class="dot"></span>blinkers</a>
+    <div class="nav__links"><a href="#">Edibles</a><a href="#">Concentrates</a><a href="#">Vapes</a><a href="#" aria-current="page">Lab reports</a></div>
+  </div>
+  <div class="nav__right"><span>Search</span><span>Account</span><span class="cartpill">Cart · 0</span></div>
+</nav>
+
+<!-- ============ PAGE HEADER: breadcrumb + title + trust stats ============ -->
+<!-- data-pl: breadcrumb = static route trail (/ → /lab-reports). Title/intro could live on a
+     `labReports` global (tenant-scoped). Stats are aggregates over the lab-reports result set. -->
+<header class="plp-head">
+  <span class="blob blob--1"></span><span class="blob blob--2"></span>
+  <div class="wrap plp-head__in">
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="#">Home</a><span class="sep">/</span><span class="here">Lab reports</span>
+    </nav>
+    <div class="plp-head__row">
+      <div>
+        <h1 class="plp-title">Lab <span class="hl">reports.</span></h1>
+        <p class="plp-lead">Every lot on the Blinkers shelf is third-party tested before it ships — potency, pesticides, heavy metals, solvents and microbials. Pull the exact COA for any batch below.</p>
+      </div>
+    </div>
+    <!-- data-pl: aggregates — totalDocs, distinct lab count, % status==passed -->
+    <div class="stats">
+      <div class="stat"><div class="stat__n">21</div><div class="stat__l">Lots tested</div></div>
+      <div class="stat"><div class="stat__n">3</div><div class="stat__l">Accredited labs</div></div>
+      <div class="stat"><div class="stat__n">100%</div><div class="stat__l">Passed screening</div></div>
+      <div class="stat"><div class="stat__n">6</div><div class="stat__l">Screens / lot</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ WHAT WE TEST FOR ============ -->
+<!-- data-pl: static educational content (a `labReports.screens` array on the global, or hard-coded).
+     Each tile = one analyte panel that every lot is screened against. -->
+<section class="section" style="padding:48px 0 8px"><div class="wrap">
+  <div class="section__head">
+    <div><div class="eyebrow">Every lot, every time</div><h2 style="margin-top:8px;font-size:38px">What we test for.</h2></div>
+  </div>
+  <div class="tests">
+    <div class="test">
+      <div class="test__top"><span class="test__name">Cannabinoid potency</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Full cannabinoid profile — THCa, Δ9-THC, CBD, CBG — quantified by HPLC so the label matches the lot.</p>
+    </div>
+    <div class="test">
+      <div class="test__top"><span class="test__name">Pesticides</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Screened against the full state pesticide panel. Anything over action limits never reaches the shelf.</p>
+    </div>
+    <div class="test">
+      <div class="test__top"><span class="test__name">Heavy metals</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Arsenic, cadmium, lead and mercury measured by ICP-MS, well under tolerance.</p>
+    </div>
+    <div class="test">
+      <div class="test__top"><span class="test__name">Residual solvents</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Confirms no leftover processing solvents — and verifies our rosin is genuinely solventless.</p>
+    </div>
+    <div class="test">
+      <div class="test__top"><span class="test__name">Microbials</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Pathogen screen — E. coli, Salmonella, total yeast &amp; mold — on every batch.</p>
+    </div>
+    <div class="test">
+      <div class="test__top"><span class="test__name">Mycotoxins</span><span class="pass"><span class="tick">✓</span> Pass</span></div>
+      <p class="test__note">Aflatoxins and ochratoxin A tested to rule out mold-derived toxins.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ REPORT LIBRARY: search + filter + table ============ -->
+<!--
+  data-pl: payload.find('lab-reports', { where: { _status: published, tenant, ...facets },
+  sort: '-testedDate', depth: 1 }) — each row joins to its product for name / image / brand /
+  category. Search maps to where.OR[batchLot.like, product.name.like]; category pills map to
+  where['product.category'].equals. (See the content model section for the proposed collection.)
+-->
+<section class="section" style="padding:36px 0 8px"><div class="wrap">
+  <div class="section__head" style="margin-bottom:18px">
+    <div><div class="eyebrow">COA library</div><h2 style="margin-top:8px;font-size:38px">Find a report.</h2></div>
+  </div>
+
+  <!-- toolbar -->
+  <div class="toolbar">
+    <label class="search">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="#14130d" stroke-width="2"/><path d="M13 13l3 3" stroke="#14130d" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search by product or batch / lot…" aria-label="Search lab reports" oninput="applyFilter()">
+    </label>
+    <!-- data-pl: category pills → where['product.category'].equals (distinct product categories) -->
+    <div class="pills" role="group" aria-label="Filter by category">
+      <button class="pill is-active" data-cat="all" onclick="setCat(this)">All</button>
+      <button class="pill" data-cat="Edibles" onclick="setCat(this)">Edibles</button>
+      <button class="pill" data-cat="Concentrates" onclick="setCat(this)">Concentrates</button>
+      <button class="pill" data-cat="Vapes" onclick="setCat(this)">Vapes</button>
+    </div>
+  </div>
+
+  <!-- table -->
+  <div class="libcard">
+    <div class="libcard__scroll">
+      <table class="lib" aria-label="Lab report library">
+        <thead>
+          <tr>
+            <th>Product</th><th>Batch / Lot</th><th>Category</th><th>Potency</th><th>Tested</th><th>Lab</th><th>Result</th><th>Report</th>
+          </tr>
+        </thead>
+        <!-- data-pl: one <tr> per lab-reports doc, newest first. Cells read:
+             product.featuredImage→media, product.name, product.brand, lab-reports.batchLot,
+             product.category, lab-reports.potency, lab-reports.testedDate, lab-reports.lab,
+             lab-reports.status, lab-reports.reportFile→media -->
+        <tbody id="rows">
+
+          <!-- ===== April 2026 ===== -->
+          <tr data-name="gelato pie pineapple haze" data-lot="bf-gp24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_gelato_pie_pineapple_haze.jpg" alt=""></span><span><span class="lib__name">Gelato Pie × Pineapple Haze</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-GP24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">86.4% THCa</span></td>
+            <td class="lib__muted">Apr 22, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="green apple diesel blue nerdz" data-lot="bf-ga24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_green_apple_diesel_blue_nerdz.jpg" alt=""></span><span><span class="lib__name">Green Apple Diesel × Blue Nerdz</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-GA24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">84.1% THCa</span></td>
+            <td class="lib__muted">Apr 18, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="moroccan peaches" data-lot="rn-mp24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_moroccan_peaches.jpg" alt=""></span><span><span class="lib__name">Moroccan Peaches</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-MP24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">79.4% THCa</span></td>
+            <td class="lib__muted">Apr 11, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="treasure trove" data-lot="le-tt24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/treasure_trove.jpg" alt=""></span><span><span class="lib__name">Treasure Trove</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-TT24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Apr 09, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="candy vibes" data-lot="le-cv24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/candy_vibes.jpg" alt=""></span><span><span class="lib__name">Candy Vibes</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-CV24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Apr 04, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+
+          <!-- ===== March 2026 ===== -->
+          <tr data-name="pink champagne superglue" data-lot="bf-pc24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_pink_champagne_superglue.jpg" alt=""></span><span><span class="lib__name">Pink Champagne × Superglue</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-PC24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">87.2% THCa</span></td>
+            <td class="lib__muted">Mar 28, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="mango tango lemon heads" data-lot="bf-mt24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_mango_tango_lemon_heads.jpg" alt=""></span><span><span class="lib__name">Mango Tango × Lemon Heads</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-MT24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">85.0% THCa</span></td>
+            <td class="lib__muted">Mar 24, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="forbidden fruit pink runtz" data-lot="bf-ff24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_forbidden_fruit_pink_runtz.jpg" alt=""></span><span><span class="lib__name">Forbidden Fruit × Pink Runtz</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-FF24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">88.3% THCa</span></td>
+            <td class="lib__muted">Mar 19, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="mad honey" data-lot="rn-mh24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_mad_honey.jpg" alt=""></span><span><span class="lib__name">Mad Honey</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-MH24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">81.6% THCa</span></td>
+            <td class="lib__muted">Mar 14, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="rainbow guava" data-lot="rn-rg24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_rainbow_guava.jpg" alt=""></span><span><span class="lib__name">Rainbow Guava</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-RG24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">77.8% THCa</span></td>
+            <td class="lib__muted">Mar 10, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="rainbow ribbons" data-lot="le-rr24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/rainbow_ribbons.jpg" alt=""></span><span><span class="lib__name">Rainbow Ribbons</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-RR24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Mar 06, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="forest forage gummies" data-lot="le-ff24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/forest_forage_gummies.jpg" alt=""></span><span><span class="lib__name">Forest Forage Gummies</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-FF24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Mar 03, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+
+          <!-- ===== February 2026 ===== -->
+          <tr data-name="gushers banana mochi" data-lot="bf-gu24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_gushers_banana_mochi.jpg" alt=""></span><span><span class="lib__name">Gushers × Banana Mochi</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-GU24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">83.6% THCa</span></td>
+            <td class="lib__muted">Feb 25, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="lemon slushie strawberry cough" data-lot="bf-ls24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_lemon_slushie_strawberry_cough.jpg" alt=""></span><span><span class="lib__name">Lemon Slushie × Strawberry Cough</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-LS24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">85.9% THCa</span></td>
+            <td class="lib__muted">Feb 20, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="watermelon z lemon cherry gelato" data-lot="bf-wz24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_watermelon_z_lemon_cherry_gelato.jpg" alt=""></span><span><span class="lib__name">Watermelon Z × Lemon Cherry Gelato</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-WZ24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">86.8% THCa</span></td>
+            <td class="lib__muted">Feb 17, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="zoap" data-lot="rn-zp24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_zoap.jpg" alt=""></span><span><span class="lib__name">Zoap</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-ZP24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">82.9% THCa</span></td>
+            <td class="lib__muted">Feb 12, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="maad fruit" data-lot="rn-mf24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_maad_fruit.jpg" alt=""></span><span><span class="lib__name">Maad Fruit</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-MF24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">76.5% THCa</span></td>
+            <td class="lib__muted">Feb 07, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="cyber chews" data-lot="le-cc24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/cyber_chews.jpg" alt=""></span><span><span class="lib__name">Cyber Chews</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-CC24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Feb 04, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+
+          <!-- ===== January 2026 ===== -->
+          <tr data-name="tropical grape melon burst" data-lot="bf-tg24" data-cat="Vapes">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/blinkers_flip_tropical_grape_melon_burst.jpg" alt=""></span><span><span class="lib__name">Tropical Grape × Melon Burst</span><span class="lib__brand">Blinkers Flip</span></span></div></td>
+            <td><span class="lib__lot">BF-TG24</span></td>
+            <td><span class="lib__cat">Vapes</span></td>
+            <td><span class="lib__pot">84.7% THCa</span></td>
+            <td class="lib__muted">Jan 28, 2026</td>
+            <td class="lib__muted">Kaycha Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="red rings" data-lot="rn-rr24" data-cat="Concentrates">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/710_nomad_red_rings.jpg" alt=""></span><span><span class="lib__name">Red Rings</span><span class="lib__brand">710 Nomad Rosin</span></span></div></td>
+            <td><span class="lib__lot">RN-RR24</span></td>
+            <td><span class="lib__cat">Concentrates</span></td>
+            <td><span class="lib__pot">80.2% THCa</span></td>
+            <td class="lib__muted">Jan 21, 2026</td>
+            <td class="lib__muted">ACS Laboratory</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+          <tr data-name="galactic gummy blast" data-lot="le-gb24" data-cat="Edibles">
+            <td><div class="lib__prod"><span class="lib__thumb"><img src="/api/media/file/galactic_gummy_blast.jpg" alt=""></span><span><span class="lib__name">Galactic Gummy Blast</span><span class="lib__brand">Litt Edibles</span></span></div></td>
+            <td><span class="lib__lot">LE-GB24</span></td>
+            <td><span class="lib__cat">Edibles</span></td>
+            <td><span class="lib__pot">1000mg total</span></td>
+            <td class="lib__muted">Jan 15, 2026</td>
+            <td class="lib__muted">Green Scientific Labs</td>
+            <td><span class="pass"><span class="tick">✓</span> Pass</span></td>
+            <td><a class="lib__coa" href="#">COA ↗</a></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <div id="empty" class="lib__empty" style="display:none">No reports match that search. Try a product name or a batch / lot like “BF-GP24”.</div>
+  </div>
+  <p class="lib__count" id="count"><b>21</b> reports · newest first</p>
+</div></section>
+
+<!-- ============ SAMPLE / EXPANDED COA ============ -->
+<!--
+  data-pl: a single lab-reports doc rendered in full (e.g. the most recent lot, or the one a
+  shopper drilled into from "COA ↗"). cannabinoids = lab-reports.cannabinoids (array{name,value}),
+  screens = lab-reports.safetyScreens (array{name,result}), terpenes = product.terpenes,
+  reportFile = lab-reports.reportFile→media.
+-->
+<section class="section" style="padding:42px 0 8px"><div class="wrap">
+  <div class="section__head" style="margin-bottom:16px">
+    <div><div class="eyebrow">What's inside a report</div><h2 style="margin-top:8px;font-size:38px">Sample COA.</h2></div>
+  </div>
+
+  <div class="report">
+    <div class="report__head">
+      <div>
+        <h3 class="report__title">Gelato Pie × Pineapple Haze</h3>
+        <div class="report__sub">
+          <b>Batch BF-GP24</b><span class="sep">·</span>Blinkers Flip<span class="sep">·</span>2g liquid-diamond disposable<span class="sep">·</span>Tested Apr 22, 2026<span class="sep">·</span>Kaycha Labs
+        </div>
+      </div>
+      <span class="pass" style="font-size:13px;padding:7px 14px"><span class="tick">✓</span> Passed all screens</span>
+    </div>
+
+    <div class="report__grid">
+      <!-- cannabinoid profile -->
+      <div class="report__col">
+        <h4>Cannabinoid profile</h4>
+        <div class="ana">
+          <div class="ana__row"><span class="ana__k">THCa</span><span class="ana__v">86.4%</span><span class="ana__bar"><span class="ana__fill" style="width:96%"></span></span></div>
+          <div class="ana__row"><span class="ana__k">Δ9-THC</span><span class="ana__v">&lt;0.3%</span><span class="ana__bar"><span class="ana__fill" style="width:3%"></span></span></div>
+          <div class="ana__row"><span class="ana__k">CBG</span><span class="ana__v">0.6%</span><span class="ana__bar"><span class="ana__fill" style="width:6%"></span></span></div>
+          <div class="ana__row"><span class="ana__k">CBD</span><span class="ana__v">0.1%</span><span class="ana__bar"><span class="ana__fill" style="width:2%"></span></span></div>
+          <div class="ana__row ana__row--tot"><span class="ana__k">Total cannabinoids</span><span class="ana__v">88.1%</span></div>
+        </div>
+      </div>
+
+      <!-- safety screens + terpenes -->
+      <div class="report__col">
+        <h4>Safety screens</h4>
+        <ul class="screens">
+          <li><span class="name"><span class="ic">✓</span> Pesticides</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+          <li><span class="name"><span class="ic">✓</span> Heavy metals</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+          <li><span class="name"><span class="ic">✓</span> Residual solvents</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+          <li><span class="name"><span class="ic">✓</span> Microbials</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+          <li><span class="name"><span class="ic">✓</span> Mycotoxins</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+          <li><span class="name"><span class="ic">✓</span> Water activity</span><span class="pass"><span class="tick">✓</span> Pass</span></li>
+        </ul>
+        <div class="terps">
+          <h4 style="margin-bottom:4px">Dominant terpenes</h4>
+          <p class="terps__list">Limonene · Caryophyllene · Linalool</p>
+        </div>
+        <div class="report__cta">
+          <a class="btn btn--dark" href="#" data-pl="lab-reports.reportFile (upload→media)">View full COA (PDF) →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ FAQ ============ -->
+<!-- data-pl: labReports.faqs (array{ question, answer }) on the global, or a shared site FAQ -->
+<section class="section" style="padding:30px 0 8px"><div class="wrap">
+  <div class="faq" data-pl="labReports.faqs">
+    <h2>How testing works</h2>
+    <details class="q" open>
+      <summary>How do I read a COA?</summary>
+      <p class="a">A Certificate of Analysis lists the cannabinoid potency (THCa, Δ9-THC, CBD and more) plus a set of pass/fail safety screens. Match the batch / lot number on your device or package to the one on the report — that's how you confirm the COA belongs to the exact lot in your hand.</p>
+    </details>
+    <details class="q">
+      <summary>Which labs do you use?</summary>
+      <p class="a">We rotate between three ISO-accredited, third-party labs — Kaycha Labs, ACS Laboratory and Green Scientific Labs. They have no stake in the result, which is the point: independent testing keeps the numbers honest.</p>
+    </details>
+    <details class="q">
+      <summary>How often is each product tested?</summary>
+      <p class="a">Every single batch, before it's listed. A new lot means a new COA — we don't carry forward an old report onto fresh production. If a lot doesn't pass every screen, it never reaches the shelf.</p>
+    </details>
+    <details class="q">
+      <summary>What does the batch / lot number mean?</summary>
+      <p class="a">It's the traceability key. Each production run gets its own lot code (for example BF-GP24), printed on the package and tied to one COA. Search that code above to pull the matching report.</p>
+    </details>
+  </div>
+</div></section>
+
+<!-- ============ FOOTER reused VERBATIM from homepage ============ -->
+<footer class="footer"><div class="wrap">
+  <div class="footer__top">
+    <div><div class="footer__brand"><span class="dot" style="width:12px;height:12px;background:var(--lime);border-radius:50%"></span>blinkers</div><p style="margin-top:12px;max-width:34ch;color:#9b9a8c">A tight, lab-tested shelf of THCa. 21+ only.</p></div>
+    <div><h5>Shop</h5><ul><li>Edibles</li><li>Concentrates</li><li>Vapes</li><li>All products</li></ul></div>
+    <div><h5>Learn</h5><ul><li>About THCa</li><li>Lab reports</li><li>Journal</li><li>Wholesale</li></ul></div>
+    <div><h5>Help</h5><ul><li>Shipping &amp; states</li><li>Returns</li><li>Age verification</li><li>Contact</li></ul></div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Blinkers · 21+ only · keep away from children &amp; pets</span><span class="footer__social">Instagram · TikTok · X</span></div>
+</div></footer>
+
+<!-- ============ CONTENT MODEL (review only) ============ -->
+<section class="cm" id="content-model"><div class="wrap" style="padding:54px 0">
+  <h2>Proposed Payload data flow — Lab reports</h2>
+  <p><span class="flag">Gap:</span> there is no lab-report model today. <code>products</code> carries only flat
+  <code>lot</code>, <code>thcLabel</code> and <code>terpenes</code> — enough for the PDP's mini COA panel, but not the per-lot
+  history, tested date, testing lab, safety panel, or report PDF this page shows. (<code>compliance-checks</code> is
+  KYC / AML for customers &amp; partners — unrelated to product testing.) The clean fix is a dedicated, tenant-scoped
+  <code>lab-reports</code> collection, one doc per lot, related to its product. The table is then a single query:
+  <code>payload.find('lab-reports', { where: { _status:'published', tenant, …facets }, sort:'-testedDate', depth:1 })</code>.</p>
+  <table>
+    <thead><tr><th>Region</th><th>Field / param</th><th>Type</th><th>Source / notes</th></tr></thead>
+    <tbody>
+      <tr><td>Breadcrumb</td><td>—</td><td>route trail</td><td>static <code>/</code> → <code>/lab-reports</code></td></tr>
+      <tr><td>Title / intro</td><td><code>labReports.heading</code>, <code>.intro</code></td><td>text / textarea</td><td>new tenant-scoped global, or hard-coded</td></tr>
+      <tr><td>Trust stats</td><td><code>totalDocs</code>, distinct <code>lab</code>, % <code>status</code></td><td>aggregates</td><td>computed over the <code>lab-reports</code> result set</td></tr>
+      <tr><td>"What we test for"</td><td><code>labReports.screens[]</code></td><td>array{name, note}</td><td>static educational content; one tile per safety panel</td></tr>
+      <tr><td>Search</td><td><code>where.OR[batchLot.like, 'product.name'.like]</code></td><td>text</td><td>matches lot code or product name</td></tr>
+      <tr><td>Category pills</td><td><code>where['product.category'].equals</code></td><td>select</td><td>distinct <code>products.category</code> (Edibles / Concentrates / Vapes)</td></tr>
+      <tr><td rowspan="3">Table row</td><td><code>product</code> → name, brand, <code>featuredImage</code></td><td>relationship</td><td>join to <code>products</code>; today's <code>lot</code> ⇄ <code>batchLot</code></td></tr>
+      <tr><td><code>batchLot</code>, <code>potency</code>, <code>testedDate</code>, <code>lab</code></td><td>text · text · date · text</td><td><span class="flag">new</span> on <code>lab-reports</code> (<code>potency</code> ≈ existing <code>thcLabel</code>)</td></tr>
+      <tr><td><code>status</code>, <code>reportFile</code></td><td>select · upload→media</td><td><span class="flag">new</span> — pass / fail / pending · the COA PDF</td></tr>
+      <tr><td rowspan="2">Sample COA</td><td><code>cannabinoids</code>, <code>safetyScreens</code></td><td>array{name,value} · array{name,result}</td><td><span class="flag">new</span> — full analyte + screen breakdown</td></tr>
+      <tr><td><code>terpenes</code></td><td>text</td><td>reuses existing <code>products.terpenes</code></td></tr>
+      <tr><td>FAQ</td><td><code>labReports.faqs[]</code></td><td>array{question, answer}</td><td>new global, or shared site FAQ</td></tr>
+      <tr><td>Nav / footer</td><td>—</td><td>—</td><td>verbatim from homepage; brand from <code>brand-configs</code></td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<script>
+  // Mock-only interactivity (no Payload wiring): table search + category filter.
+  var activeCat = 'all';
+  function setCat(btn){
+    activeCat = btn.getAttribute('data-cat');
+    var pills = document.querySelectorAll('.pill');
+    for (var i = 0; i < pills.length; i++) pills[i].classList.remove('is-active');
+    btn.classList.add('is-active');
+    applyFilter();
+  }
+  function applyFilter(){
+    var q = (document.getElementById('q').value || '').trim().toLowerCase();
+    var rows = document.querySelectorAll('#rows tr');
+    var shown = 0;
+    for (var i = 0; i < rows.length; i++){
+      var row = rows[i];
+      var name = row.getAttribute('data-name') || '';
+      var lot = row.getAttribute('data-lot') || '';
+      var cat = row.getAttribute('data-cat') || '';
+      var matchText = !q || name.indexOf(q) !== -1 || lot.indexOf(q) !== -1;
+      var matchCat = activeCat === 'all' || cat === activeCat;
+      if (matchText && matchCat){ row.classList.remove('is-hidden'); shown++; }
+      else { row.classList.add('is-hidden'); }
+    }
+    document.getElementById('empty').style.display = shown ? 'none' : 'block';
+    var countEl = document.getElementById('count');
+    countEl.innerHTML = '<b>' + shown + '</b> report' + (shown === 1 ? '' : 's') +
+      (activeCat === 'all' && !q ? ' · newest first' : ' shown');
+  }
+</script>
+
+</body>
+</html>
