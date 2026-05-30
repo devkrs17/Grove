@@ -1,18 +1,15 @@
-import { Announce, Footer, Nav } from "@/storefront/components/Chrome";
-import { GroveShell } from "@/storefront/components/GroveShell";
-import { Shop } from "@/storefront/components/Shop";
+import "@/storefront/blinkers/blinkers.css";
+import "@/storefront/blinkers/shop.css";
+import { BlinkersShop } from "@/storefront/blinkers/BlinkersShop";
 import { getStorefrontProducts } from "@/storefront/server";
 
-export const metadata = { title: "Highgrove — Shop" };
+export const metadata = { title: "Blinkers — Shop everything." };
 
 export default async function StorefrontShopPage() {
   const products = await getStorefrontProducts();
   return (
-    <GroveShell>
-      <Announce />
-      <Nav />
-      <Shop products={products} />
-      <Footer />
-    </GroveShell>
+    <div className="blinkers">
+      <BlinkersShop products={products} />
+    </div>
   );
 }

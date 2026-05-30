@@ -1,0 +1,101 @@
+/* ============================================================
+   Blinkers storefront — product detail (PDP) stylesheet
+   Page-specific rules ported from apps/web/public/product-mock.html
+   (the <style> block's "PDP-SPECIFIC" section). The shared base —
+   tokens, .announce, .nav, .btn*, .sticker*, .pgrid/.pcard*, .section,
+   .section__head, .seeall, .footer*, .eyebrow, .wrap, blobs, fonts —
+   already lives in blinkers.css and is intentionally NOT repeated here.
+
+   Import alongside blinkers.css from the PDP route, inside a `.blinkers`
+   root. Selectors are scoped under `.blinkers` so importing this file
+   does not leak PDP styles onto other pages.
+   ============================================================ */
+
+/* breadcrumb */
+.blinkers .crumb{font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-3);padding:18px 0 0}
+.blinkers .crumb a:hover{color:var(--ink)}
+.blinkers .crumb .sep{color:var(--rule-strong);margin:0 8px}
+.blinkers .crumb .now{color:var(--ink)}
+
+/* product layout */
+.blinkers .pdp{position:relative;overflow:hidden}
+.blinkers .pdp__grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;padding:26px 0 18px}
+
+/* gallery */
+.blinkers .gallery{position:sticky;top:18px}
+.blinkers .gallery__hero{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:1/1;background:#e9e4d5;box-shadow:0 30px 70px -30px rgba(20,19,13,.5);border:3px solid var(--ink)}
+.blinkers .gallery__hero img{width:100%;height:100%;object-fit:cover}
+.blinkers .gallery__thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.blinkers .thumb{aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#ece7d8;border:2px solid var(--ink);cursor:pointer;transition:transform .12s}
+.blinkers .thumb:hover{transform:translateY(-3px)}
+.blinkers .thumb.is-active{outline:3px solid var(--lime);outline-offset:2px}
+.blinkers .thumb img{width:100%;height:100%;object-fit:cover}
+
+/* buy box */
+.blinkers .buy__brand{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--grape)}
+.blinkers .buy__title{font-size:46px;margin:8px 0 0;letter-spacing:-.03em}
+.blinkers .buy__rate{display:flex;align-items:center;gap:9px;margin-top:14px;font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-2)}
+.blinkers .buy__rate .stars{color:var(--lime-deep);letter-spacing:1px;font-size:16px}
+.blinkers .buy__rate .sep{color:var(--rule-strong)}
+.blinkers .buy__pricerow{display:flex;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+.blinkers .buy__price{font-family:var(--disp);font-weight:700;font-size:34px;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:6px 22px;line-height:1.1}
+.blinkers .buy__unit{font-family:var(--disp);font-weight:500;font-size:14px;color:var(--ink-3)}
+.blinkers .buy__blurb{font-size:16px;color:var(--ink-2);max-width:48ch;margin:20px 0 0}
+
+.blinkers .specs{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:10px}
+.blinkers .specs li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--ink)}
+.blinkers .specs li::before{content:"";flex:0 0 auto;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--lime);border:2px solid var(--ink)}
+
+.blinkers .buy__order{display:flex;gap:12px;align-items:center;margin-top:26px;flex-wrap:wrap}
+.blinkers .stepper{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:999px;background:var(--paper);overflow:hidden}
+.blinkers .stepper button{font-family:var(--disp);font-weight:700;font-size:20px;width:46px;height:48px;background:transparent;border:0;cursor:pointer;color:var(--ink);line-height:1}
+.blinkers .stepper button:hover{background:var(--lime)}
+.blinkers .stepper .qty{font-family:var(--disp);font-weight:700;font-size:17px;min-width:38px;text-align:center}
+.blinkers .buy__add{flex:1;min-width:200px;text-align:center}
+.blinkers .buy__buynow{margin-top:12px;display:block;width:100%;text-align:center}
+
+.blinkers .trustrow{display:flex;align-items:center;gap:14px;margin-top:22px;padding-top:20px;border-top:1px solid var(--rule);font-family:var(--disp);font-weight:500;font-size:13px;color:var(--ink-2);flex-wrap:wrap}
+.blinkers .trustrow span{display:inline-flex;align-items:center;gap:7px}
+.blinkers .trustrow .ic{width:9px;height:9px;border-radius:50%;background:var(--lime-deep)}
+.blinkers .trustrow .sep{color:var(--rule-strong)}
+
+/* description + COA + faq band */
+.blinkers .detail{padding:18px 0 8px}
+.blinkers .detail__grid{display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:start}
+.blinkers .prose h2{font-size:32px;margin:0 0 14px}
+.blinkers .prose p{color:var(--ink-2);font-size:16px;margin:0 0 14px;max-width:62ch}
+
+.blinkers .coa{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:22px}
+.blinkers .coa__top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.blinkers .coa__top h3{font-size:21px}
+.blinkers .coa__badge{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--lime);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px}
+.blinkers .coa__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.blinkers .coa__cell{border:1.5px solid var(--rule-strong);border-radius:14px;padding:13px 14px;background:#fcfbf6}
+.blinkers .coa__k{font-family:var(--disp);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.blinkers .coa__v{font-family:var(--disp);font-weight:700;font-size:18px;margin-top:5px}
+.blinkers .coa__v.hl{color:var(--lime-deep)}
+.blinkers .coa__link{display:inline-block;margin-top:16px;font-family:var(--disp);font-weight:600;font-size:14px;background:var(--ink);color:#fff;border-radius:999px;padding:10px 18px}
+
+/* faq */
+.blinkers .faq{margin-top:36px}
+.blinkers .faq h2{font-size:32px;margin:0 0 16px}
+.blinkers details.q{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:0 18px;margin-bottom:12px;overflow:hidden}
+.blinkers details.q summary{font-family:var(--disp);font-weight:600;font-size:17px;list-style:none;cursor:pointer;padding:17px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.blinkers details.q summary::-webkit-details-marker{display:none}
+.blinkers details.q summary::after{content:"+";font-family:var(--disp);font-weight:700;font-size:24px;color:var(--grape);line-height:1}
+.blinkers details.q[open] summary::after{content:"–"}
+.blinkers details.q .a{color:var(--ink-2);font-size:15px;padding:0 0 18px;margin:0;max-width:64ch}
+
+/* PDP-specific responsive overrides (the shared breakpoints live in blinkers.css) */
+@media(max-width:920px){
+  .blinkers .pdp__grid{grid-template-columns:1fr;gap:28px}
+  .blinkers .gallery{position:static}
+  .blinkers .buy__title{font-size:36px}
+  .blinkers .detail__grid{grid-template-columns:1fr;gap:28px}
+  .blinkers .coa{position:static}
+}
+@media(max-width:560px){
+  .blinkers .coa__grid{grid-template-columns:1fr}
+  .blinkers .buy__order{flex-direction:column;align-items:stretch}
+  .blinkers .stepper{justify-content:center}
+}

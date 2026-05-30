@@ -1,16 +1,28 @@
-import { Announce, Footer, Nav } from "@/storefront/components/Chrome";
-import { Cart } from "@/storefront/components/Cart";
-import { GroveShell } from "@/storefront/components/GroveShell";
+import "@/storefront/blinkers/blinkers.css";
+import "@/storefront/blinkers/cart.css";
+import { Announce } from "@/storefront/blinkers/Announce";
+import { BlinkersNav } from "@/storefront/blinkers/BlinkersNav";
+import { BlinkersFooter } from "@/storefront/blinkers/BlinkersFooter";
+import { BlinkersCart } from "@/storefront/blinkers/BlinkersCart";
 
-export const metadata = { title: "Highgrove — Cart" };
+export const metadata = { title: "Blinkers — Your cart" };
 
-export default function CartPage() {
+const ANNOUNCEMENT = "Free shipping over $99 · 21+ · ships discreet, no labels";
+
+const NAV_LINKS = [
+  { label: "Edibles", href: "/shop" },
+  { label: "Concentrates", href: "/shop" },
+  { label: "Vapes", href: "/shop" },
+  { label: "Lab reports", href: "/lab-reports" },
+];
+
+export default function StorefrontCartPage() {
   return (
-    <GroveShell>
-      <Announce />
-      <Nav />
-      <Cart />
-      <Footer />
-    </GroveShell>
+    <div className="blinkers">
+      <Announce>{ANNOUNCEMENT}</Announce>
+      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
+      <BlinkersCart />
+      <BlinkersFooter />
+    </div>
   );
 }
