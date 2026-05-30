@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: "White-label multi-tenant platform",
 };
 
+// Tenant is resolved per-request from the hostname and content comes from
+// Payload, so this must render dynamically (never prerendered at build time).
+export const dynamic = "force-dynamic";
+
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   const { siteId } = await getTenantContext();
 
