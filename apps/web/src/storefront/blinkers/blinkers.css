@@ -47,7 +47,9 @@
 .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
 .nav__links a:hover{color:var(--lime-deep)}
 .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
-.cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
+/* qualified with `a` so it outweighs the `.blinkers a` color reset (same class
+   count, but the element selector + later source order win the cascade). */
+a.cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
 
 /* hero */
 .hero{position:relative;overflow:hidden}
