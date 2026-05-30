@@ -5,6 +5,7 @@
 
 import { getPayload, type Payload, type Where } from "payload";
 import config from "@payload-config";
+import type { Page } from "@grove/types";
 import { getTenantContext } from "@/lib/tenant";
 import { mapProduct, mapProducts } from "@/lib/storefront";
 import type { Product } from "./data";
@@ -19,6 +20,19 @@ async function resolveTenantId(payload: Payload, tenantId: string | null): Promi
   }
   const { docs } = await payload.find({
     collection: "tenants",
+    where: { slug: { equals: DEFAULT_TENANT_SLUG } },
+    limit: 1,
+    overrideAccess: true,
+  });
+  return docs[0] ? Number(docs[0].id) : null;
+}
+
+async function resolveSiteId(payload: Payload, siteId: string | null): Promise<number | null> {
+  if (siteId) {
+    return Number(siteId);
+  }
+  const { docs } = await payload.find({
+    collection: "sites",
     where: { slug: { equals: DEFAULT_TENANT_SLUG } },
     limit: 1,
     overrideAccess: true,
@@ -62,4 +76,28 @@ export async function getStorefrontProductBySlug(slug: string): Promise<Product 
     limit: 1,
   });
   return docs[0] ? mapProduct(docs[0]) : null;
+}
+
+/** A single published marketing page by slug for the resolved (or default) site, or null. */
+export async function getStorefrontPageBySlug(slug: string): Promise<Page | null> {
+  const payload = await getPayload({ config });
+  const { siteId } = await getTenantContext();
+  const effective = await resolveSiteId(payload, siteId);
+  if (!effective) {
+    return null;
+  }
+  const { docs } = await payload.find({
+    collection: "pages",
+    where: {
+      and: [
+        { site: { equals: effective } },
+        { slug: { equals: slug } },
+        { status: { equals: "published" } },
+      ],
+    },
+    overrideAccess: true,
+    depth: 0,
+    limit: 1,
+  });
+  return docs[0] ?? null;
 }

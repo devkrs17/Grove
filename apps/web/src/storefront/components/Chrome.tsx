@@ -12,6 +12,10 @@ export function Announce({ message = ANNOUNCE }: { message?: string }) {
   return <div className="announce">{message}</div>;
 }
 
+// Footer Learn/Help labels map to CMS pages by slug (matches scripts/seed-pages.mjs).
+const pageHref = (label: string) =>
+  `/${label.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`;
+
 function BrandMark({ name = BRAND }: { name?: string }) {
   return <i style={{ fontStyle: "italic" }}>{name}</i>;
 }
@@ -90,7 +94,7 @@ export function Footer({ routes = LIVE_ROUTES }: { routes?: Routes }) {
             <ul>
               {FOOT.learn.map((x) => (
                 <li key={x}>
-                  <a href="#">{x}</a>
+                  <a href={pageHref(x)}>{x}</a>
                 </li>
               ))}
             </ul>
@@ -100,7 +104,7 @@ export function Footer({ routes = LIVE_ROUTES }: { routes?: Routes }) {
             <ul>
               {FOOT.help.map((x) => (
                 <li key={x}>
-                  <a href="#">{x}</a>
+                  <a href={pageHref(x)}>{x}</a>
                 </li>
               ))}
             </ul>
