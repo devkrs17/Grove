@@ -41,7 +41,17 @@ function run(label, args) {
   const result = spawnSync(
     "node",
     ["--require", "./scripts/payload-compat.cjs", "--import", "tsx", ...args],
-    { stdio: "inherit", env: { ...process.env, DATABASE_URL: dbUrl } },
+    {
+      // Feed "N" to stdin so `payload migrate` immediately DECLINES its interactive
+      // "you've run Payload in dev mode — data loss will occur, proceed? (y/N)"
+      // prompt instead of hanging ~5 min for input it can never get in CI. That
+      // prompt only appears when the DB carries a dev-push marker; on a clean DB
+      // there is no prompt and migrations run normally. The seed steps don't read
+      // stdin, so this is a no-op for them.
+      input: "N\n",
+      stdio: ["pipe", "inherit", "inherit"],
+      env: { ...process.env, DATABASE_URL: dbUrl },
+    },
   );
   if (result.status !== 0) {
     console.error(`[deploy-migrate] ${label} failed (exit ${result.status})`);
