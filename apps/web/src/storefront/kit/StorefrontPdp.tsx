@@ -3,7 +3,7 @@
 // breadcrumb; left gallery hero + thumbnails + stickers; right buy box (brand,
 // title, rating, price, spec bullets, quantity stepper + Add to cart); a
 // Description band with a COA panel; an FAQ accordion; and a "More like this"
-// grid. Server component — the only client island is <BlinkersBuyBox/>, which
+// grid. Server component — the only client island is <StorefrontBuyBox/>, which
 // wraps the shared <AddToCartButton/> (the live CartProvider is mounted by the
 // (frontend) layout). Spec/COA values are derived from the Product view-model.
 
@@ -12,22 +12,16 @@ import type { Product } from "../data";
 import { imgUrl } from "../data";
 import { productHref } from "@/lib/storefront";
 import { Announce } from "./Announce";
-import { BlinkersNav } from "./BlinkersNav";
-import { BlinkersFooter } from "./BlinkersFooter";
+import { StorefrontNav } from "./StorefrontNav";
+import { StorefrontFooter } from "./StorefrontFooter";
+import { storefrontNavLinks } from "./navLinks";
 import { ProductCard } from "./ProductCard";
 import { Sticker } from "./Sticker";
 import { SectionHead } from "./SectionHead";
 import { Button } from "./Button";
-import { BlinkersBuyBox } from "./BlinkersBuyBox";
+import { StorefrontBuyBox } from "./StorefrontBuyBox";
 
 const ANNOUNCEMENT = "Free shipping over $99 · 21+ · ships discreet, no labels";
-
-const NAV_LINKS = [
-  { label: "Edibles", href: "/shop" },
-  { label: "Concentrates", href: "/shop" },
-  { label: "Vapes", href: "/shop" },
-  { label: "Lab reports", href: "/lab-reports" },
-];
 
 /** Pull a brand label from a product name (the packs are name-prefixed). */
 function brandOf(name: string): string {
@@ -45,22 +39,32 @@ function chipFor(tag: string) {
   return { label: tag, tone } as const;
 }
 
-export function BlinkersPdp({ product, related }: { product: Product; related: Product[] }) {
+export function StorefrontPdp({
+  product,
+  related,
+  showLabReports = false,
+}: {
+  product: Product;
+  related: Product[];
+  showLabReports?: boolean;
+}) {
   const brand = brandOf(product.name);
   const hero = imgUrl(product.img);
 
-  // Short highlight bullets, derived from the view-model (mock's .specs).
+  // Short highlight bullets, derived from the view-model (mock's .specs). The
+  // COA-traceability bullet belongs to the regulated vertical, so it is dropped
+  // when the tenant hasn't opted in.
   const specs = [
     product.meta,
     product.thc ? `${product.thc}${product.lot ? ` · lot ${product.lot}` : ""}` : "",
     "Third-party lab-tested — every batch",
-    "Lot-traceable — scan to pull the exact COA",
+    showLabReports ? "Lot-traceable — scan to pull the exact COA" : "",
   ].filter(Boolean);
 
   return (
     <>
       <Announce>{ANNOUNCEMENT}</Announce>
-      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
+      <StorefrontNav brandHref="/" links={storefrontNavLinks(showLabReports)} cartHref="/cart" />
 
       {/* ============ BREADCRUMB ============ */}
       <div className="wrap">
@@ -127,7 +131,7 @@ export function BlinkersPdp({ product, related }: { product: Product; related: P
             </ul>
 
             {/* Interactive order row (client island): stepper + AddToCartButton. */}
-            <BlinkersBuyBox product={product} />
+            <StorefrontBuyBox product={product} />
             <Button variant="dark" href="/cart" className="buy__buynow">
               Buy it now
             </Button>
@@ -172,7 +176,8 @@ export function BlinkersPdp({ product, related }: { product: Product; related: P
               </p>
             </div>
 
-            {/* COA / lab report panel */}
+            {/* COA / lab report panel — regulated vertical only */}
+            {showLabReports ? (
             <aside className="coa">
               <div className="coa__top">
                 <h3>Lab report · COA</h3>
@@ -206,6 +211,7 @@ export function BlinkersPdp({ product, related }: { product: Product; related: P
                 View full COA (PDF) →
               </Link>
             </aside>
+            ) : null}
           </div>
 
           {/* ============ FAQ ============ */}
@@ -267,7 +273,7 @@ export function BlinkersPdp({ product, related }: { product: Product; related: P
         </section>
       ) : null}
 
-      <BlinkersFooter />
+      <StorefrontFooter showLabReports={showLabReports} />
     </>
   );
 }

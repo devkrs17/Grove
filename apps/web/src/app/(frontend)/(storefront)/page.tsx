@@ -1,14 +1,19 @@
-import "@/storefront/blinkers/blinkers.css";
-import { BlinkersHome } from "@/storefront/blinkers/BlinkersHome";
-import { getHomepage, getStorefrontProducts } from "@/storefront/server";
+import "@/storefront/kit/kit.css";
+import { StorefrontHome } from "@/storefront/kit/StorefrontHome";
+import { StorefrontRoot } from "@/storefront/StorefrontRoot";
+import { getHomepage, getShowLabReports, getStorefrontProducts } from "@/storefront/server";
 
 export const metadata = { title: "Blinkers — Loud flavor, clean labs." };
 
 export default async function StorefrontHomePage() {
-  const [products, homepage] = await Promise.all([getStorefrontProducts(), getHomepage()]);
+  const [products, homepage, showLabReports] = await Promise.all([
+    getStorefrontProducts(),
+    getHomepage(),
+    getShowLabReports(),
+  ]);
   return (
-    <div className="blinkers">
-      <BlinkersHome products={products} homepage={homepage} />
-    </div>
+    <StorefrontRoot>
+      <StorefrontHome products={products} homepage={homepage} showLabReports={showLabReports} />
+    </StorefrontRoot>
   );
 }

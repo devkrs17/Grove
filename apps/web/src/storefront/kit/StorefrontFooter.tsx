@@ -7,34 +7,46 @@ export interface FooterColumn {
   links: string[];
 }
 
-export interface BlinkersFooterProps {
+export interface StorefrontFooterProps {
   /** Brand wordmark (lowercase in the mock). */
   brand?: string;
   /** Short blurb under the brand. */
   blurb?: string;
-  /** Link columns (Shop / Learn / Help in the mock). */
+  /** Link columns (Shop / Learn / Help in the mock). When omitted, the default
+   *  columns are built from `showLabReports`. */
   columns?: FooterColumn[];
+  /** Whether the regulated-goods (COA) vertical is on: gates the "Lab reports"
+   *  entry in the default Learn column. Ignored when `columns` is provided. */
+  showLabReports?: boolean;
   /** Legal / copyright line in the bottom bar. */
   legal?: string;
   /** Social labels in the bottom bar. */
   socials?: string[];
 }
 
-const DEFAULT_COLUMNS: FooterColumn[] = [
-  { heading: "Shop", links: ["Edibles", "Concentrates", "Vapes", "All products"] },
-  { heading: "Learn", links: ["About THCa", "Lab reports", "Journal", "Wholesale"] },
-  { heading: "Help", links: ["Shipping & states", "Returns", "Age verification", "Contact"] },
-];
-
 const DEFAULT_SOCIALS = ["Instagram", "TikTok", "X"];
 
-export function BlinkersFooter({
+/** Footer columns; the Learn column includes "Lab reports" only when the COA
+ *  vertical is enabled (kept in its original position, after "About THCa"). */
+function defaultColumns(showLabReports: boolean): FooterColumn[] {
+  const learn = ["About THCa", "Journal", "Wholesale"];
+  if (showLabReports) learn.splice(1, 0, "Lab reports");
+  return [
+    { heading: "Shop", links: ["Edibles", "Concentrates", "Vapes", "All products"] },
+    { heading: "Learn", links: learn },
+    { heading: "Help", links: ["Shipping & states", "Returns", "Age verification", "Contact"] },
+  ];
+}
+
+export function StorefrontFooter({
   brand = "blinkers",
   blurb = "A tight, lab-tested shelf of THCa. 21+ only.",
-  columns = DEFAULT_COLUMNS,
+  columns,
+  showLabReports = false,
   legal = "© 2026 Blinkers · 21+ only · keep away from children & pets",
   socials = DEFAULT_SOCIALS,
-}: BlinkersFooterProps) {
+}: StorefrontFooterProps) {
+  const cols = columns ?? defaultColumns(showLabReports);
   return (
     <footer className="footer">
       <div className="wrap">
@@ -46,7 +58,7 @@ export function BlinkersFooter({
             </div>
             <p style={{ marginTop: 12, maxWidth: "34ch", color: "#9b9a8c" }}>{blurb}</p>
           </div>
-          {columns.map((col) => (
+          {cols.map((col) => (
             <div key={col.heading}>
               <h5>{col.heading}</h5>
               <ul>

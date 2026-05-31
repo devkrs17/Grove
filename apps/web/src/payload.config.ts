@@ -117,6 +117,31 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Admin Live Preview: embeds the real storefront in an iframe on the edit
+    // view so staff can see a doc rendered as the shopper sees it. URLs are
+    // relative because the admin and storefront are one Next app (same origin).
+    // Tenant resolves by hostname; on the admin host the storefront falls back
+    // to the Blinkers demo tenant, so previews reflect Blinkers content while it
+    // is the only live tenant.
+    livePreview: {
+      url: ({ data, collectionConfig }) => {
+        switch (collectionConfig?.slug) {
+          case "products":
+            return `/products/${data?.slug ?? ""}`;
+          case "pages":
+            return `/${data?.slug ?? ""}`;
+          default:
+            // homepage (one global doc per tenant) renders at the site root
+            return "/";
+        }
+      },
+      collections: ["products", "pages", "homepage"],
+      breakpoints: [
+        { label: "Mobile", name: "mobile", width: 375, height: 667 },
+        { label: "Tablet", name: "tablet", width: 768, height: 1024 },
+        { label: "Desktop", name: "desktop", width: 1440, height: 900 },
+      ],
+    },
   },
   plugins: [
     multiTenantPlugin({

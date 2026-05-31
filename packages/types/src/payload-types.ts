@@ -345,6 +345,10 @@ export interface BrandConfig {
     | number
     | boolean
     | null;
+  /**
+   * Regulated-goods vertical: when on, the storefront renders the lab-report (COA) library at /lab-reports, the nav/footer 'Lab reports' links, the homepage CTA, and the per-product COA panel. Off (the default) for tenants that don't publish certificates of analysis.
+   */
+  showLabReports?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1075,6 +1079,7 @@ export interface BrandConfigsSelect<T extends boolean = true> {
   primaryColor?: T;
   secondaryColor?: T;
   typography?: T;
+  showLabReports?: T;
   updatedAt?: T;
   createdAt?: T;
 }

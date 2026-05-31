@@ -6,7 +6,7 @@
 
    IMPORTANT: this file is intentionally NOT imported anywhere yet.
    When the Blinkers kit is adopted, import it once from the storefront
-   layout (e.g. `import "@/storefront/blinkers/blinkers.css"`), and add
+   layout (e.g. `import "@/storefront/kit/kit.css"`), and add
    the Google Fonts <link> in that layout's <head> (see note below) — the
    @import here covers fonts too, but a <link> with preconnect is faster.
 
@@ -27,13 +27,13 @@
 
 /* Scope the base reset to the Blinkers root so importing this file does
    not restyle every page globally. The mock applied these to *, html,
-   body; here we apply them under .blinkers and to its descendants. */
-.blinkers, .blinkers *{box-sizing:border-box}
-.blinkers{margin:0;font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
-.blinkers img{display:block;max-width:100%}
-.blinkers a{color:inherit;text-decoration:none}
+   body; here we apply them under .storefront and to its descendants. */
+.storefront, .storefront *{box-sizing:border-box}
+.storefront{margin:0;font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+.storefront img{display:block;max-width:100%}
+.storefront a{color:inherit;text-decoration:none}
 .wrap{max-width:1200px;margin:0 auto;padding:0 26px}
-.blinkers h1,.blinkers h2,.blinkers h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
+.storefront h1,.storefront h2,.storefront h3{margin:0;font-family:var(--disp);font-weight:700;letter-spacing:-.02em;line-height:1}
 .eyebrow{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 .btn{font-family:var(--disp);font-size:15px;font-weight:600;display:inline-block;padding:14px 24px;border-radius:999px;border:2px solid var(--ink);cursor:pointer}
 .btn--lime{background:var(--lime);color:var(--ink)}
@@ -47,7 +47,7 @@
 .nav__links{display:flex;gap:24px;font-family:var(--disp);font-weight:500;font-size:15px}
 .nav__links a:hover{color:var(--lime-deep)}
 .nav__right{display:flex;gap:14px;align-items:center;font-family:var(--disp);font-weight:500;font-size:14px}
-/* qualified with `a` so it outweighs the `.blinkers a` color reset (same class
+/* qualified with `a` so it outweighs the `.storefront a` color reset (same class
    count, but the element selector + later source order win the cascade). */
 a.cartpill{background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px}
 

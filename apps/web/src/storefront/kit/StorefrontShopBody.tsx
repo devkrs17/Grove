@@ -2,7 +2,7 @@
 
 // Client body for the Blinkers shop / PLP. Owns the filter + sort state and
 // renders everything that depends on it: the PLP header count + sort pill, the
-// filter sidebar, and the product grid. The server wrapper (BlinkersShop) fetches
+// filter sidebar, and the product grid. The server wrapper (StorefrontShop) fetches
 // `products` and passes them down; all narrowing happens here in the browser
 // (instant, no reload). Markup/classNames/SVGs mirror the approved mock verbatim
 // (apps/web/public/shop-mock.html) — only the wiring is new.
@@ -39,7 +39,7 @@ const BRAND_OPTIONS = ["Litt Edibles", "710 Nomad Rosin", "Blinkers Flip"] as co
 // is worse than no option.
 type SortMode = "featured" | "price" | "-price";
 
-export function BlinkersShopBody({ products }: { products: Product[] }) {
+export function StorefrontShopBody({ products }: { products: Product[] }) {
   // Price bounds come from the real data so the slider spans the actual range
   // and the default (full-range) filter shows everything.
   const [minBound, maxBound] = useMemo(() => {

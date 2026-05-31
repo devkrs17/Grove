@@ -12,20 +12,18 @@
 import Link from "next/link";
 import type { LabReport } from "../data";
 import { Announce } from "./Announce";
-import { BlinkersNav } from "./BlinkersNav";
-import { BlinkersFooter } from "./BlinkersFooter";
+import { StorefrontNav } from "./StorefrontNav";
+import { StorefrontFooter } from "./StorefrontFooter";
+import { storefrontNavLinks } from "./navLinks";
 import { Button } from "./Button";
 import { LabReportTable } from "./LabReportTable";
 import { StatusBadge } from "./StatusBadge";
 
 const ANNOUNCEMENT = "Free shipping over $99 · 21+ · ships discreet, no labels";
 
-const NAV_LINKS = [
-  { label: "Edibles", href: "/shop" },
-  { label: "Concentrates", href: "/shop" },
-  { label: "Vapes", href: "/shop" },
-  { label: "Lab reports", href: "/lab-reports" },
-];
+// This page only renders when the COA vertical is enabled (the /lab-reports
+// route guards on it), so its chrome always shows the lab-report links.
+const NAV_LINKS = storefrontNavLinks(true);
 
 // Batch/lot of the lot featured in the Sample COA panel (the PDP mock's lot);
 // falls back to the first report if that lot isn't in the set.
@@ -111,7 +109,7 @@ function barWidth(value: string): number | null {
   return Math.max(2, Math.min(100, Math.round(n)));
 }
 
-export function BlinkersLabReports({ reports }: { reports: LabReport[] }) {
+export function StorefrontLabReports({ reports }: { reports: LabReport[] }) {
   const featured = reports.find((r) => r.batchLot === FEATURED_LOT) ?? reports[0];
 
   // The Sample COA renders the cannabinoid rows from the featured report. If the
@@ -125,7 +123,7 @@ export function BlinkersLabReports({ reports }: { reports: LabReport[] }) {
   return (
     <>
       <Announce>{ANNOUNCEMENT}</Announce>
-      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
+      <StorefrontNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
 
       {/* ============ PAGE HEADER: breadcrumb + title + trust stats ============ */}
       <header className="plp-head">
@@ -325,7 +323,7 @@ export function BlinkersLabReports({ reports }: { reports: LabReport[] }) {
         </div>
       </section>
 
-      <BlinkersFooter />
+      <StorefrontFooter showLabReports />
     </>
   );
 }

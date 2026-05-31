@@ -1,15 +1,19 @@
-import "@/storefront/blinkers/blinkers.css";
-import "@/storefront/blinkers/shop.css";
-import { BlinkersShop } from "@/storefront/blinkers/BlinkersShop";
-import { getStorefrontProducts } from "@/storefront/server";
+import "@/storefront/kit/kit.css";
+import "@/storefront/kit/shop.css";
+import { StorefrontShop } from "@/storefront/kit/StorefrontShop";
+import { StorefrontRoot } from "@/storefront/StorefrontRoot";
+import { getShowLabReports, getStorefrontProducts } from "@/storefront/server";
 
 export const metadata = { title: "Blinkers — Shop everything." };
 
 export default async function StorefrontShopPage() {
-  const products = await getStorefrontProducts();
+  const [products, showLabReports] = await Promise.all([
+    getStorefrontProducts(),
+    getShowLabReports(),
+  ]);
   return (
-    <div className="blinkers">
-      <BlinkersShop products={products} />
-    </div>
+    <StorefrontRoot>
+      <StorefrontShop products={products} showLabReports={showLabReports} />
+    </StorefrontRoot>
   );
 }

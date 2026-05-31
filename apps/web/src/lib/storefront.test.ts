@@ -9,6 +9,7 @@ import {
   brandFromName,
   flavorFromName,
   formatLabDate,
+  brandConfigToCssVars,
 } from "./storefront";
 
 function makeDoc(overrides: Partial<PayloadProduct> = {}): PayloadProduct {
@@ -359,5 +360,34 @@ describe("mapLabReports", () => {
 
   it("returns an empty array for no docs", () => {
     expect(mapLabReports([])).toEqual([]);
+  });
+});
+
+describe("brandConfigToCssVars", () => {
+  it("returns no overrides for a null BrandConfig (defaults render)", () => {
+    expect(brandConfigToCssVars(null)).toEqual({});
+  });
+
+  it("returns no overrides when colors are unset", () => {
+    expect(brandConfigToCssVars({ primaryColor: null, secondaryColor: null })).toEqual({});
+  });
+
+  // Encodes the seed's mapping contract: primaryColor themes the dominant --ink
+  // and secondaryColor themes the --lime accent. If the storefront ever remaps
+  // these slots, this assertion must change with it — a tenant's saved colors
+  // would otherwise silently land on the wrong elements.
+  it("maps primaryColor to --ink and secondaryColor to --lime", () => {
+    expect(
+      brandConfigToCssVars({ primaryColor: "#14130d", secondaryColor: "#c2f04a" }),
+    ).toEqual({ "--ink": "#14130d", "--lime": "#c2f04a" });
+  });
+
+  it("emits only the colors that are set", () => {
+    expect(brandConfigToCssVars({ primaryColor: "#222", secondaryColor: null })).toEqual({
+      "--ink": "#222",
+    });
+    expect(brandConfigToCssVars({ primaryColor: null, secondaryColor: "#0f0" })).toEqual({
+      "--lime": "#0f0",
+    });
   });
 });

@@ -46,8 +46,17 @@ describe("BrandConfigs collection", () => {
     expect(field).toMatchObject({ type: "json" });
   });
 
-  it("has exactly 5 fields", () => {
-    expect(BrandConfigs.fields).toHaveLength(5);
+  // Gates the regulated-goods (COA/lab-report) vertical in the storefront.
+  // Defaults off so a generic tenant opts in rather than having to opt out.
+  it("has showLabReports checkbox field defaulting off", () => {
+    const field = BrandConfigs.fields.find(
+      (f) => "name" in f && f.name === "showLabReports",
+    );
+    expect(field).toMatchObject({ type: "checkbox", defaultValue: false });
+  });
+
+  it("has exactly 6 fields", () => {
+    expect(BrandConfigs.fields).toHaveLength(6);
   });
 
   it("allows read for authenticated users", () => {

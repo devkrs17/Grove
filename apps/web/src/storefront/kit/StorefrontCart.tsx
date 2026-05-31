@@ -25,7 +25,7 @@ function brandOf(name: string): string {
   return "";
 }
 
-export function BlinkersCart() {
+export function StorefrontCart() {
   const { items, remove, setQty, subtotal, count } = useCart();
 
   // Empty cart — Blinkers-styled version of the existing empty state.

@@ -27,8 +27,8 @@ export interface HeroProps {
   subhead: string;
   /** Primary CTA — lime pill. */
   primaryCta: HeroCta;
-  /** Secondary CTA — ghost pill. */
-  secondaryCta: HeroCta;
+  /** Secondary CTA — ghost pill. Omitted (no ghost button) when undefined. */
+  secondaryCta?: HeroCta;
   /** Trust line to the right of the stars, e.g. "4.9 · 15,000+ reviews · free shipping $99+". */
   trust: string;
   /** Hero image URL (4:5). */
@@ -71,9 +71,11 @@ export function Hero({
             <Button variant="lime" href={primaryCta.href}>
               {primaryCta.label}
             </Button>
-            <Button variant="ghost" href={secondaryCta.href}>
-              {secondaryCta.label}
-            </Button>
+            {secondaryCta ? (
+              <Button variant="ghost" href={secondaryCta.href}>
+                {secondaryCta.label}
+              </Button>
+            ) : null}
           </div>
           <div className="hero__trust">
             <span className="stars">★★★★★</span> {trust}

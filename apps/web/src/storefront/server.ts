@@ -5,7 +5,7 @@
 
 import { getPayload, type Payload, type Where } from "payload";
 import config from "@payload-config";
-import type { Page, Homepage } from "@grove/types";
+import type { Page, Homepage, BrandConfig } from "@grove/types";
 import { getTenantContext } from "@/lib/tenant";
 import { mapProduct, mapProducts, mapLabReports } from "@/lib/storefront";
 import type { Product, LabReport } from "./data";
@@ -100,6 +100,42 @@ export async function getStorefrontPageBySlug(slug: string): Promise<Page | null
     limit: 1,
   });
   return docs[0] ?? null;
+}
+
+/**
+ * The BrandConfig for the resolved (or default) site, or null. Drives the
+ * storefront's theme tokens (see brandConfigToCssVars + StorefrontRoot): its
+ * colors are injected as CSS custom properties so a tenant reskins the store
+ * from the admin, with no code change. brand-configs is global per tenant, so
+ * there is one row per site.
+ */
+export async function getBrandConfig(): Promise<BrandConfig | null> {
+  const payload = await getPayload({ config });
+  const { siteId } = await getTenantContext();
+  const effective = await resolveSiteId(payload, siteId);
+  if (!effective) {
+    return null;
+  }
+  const { docs } = await payload.find({
+    collection: "brand-configs",
+    where: { site: { equals: effective } },
+    overrideAccess: true,
+    depth: 0,
+    limit: 1,
+  });
+  return docs[0] ?? null;
+}
+
+/**
+ * Whether the resolved tenant has opted into the regulated-goods (COA /
+ * lab-report) vertical. Drives the opt-in storefront pieces: the /lab-reports
+ * route, the nav/footer "Lab reports" links, the homepage CTA, and the PDP COA
+ * panel. Defaults false (a generic tenant renders none of these) and reads the
+ * tenant's BrandConfig.showLabReports.
+ */
+export async function getShowLabReports(): Promise<boolean> {
+  const brand = await getBrandConfig();
+  return Boolean(brand?.showLabReports);
 }
 
 /** The per-tenant homepage document for the resolved (or default) tenant, or null. */

@@ -36,5 +36,14 @@ export const BrandConfigs: CollectionConfig = {
       name: "typography",
       type: "json",
     },
+    {
+      name: "showLabReports",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description:
+          "Regulated-goods vertical: when on, the storefront renders the lab-report (COA) library at /lab-reports, the nav/footer 'Lab reports' links, the homepage CTA, and the per-product COA panel. Off (the default) for tenants that don't publish certificates of analysis.",
+      },
+    },
   ],
 };

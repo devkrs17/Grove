@@ -1,28 +1,25 @@
-import "@/storefront/blinkers/blinkers.css";
-import "@/storefront/blinkers/cart.css";
-import { Announce } from "@/storefront/blinkers/Announce";
-import { BlinkersNav } from "@/storefront/blinkers/BlinkersNav";
-import { BlinkersFooter } from "@/storefront/blinkers/BlinkersFooter";
-import { BlinkersCart } from "@/storefront/blinkers/BlinkersCart";
+import "@/storefront/kit/kit.css";
+import "@/storefront/kit/cart.css";
+import { Announce } from "@/storefront/kit/Announce";
+import { StorefrontNav } from "@/storefront/kit/StorefrontNav";
+import { StorefrontFooter } from "@/storefront/kit/StorefrontFooter";
+import { StorefrontCart } from "@/storefront/kit/StorefrontCart";
+import { storefrontNavLinks } from "@/storefront/kit/navLinks";
+import { StorefrontRoot } from "@/storefront/StorefrontRoot";
+import { getShowLabReports } from "@/storefront/server";
 
 export const metadata = { title: "Blinkers — Your cart" };
 
 const ANNOUNCEMENT = "Free shipping over $99 · 21+ · ships discreet, no labels";
 
-const NAV_LINKS = [
-  { label: "Edibles", href: "/shop" },
-  { label: "Concentrates", href: "/shop" },
-  { label: "Vapes", href: "/shop" },
-  { label: "Lab reports", href: "/lab-reports" },
-];
-
-export default function StorefrontCartPage() {
+export default async function StorefrontCartPage() {
+  const showLabReports = await getShowLabReports();
   return (
-    <div className="blinkers">
+    <StorefrontRoot>
       <Announce>{ANNOUNCEMENT}</Announce>
-      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
-      <BlinkersCart />
-      <BlinkersFooter />
-    </div>
+      <StorefrontNav brandHref="/" links={storefrontNavLinks(showLabReports)} cartHref="/cart" />
+      <StorefrontCart />
+      <StorefrontFooter showLabReports={showLabReports} />
+    </StorefrontRoot>
   );
 }

@@ -4,32 +4,32 @@
 // (Category / Brand / Price), a responsive product grid, and the footer.
 //
 // This component is a server component: it owns the static chrome (announce / nav
-// / footer) and hands the server-fetched `products` to BlinkersShopBody, the
+// / footer) and hands the server-fetched `products` to StorefrontShopBody, the
 // "use client" component that owns the live filter + sort state and renders the
 // header count, sidebar, and grid.
 
 import { Announce } from "./Announce";
-import { BlinkersNav } from "./BlinkersNav";
-import { BlinkersFooter } from "./BlinkersFooter";
-import { BlinkersShopBody } from "./BlinkersShopBody";
+import { StorefrontNav } from "./StorefrontNav";
+import { StorefrontFooter } from "./StorefrontFooter";
+import { storefrontNavLinks } from "./navLinks";
+import { StorefrontShopBody } from "./StorefrontShopBody";
 import type { Product } from "../data";
 
 const ANNOUNCEMENT = "Free shipping over $99 · 21+ · ships discreet, no labels";
 
-const NAV_LINKS = [
-  { label: "Edibles", href: "/shop" },
-  { label: "Concentrates", href: "/shop" },
-  { label: "Vapes", href: "/shop" },
-  { label: "Lab reports", href: "/lab-reports" },
-];
-
-export function BlinkersShop({ products }: { products: Product[] }) {
+export function StorefrontShop({
+  products,
+  showLabReports = false,
+}: {
+  products: Product[];
+  showLabReports?: boolean;
+}) {
   return (
     <>
       <Announce>{ANNOUNCEMENT}</Announce>
-      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
-      <BlinkersShopBody products={products} />
-      <BlinkersFooter />
+      <StorefrontNav brandHref="/" links={storefrontNavLinks(showLabReports)} cartHref="/cart" />
+      <StorefrontShopBody products={products} />
+      <StorefrontFooter showLabReports={showLabReports} />
     </>
   );
 }

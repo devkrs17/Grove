@@ -7,7 +7,7 @@ export interface NavLink {
   href: string;
 }
 
-export interface BlinkersNavProps {
+export interface StorefrontNavProps {
   /** Brand wordmark. Defaults to "blinkers" (rendered lowercase in the mock). */
   brand?: string;
   /** Link to the brand/home. */
@@ -27,13 +27,13 @@ const DEFAULT_LINKS: NavLink[] = [
   { label: "Lab reports", href: "#" },
 ];
 
-export function BlinkersNav({
+export function StorefrontNav({
   brand = "blinkers",
   brandHref = "#",
   links = DEFAULT_LINKS,
   cartCount = 0,
   cartHref = "#",
-}: BlinkersNavProps) {
+}: StorefrontNavProps) {
   return (
     <nav className="nav">
       <div style={{ display: "flex", gap: 32, alignItems: "center" }}>

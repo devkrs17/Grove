@@ -8,22 +8,16 @@ import type { Product } from "../data";
 import { imgUrl } from "../data";
 import { productHref } from "@/lib/storefront";
 import { Announce } from "./Announce";
-import { BlinkersNav } from "./BlinkersNav";
-import { BlinkersFooter } from "./BlinkersFooter";
-import { Hero } from "./Hero";
+import { StorefrontNav } from "./StorefrontNav";
+import { StorefrontFooter } from "./StorefrontFooter";
+import { storefrontNavLinks } from "./navLinks";
+import { Hero, type HeroCta } from "./Hero";
 import { Marquee } from "./Marquee";
 import { ProductCard } from "./ProductCard";
 import { CategoryTile } from "./CategoryTile";
 import { SectionHead } from "./SectionHead";
 import { ReviewCard } from "./ReviewCard";
 import { EmailBand } from "./EmailBand";
-
-const NAV_LINKS = [
-  { label: "Edibles", href: "/shop" },
-  { label: "Concentrates", href: "/shop" },
-  { label: "Vapes", href: "/shop" },
-  { label: "Lab reports", href: "/lab-reports" },
-];
 
 const CATEGORIES = ["Edibles", "Concentrates", "Vapes"];
 
@@ -77,9 +71,32 @@ function mediaUrl(value: Homepage["heroImage"]): string | null {
   return value && typeof value === "object" ? (value.url ?? null) : null;
 }
 
-export function BlinkersHome({ products, homepage }: { products: Product[]; homepage: Homepage | null }) {
+export function StorefrontHome({
+  products,
+  homepage,
+  showLabReports = false,
+}: {
+  products: Product[];
+  homepage: Homepage | null;
+  showLabReports?: boolean;
+}) {
   const hp = homepage;
   const featured = products.slice(0, 8);
+
+  // Secondary hero CTA: an explicit homepage doc value wins; otherwise it
+  // defaults to the lab-report library when the COA vertical is on. Either way a
+  // CTA that targets the /lab-reports route is dropped when the vertical is off,
+  // so the hero never links to the (then-absent, 404ing) lab-reports page.
+  const candidateCta: HeroCta | null =
+    hp?.heroCtaSecondaryLabel || hp?.heroCtaSecondaryHref
+      ? { label: hp.heroCtaSecondaryLabel ?? "Learn more", href: hp.heroCtaSecondaryHref ?? "/" }
+      : showLabReports
+        ? { label: "See the lab reports", href: "/lab-reports" }
+        : null;
+  const secondaryCta: HeroCta | undefined =
+    candidateCta && !(candidateCta.href === "/lab-reports" && !showLabReports)
+      ? candidateCta
+      : undefined;
   const catTiles = CATEGORIES.map((label) => {
     const items = products.filter((p) => p.category === label);
     return { label, image: items[0] ? imgUrl(items[0].img) : "", count: items.length };
@@ -99,7 +116,7 @@ export function BlinkersHome({ products, homepage }: { products: Product[]; home
   return (
     <>
       <Announce>{hp?.announcement ?? DEFAULTS.announcement}</Announce>
-      <BlinkersNav brandHref="/" links={NAV_LINKS} cartHref="/cart" />
+      <StorefrontNav brandHref="/" links={storefrontNavLinks(showLabReports)} cartHref="/cart" />
 
       <Hero
         eyebrow={hp?.heroEyebrow ?? DEFAULTS.heroEyebrow}
@@ -107,7 +124,7 @@ export function BlinkersHome({ products, homepage }: { products: Product[]; home
         headline={hp?.heroHeadline ?? DEFAULTS.heroHeadline}
         subhead={hp?.heroSubhead ?? DEFAULTS.heroSubhead}
         primaryCta={{ label: hp?.heroCtaPrimaryLabel ?? "Shop the drop →", href: hp?.heroCtaPrimaryHref ?? "/shop" }}
-        secondaryCta={{ label: hp?.heroCtaSecondaryLabel ?? "See the lab reports", href: hp?.heroCtaSecondaryHref ?? "/lab-reports" }}
+        secondaryCta={secondaryCta}
         trust={hp?.heroRating ?? DEFAULTS.heroRating}
         image={mediaUrl(hp?.heroImage ?? null) ?? DEFAULTS.heroImage}
         stickers={[
@@ -198,7 +215,7 @@ export function BlinkersHome({ products, homepage }: { products: Product[]; home
         />
       </section>
 
-      <BlinkersFooter />
+      <StorefrontFooter showLabReports={showLabReports} />
     </>
   );
 }

@@ -1,9 +1,9 @@
 /* Blinkers SHOP / PLP-specific styles — ported verbatim from the approved mock
  * (apps/web/public/shop-mock.html, the SHOP / PLP additions block). Pair with
- * ./blinkers.css (the shared kit tokens + base rules) and ./BlinkersShop.tsx.
+ * ./kit.css (the shared kit tokens + base rules) and ./StorefrontShop.tsx.
  *
  * Only the page-specific rules live here. Tokens (--ink, --lime, …) and the
- * shared .wrap / .btn / .blob primitives come from blinkers.css and are reused.
+ * shared .wrap / .btn / .blob primitives come from kit.css and are reused.
  */
 
 /* page header: breadcrumb + title + count + sort */

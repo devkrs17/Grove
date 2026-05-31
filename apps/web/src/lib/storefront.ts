@@ -3,8 +3,36 @@
 // fully tested. Async Payload data-access lives in src/storefront/server.ts
 // (a server-only module), keeping this file pure and importable anywhere.
 
-import type { Product as PayloadProduct, LabReport as PayloadLabReport, Media } from "@grove/types";
+import type {
+  Product as PayloadProduct,
+  LabReport as PayloadLabReport,
+  Media,
+  BrandConfig,
+} from "@grove/types";
 import type { Product, LabReport } from "@/storefront/data";
+
+/**
+ * Maps a tenant's BrandConfig to the storefront's themeable CSS custom
+ * properties. The storefront stylesheet (kit.css) ships a complete default
+ * palette in `:root`; these overrides are layered on the `.storefront` root so a
+ * tenant reskins the store from the admin without touching code. Only fields the
+ * tenant actually set are emitted, so an empty/partial BrandConfig leaves the
+ * defaults intact (the Blinkers tenant's seeded values equal those defaults, so
+ * its rendering is unchanged).
+ *
+ * Mapping follows the seed's convention (packages/payload seed brand-config):
+ *   primaryColor   → --ink  (dominant brand color: text, borders, dark buttons)
+ *   secondaryColor → --lime (accent: highlights, price pills, CTAs)
+ */
+export function brandConfigToCssVars(
+  brand: Pick<BrandConfig, "primaryColor" | "secondaryColor"> | null,
+): Record<string, string> {
+  const vars: Record<string, string> = {};
+  if (!brand) return vars;
+  if (brand.primaryColor) vars["--ink"] = brand.primaryColor;
+  if (brand.secondaryColor) vars["--lime"] = brand.secondaryColor;
+  return vars;
+}
 
 /** Storefront route helper: path to a product detail page. */
 export function productHref(slugOrId: string): string {

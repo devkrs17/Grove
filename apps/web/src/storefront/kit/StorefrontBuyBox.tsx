@@ -10,7 +10,7 @@ import { useState } from "react";
 import type { Product } from "../data";
 import { AddToCartButton } from "@/storefront/cart/AddToCartButton";
 
-export function BlinkersBuyBox({ product }: { product: Product }) {
+export function StorefrontBuyBox({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const dec = () => setQty((n) => Math.max(1, n - 1));
   const inc = () => setQty((n) => n + 1);

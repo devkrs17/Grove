@@ -1,11 +1,12 @@
-// Blinkers storefront kit — barrel re-export.
-// Type-safe React components + tokens ported from the approved homepage mock
-// (apps/web/public/homepage-mock.html). Pair with ./blinkers.css, which must
-// be imported once in the storefront layout when this kit is adopted.
+// Storefront kit — barrel re-export.
+// Type-safe React components + tokens, originally ported from the approved
+// Blinkers homepage mock (apps/web/public/homepage-mock.html) and now the shared,
+// BrandConfig-themeable kit. Pair with ./kit.css, which must be imported once in
+// the storefront layout when this kit is adopted.
 
 export { Announce, type AnnounceProps } from "./Announce";
-export { BlinkersFooter, type BlinkersFooterProps, type FooterColumn } from "./BlinkersFooter";
-export { BlinkersNav, type BlinkersNavProps, type NavLink } from "./BlinkersNav";
+export { StorefrontFooter, type StorefrontFooterProps, type FooterColumn } from "./StorefrontFooter";
+export { StorefrontNav, type StorefrontNavProps, type NavLink } from "./StorefrontNav";
 export { Button, type ButtonProps, type ButtonVariant } from "./Button";
 export { CategoryTile, type CategoryTileProps } from "./CategoryTile";
 export { Chip, type ChipProps, type ChipTone } from "./Chip";

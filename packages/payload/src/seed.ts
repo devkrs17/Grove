@@ -397,6 +397,9 @@ export const seed = async (payload: Payload): Promise<void> => {
       tenant: tenant.id,
       primaryColor: "#14130d",
       secondaryColor: "#c2f04a",
+      // Blinkers is the regulated-goods tenant: it publishes COAs, so it opts
+      // into the lab-report vertical. (Generic tenants leave this off.)
+      showLabReports: true,
     },
   });
   payload.logger.info("Created brand config");
