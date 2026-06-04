@@ -145,12 +145,21 @@ SUPER_ADMIN_EMAIL=admin@example.com
 ## Reference Docs
 
 Deeper context lives in `.claude/docs/`:
+- `working-agreement.md` — House rules every ticket follows (plan first, worktree per ticket, red→green tests, `/check` before `/done`)
+- `board-plan.md` — The fresh, beginner-buildable Linear board (epics, tickets, build order) + the wipe runbook
 - `mvp.md` — MVP scope, what's in/out, definition of done
 - `architecture.md` — Full system design from Notion
 - `domain-model.md` — All entities, relationships, Payload mapping
 - `notion-links.md` — Quick-reference Notion URLs and board IDs
 
-## Notion Project Board
+## Project Boards
+
+**Linear = tasks, Notion = specs/strategy.** Day-to-day tickets live on the
+Linear "Grove Platform" board (team KRI); pull work with `/next-task` and close
+it with `/done`. The board's content and build order is in
+`.claude/docs/board-plan.md`. Notion holds the deeper specs and strategy.
+
+### Notion (specs & strategy)
 
 | Field | Value |
 |-------|-------|

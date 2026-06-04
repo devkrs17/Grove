@@ -1,23 +1,31 @@
-Fetch the next MVP task to work on from the Notion project board.
+Fetch the next task to work on from the Linear "Grove Platform" board.
+
+> Run this from a **local** session that has the Linear MCP. The remote/CI
+> environment cannot reach Linear.
 
 ## How to find the next task
 
-1. Read `.claude/docs/mvp.md` to understand what's in scope.
-2. Read `.claude/docs/notion-links.md` to get the board data source ID and known ticket IDs.
-3. Fetch each known MVP ticket by page ID to check its current status.
-4. Search the data source (`collection://c2294908-28ff-4da9-9fee-5b45061427b5`) for "Foundation" and "Storefront" tickets.
-5. Pick the highest-priority ticket with Status = "To Do". If none, find highest-priority "Backlog" ticket whose dependencies are met (check Depends On field).
-6. Show: Ticket ID, Name, Phase, Priority, Size, Type, Depends On, and Acceptance Criteria.
-7. Fetch the full page so I have all details.
+1. Read `.claude/docs/board-plan.md` to understand the epics, the build order,
+   and the `Depends on` chain.
+2. List the board's issues: `list_issues(project="Grove Platform")` (team KRI).
+3. For each candidate, check its Status and `Depends on`.
+4. Pick the next ticket:
+   - Anything **In Progress** or **Blocked** first (finish or unblock it).
+   - Else the highest-priority **Todo** ticket whose dependencies are all Done.
+   - Else the highest-priority **Backlog** ticket whose dependencies are met.
+5. Show: ticket id, title, epic, priority, `Depends on`, and acceptance criteria.
+6. Fetch the full issue so you have all the details, then start it with
+   `/work-feature`.
 
-## Priority order for MVP work
+## Priority order
 
-1. Anything currently "Blocked" or "In Progress" (unblock or finish it)
-2. "To Do" tickets, highest priority first
-3. "Backlog" Foundation/Storefront tickets with met dependencies
+1. In Progress / Blocked (unblock or finish)
+2. Todo, highest priority first
+3. Backlog tickets with met dependencies
 
-## Important
+## Notes
 
-- Do NOT suggest tickets from Service Layer, AI Layer, or SEO phases — they're not MVP.
-- `view://` URLs cannot be fetched. Use page IDs directly.
-- notion-search is semantic, not property-filtered. Always fetch pages to verify Status.
+- On a freshly created board, this should return **T0.1 (Build the blank starter
+  "Sprout")** — it has no dependencies and the highest priority.
+- Priorities descend by epic (EPIC 0 highest), so the chain in `board-plan.md`
+  is the tie-breaker.

@@ -1,5 +1,13 @@
-Fetch a specific ticket from the Notion project board by ticket ID or name.
+Fetch a specific ticket from the Linear "Grove Platform" board by id or title.
 
-Usage: /ticket PLT-123  or  /ticket "ticket name"
+Usage: `/ticket KRI-123`  or  `/ticket "ticket title"`
 
-Search for the ticket in the project board at https://www.notion.so/7be2c45841954399b92ced74a494e3c8 and fetch its full page content including Name, Status, Priority, Size, Phase, Epic, Depends On, Acceptance Criteria, and Notes.
+> Run this from a **local** session that has the Linear MCP. The remote/CI
+> environment cannot reach Linear.
+
+Look up the issue in the Linear project **"Grove Platform"** (team **KRI**) and
+show its full details: id, title, status, priority, epic (parent issue),
+`Depends on`, the task checklist, tests, and acceptance criteria.
+
+If only a title or partial id is given, list the close matches and confirm which
+one before fetching the full issue.
